@@ -1,10 +1,14 @@
-import React from 'react';
-import MainPage from './pages/main';
+import React from "react";
+import { Box } from "@mui/material";
+import Layout from "./components/layout";
 
 function App() {
   return (
-    <MainPage/>
-    );
+   <Layout>
+    test
+    </Layout>
+    //<MainPage/>
+  );
 }
 
 export default App;
