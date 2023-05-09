@@ -59,6 +59,7 @@ export default function Example() {
                   sx={{
                     color: "gray",
                     mt: 1,
+                    fontSize: 12,
                   }}
                 >
                   doris0707@naver.com
