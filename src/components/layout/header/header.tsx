@@ -15,7 +15,7 @@ export default function Header() {
       }}
     >
       <Box sx={{px:2}}>
-      Dino Project
+        Crepe
         </Box>
     </Box>
   );

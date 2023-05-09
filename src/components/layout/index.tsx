@@ -2,10 +2,8 @@ import { Box } from "@mui/material";
 import React from "react";
 import Sidebar from "./sidebar";
 import Header from "./header";
-import { useProSidebar } from "react-pro-sidebar";
 
 export default function Layout(props: { children: React.ReactNode }) {
-  const { collapsed } = useProSidebar();
   const { children } = props;
 
   return (
