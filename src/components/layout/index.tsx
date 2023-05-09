@@ -11,7 +11,9 @@ export default function Layout(props: { children: React.ReactNode }) {
       <Sidebar />
       <Box sx={{ width: 'calc(100% - 40px)', height: 1 }}>
         <Header />
+        <Box sx={{overflow:"auto"}}>
         {children}
+        </Box>
       </Box>
     </Box>
   );

@@ -18,7 +18,7 @@ export default function Example() {
   const { collapseSidebar, collapsed } = useProSidebar();
 
   return (
-    <Box sx={{ boxShadow: 1 }}>
+    <Box sx={{ boxShadow: 1, textOverflow: 'ellipsis'}}>
       <Sidebar>
         <Menu>
           <MenuItem
@@ -69,7 +69,7 @@ export default function Example() {
           <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
           <SubMenu icon={<FolderSharedIcon />} label="Projects">
             <MenuItem icon={<ArticleIcon />}> Project 1</MenuItem>
-            <MenuItem icon={<ArticleIcon />}> Project 2</MenuItem>
+            <MenuItem icon={<ArticleIcon />}> Project-Project-Project</MenuItem>
             <MenuItem icon={<AddCircleOutlineIcon />}>Add Project</MenuItem>
           </SubMenu>
           <MenuItem icon={<PersonOutlineIcon />}>My Page</MenuItem>
