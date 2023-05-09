@@ -18,8 +18,8 @@ export default function Example() {
   const { collapseSidebar, collapsed } = useProSidebar();
 
   return (
-    <Box sx={{ boxShadow: 1, textOverflow: 'ellipsis'}}>
-      <Sidebar>
+    <Box sx={{ boxShadow: 1, textOverflow: 'ellipsis', backgroundColor: "#FBFBFB"}}>
+      <Sidebar backgroundColor="#FBFBFB">
         <Menu>
           <MenuItem
             icon={<MenuOutlinedIcon />}

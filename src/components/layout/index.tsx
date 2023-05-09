@@ -9,9 +9,9 @@ export default function Layout(props: { children: React.ReactNode }) {
   return (
     <Box sx={{ width: 1, height: 1, display: "flex" }}>
       <Sidebar />
-      <Box sx={{ width: 'calc(100% - 40px)', height: 1 }}>
+      <Box sx={{ width: 'calc(100% - 40px)', height: 1, overflowX:'hidden'}}>
         <Header />
-        <Box sx={{overflow:"auto"}}>
+        <Box sx={{overflowY:'scroll'}}>
         {children}
         </Box>
       </Box>
