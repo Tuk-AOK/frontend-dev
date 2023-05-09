@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Fade } from "@mui/material";
 import React from "react";
 import {
   Sidebar,
@@ -18,7 +18,7 @@ export default function Example() {
   const { collapseSidebar, collapsed } = useProSidebar();
 
   return (
-    <Box sx={{boxShadow:1,}}>
+    <Box sx={{ boxShadow: 1 }}>
       <Sidebar>
         <Menu>
           <MenuItem
@@ -26,42 +26,45 @@ export default function Example() {
             onClick={() => {
               collapseSidebar();
             }}
-          >
-          </MenuItem>
-          {!collapsed && <Box
-            sx={{
-              height: 170,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Box
-              sx={{
-                width: 85,
-                height: 85,
-                borderRadius: 85,
-                bgcolor: "#000000",
-              }}
-            ></Box>
-            <Box
-              sx={{
-                color: "black",
-                mt: 2,
-              }}
-            >
-              Ellie010707
-            </Box>
-            <Box
-              sx={{
-                color: "gray",
-                mt: 1,
-              }}
-            >
-              doris0707@naver.com
-            </Box>
-          </Box>}
+          ></MenuItem>
+          {!collapsed && (
+            <Fade in timeout={1200}>
+              <Box
+                sx={{
+                  height: 170,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 85,
+                    height: 85,
+                    borderRadius: 85,
+                    bgcolor: "#000000",
+                  }}
+                ></Box>
+                <Box
+                  sx={{
+                    color: "black",
+                    mt: 2,
+                  }}
+                >
+                  Ellie010707
+                </Box>
+                <Box
+                  sx={{
+                    color: "gray",
+                    mt: 1,
+                  }}
+                >
+                  doris0707@naver.com
+                </Box>
+              </Box>
+            </Fade>
+          )}
           <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
           <SubMenu icon={<FolderSharedIcon />} label="Projects">
             <MenuItem icon={<ArticleIcon />}> Project 1</MenuItem>
