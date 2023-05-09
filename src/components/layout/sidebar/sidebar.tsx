@@ -27,8 +27,9 @@ export default function Example() {
               collapseSidebar();
             }}
           ></MenuItem>
+          
           {!collapsed && (
-            <Fade in timeout={1200}>
+            <Fade in={!collapsed} timeout={1200}>
               <Box
                 sx={{
                   height: 170,
