@@ -2,10 +2,30 @@ import { Box, Pagination } from "@mui/material";
 import React from "react";
 import GlobalButton from "../../common/globalButton";
 import ProjectBox from "../../common/projectBox";
+import { ProjectData } from "../../common/projectBox/types";
 
 export default function Main() {
+  const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);
+
+  React.useEffect(() => {
+    //fetch logic 
+
+    setProjectData([
+      { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+      { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+    ]);
+  }, []);
+
   return (
-    <Box sx={{ px: 3,py:3 }}>
+    <Box sx={{ px: 3, py: 3 }}>
       <Box
         sx={{
           textAlign: "center",
@@ -18,8 +38,10 @@ export default function Main() {
       </Box>
       <Box sx={{ px: 4 }}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Box sx={{ maxWidth: 1000,width:1, height: 32, position: "relative" }}>
-            <Box sx={{ position: "absolute", right: 0 }}>
+          <Box
+            sx={{ maxWidth: 1000, width: 1, height: 32, position: "relative" }}
+          >
+            <Box sx={{ position: "absolute", right: 12 }}>
               <GlobalButton>create</GlobalButton>
             </Box>
           </Box>
@@ -35,18 +57,20 @@ export default function Main() {
               justifyContent: "center",
             }}
           >
-            <ProjectBox />
-            <ProjectBox />
-            <ProjectBox />
-            <ProjectBox />
-            <ProjectBox />
-            <ProjectBox />
-            <ProjectBox />
-            <ProjectBox />
+            {projectData.map((v) => {
+              return <ProjectBox {...v} />;
+            })}
           </Box>
         </Box>
       </Box>
-      <Box sx={{ textAlign: "center", mt: 2,display:"flex",justifyContent:"center" }}>
+      <Box
+        sx={{
+          textAlign: "center",
+          mt: 2,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         <Pagination count={10} color="primary" size="small" />
       </Box>
     </Box>
