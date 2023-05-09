@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import React from "react";
 import GlobalButton from "../button/globalButton/globalButton";
+import ProjectBox from "../projectBox/projectBox";
 
 export default function Main() {
   return (
@@ -8,15 +9,35 @@ export default function Main() {
       <Box
         sx={{
           textAlign: "center",
-          mt: "50px",
+          mt: "60px",
           fontWeight: "bold",
-          letterSpacing: "5px",
+          letterSpacing: "3px",
         }}
       >
-        Projects
+        PROJECTS
       </Box>
-      <Box sx={{ textAlign: "right", mr: "95px" }}>
+      <Box sx={{ textAlign: "right", mt: "50px", mr: "130px" }}>
         <GlobalButton>create</GlobalButton>
+      </Box>
+      <Box
+        sx={{
+          mt: "10px",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          flexGrow: "1,1,1,1",
+          alignContent: "flex-start",
+          alignItems: "center",
+        }}
+      >
+        <ProjectBox />
+        <ProjectBox />
+        <ProjectBox />
+        <ProjectBox />
+        <ProjectBox />
+        <ProjectBox />
+        <ProjectBox />
+        <ProjectBox />
       </Box>
     </Box>
   );
