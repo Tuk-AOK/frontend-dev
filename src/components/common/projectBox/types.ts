@@ -1,5 +1,5 @@
 export interface ProjectData {
+  projectName: string;
   imageUrl: string;
-  name: string;
   createTime: string;
 }

@@ -3,7 +3,7 @@ import React from "react";
 import { ProjectData } from "./types";
 
 export default function ProjectBox(props: ProjectData) {
-  const { imageUrl, name, createTime } = props;
+  const { projectName, imageUrl, createTime } = props;
   return (
     <Box
       sx={{
@@ -25,7 +25,7 @@ export default function ProjectBox(props: ProjectData) {
         <img width="100%" height={200} src={imageUrl} alt="test" />
       </Box>
       <Box sx={{ pt: "24px", fontSize: "16px", letterSpacing: "1px" }}>
-        {name}
+        {projectName}
       </Box>
       <Box sx={{ pt: "12px", fontSize: "12px", color: "gray" }}>
         {createTime}

@@ -10,7 +10,7 @@ export default function Main() {
   const getProjectData = async () => {
     console.log(123)
     const response = await fetch(
-      `/api/v1/users/5452b295-fcb6-4ede-b06a-745282453e01/projects`,
+      `/api/v1/users/{userUuid}/projects`,
       {
         method:"GET",
       }
@@ -22,9 +22,9 @@ export default function Main() {
 
   React.useEffect(() => {
     //fetch logic
-    getProjectData();
+    //getProjectData();
 
-    /*
+    
     setProjectData([
       { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
       { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
@@ -34,10 +34,8 @@ export default function Main() {
       { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
       { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
       { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
     ]);
-    */
+  
   }, []);
 
   return (
