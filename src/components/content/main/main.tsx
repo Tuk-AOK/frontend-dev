@@ -7,6 +7,7 @@ import { ProjectData } from "../../common/projectBox/types";
 export default function Main() {
   const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);
 
+  /*
   const getProjectData = async () => {
     console.log(123)
     const response = await fetch(
@@ -19,6 +20,7 @@ export default function Main() {
     console.log(response);
     setProjectData(response?.data?.projects ?? []); //res가 undifined면 빈 배열 줌
   };
+  */
 
   React.useEffect(() => {
     //fetch logic
