@@ -4,7 +4,7 @@ import Main from "../components/content/main";
 
 export default function MainPage() {
   return (
-    <Layout>
+    <Layout headerInfo={"crepe"}>
       <Main />
     </Layout>
   );

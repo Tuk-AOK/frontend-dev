@@ -1,7 +1,9 @@
 import { Box } from "@mui/material";
 import React from "react";
 
-export default function Header() {
+export default function Header(props: { children: React.ReactNode }) {
+  const {children} = props;
+
   return (
     <Box
       sx={{
@@ -13,7 +15,7 @@ export default function Header() {
       }}
     >
       <Box sx={{px:2}}>
-        Crepe
+        {children}
         </Box>
     </Box>
   );
