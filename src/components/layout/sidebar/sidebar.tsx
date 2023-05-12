@@ -69,9 +69,9 @@ export default function Example() {
           )}
           <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
           <SubMenu icon={<FolderSharedIcon />} label="Projects">
-            <MenuItem icon={<ArticleIcon />}> Project 1</MenuItem>
-            <MenuItem icon={<ArticleIcon />}> Project-Project-Project</MenuItem>
-            <MenuItem icon={<AddCircleOutlineIcon />}>Add Project</MenuItem>
+            <MenuItem icon={<ArticleIcon />}> project 1</MenuItem>
+            <MenuItem icon={<ArticleIcon />}> PPPPPPPPPPPPPPPPPPPPPP</MenuItem>
+            <MenuItem icon={<AddCircleOutlineIcon />}>create new project</MenuItem>
           </SubMenu>
           <MenuItem icon={<PersonOutlineIcon />}>My Page</MenuItem>
         </Menu>
