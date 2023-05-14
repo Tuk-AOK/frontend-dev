@@ -11,21 +11,34 @@ export default function Project() {
       <Box sx={{ px: 5, py: 3, alignItems: "center" }}>
         <BranchButton />
       </Box>
-
-<Box display="flex">
-      <Box sx={{ textAlign: "right", px: 20 }}>
-        <DownloadButton />
-        <ImageBox />
-      </Box>
-
-      <Box sx={{pr:5, pt:3}}>
-        <DescriptionBox />
-
-        <Box sx={{pt: 6}}>
-        <DescriptionBox />
+      <Box display="flex" sx={{ flexWrap: "wrap", pt: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            flex: "1 0 60%",
+            maxWidth: 800,
+            minWidth: 500,
+          }}
+        >
+          <Box sx={{ px: 5}}>
+            <Box sx={{display:"flex",justifyContent:"center"}}>
+            <Box sx={{maxWidth:500,width:1,display:"flex",justifyContent:"flex-end"}}>
+              <DownloadButton />
+            </Box>
+            </Box>
+            <ImageBox />
+          </Box>
+        </Box>
+        <Box sx={{ flex: "1 0 40%", minWidth: 250 }}>
+          <Box sx={{ pt: 2, px:5 }}>
+            <DescriptionBox />
+            <Box sx={{ pt: 6 }}>
+              <DescriptionBox />
+            </Box>
+          </Box>
         </Box>
       </Box>
-    </Box>
     </Box>
   );
 }
