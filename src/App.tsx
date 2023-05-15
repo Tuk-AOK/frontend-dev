@@ -7,8 +7,8 @@ import UploadPage from "./pages/uploadPage";
 function App() {
   return (
    //<MainPage/>
-   //<ProjectPage/>
-   <UploadPage/>
+   <ProjectPage/>
+   //<UploadPage/>
   );
 }
 
