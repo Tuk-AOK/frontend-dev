@@ -1,8 +1,8 @@
 import { Box, Pagination } from "@mui/material";
 import React from "react";
-import GlobalButton from "../../common/globalButton";
-import ProjectBox from "../../common/projectBox";
-import { ProjectData } from "../../common/projectBox/types";
+import GlobalButton from "../../common/button/globalButton";
+import ProjectBox from "../../common/box/projectBox";
+import { ProjectData } from "../../common/box/projectBox/types";
 
 export default function Main() {
   const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);
