@@ -6,7 +6,7 @@ export default function GlobalButton(props: { children: React.ReactNode }) {
 
   return (
     <Button  color="primary" sx={{textTransform:"None"}}>
-      <Box sx={{ fontWeight: "bold", fontSize: "10px" }}> {children} </Box>
+      <Box sx={{ fontWeight: "bold" }}> {children} </Box>
     </Button>
   );
 }
