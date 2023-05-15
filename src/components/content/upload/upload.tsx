@@ -12,13 +12,10 @@ export function Upload() {
         <BranchButton />
       </Box>
       <Box display="flex" justifyContent="center" sx={{px:5}}>
-        <Box>
           <PreviewBox />
-        </Box>
-        <Box>
           <FileListBox />
-        </Box>
       </Box>
+
     </Box>
   );
 }

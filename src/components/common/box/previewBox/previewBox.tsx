@@ -8,9 +8,15 @@ export default function PreviewBox() {
         px: 3,
         py: 1,
       }}
-      textAlign="center"
     >
-      <Box sx={{ py: 1 }}>preview</Box>
+      <Box
+        height="28px"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+      >
+        preview
+      </Box>
       <Box
         display="flex"
         alignItems="center"

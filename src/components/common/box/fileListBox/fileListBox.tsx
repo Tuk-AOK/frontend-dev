@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import React from "react";
 import UploadButton from "../../button/uploadButton/uploadButton";
 import RefreshButton from "../../button/refreshButton/refreshButton";
+import FileBox from "../fileBox/fileBox";
 
 export default function FileListBox() {
   return (
@@ -11,36 +12,58 @@ export default function FileListBox() {
         py: 1,
       }}
     >
-      <Box display="flex" justifyContent="space-between">
-      <Box width="56px">
-        </Box>
-        <Box sx={{ py: 1, }}>upload files</Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Box width="56px"></Box>
+        <Box>upload files</Box>
         <Box display="flex">
-        <UploadButton/>
-        <RefreshButton/>
+          <UploadButton />
+          <RefreshButton />
         </Box>
       </Box>
       <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
         sx={{
           width: "500px",
           height: "400px",
           borderRadius: "3px",
           boxShadow: 1,
           backgroundColor: "#F0F0F0",
-          
+          overflow: "auto",
         }}
       >
-        <Box sx={{
-          width: "480px",
-          height: "40px",
-          borderRadius: "3px",
-          boxShadow: 1,
-          backgroundColor: "#FFFFD2",
-        }}>
-        
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          sx={{
+            py: 6,
+            gap: "10px",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
+          <FileBox />
         </Box>
       </Box>
     </Box>

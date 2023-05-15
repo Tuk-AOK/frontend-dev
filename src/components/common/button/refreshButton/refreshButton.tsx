@@ -11,7 +11,7 @@ export default function RefreshButton(){
           placement="top"
           arrow
         >
-          <IconButton aria-label="download" color="primary" size="small">
+          <IconButton aria-label="refresh" color="primary" size="small">
             <RefreshIcon fontSize="inherit" />
           </IconButton>
         </Tooltip>

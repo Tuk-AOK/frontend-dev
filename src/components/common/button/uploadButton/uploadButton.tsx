@@ -11,7 +11,7 @@ export default function UploadButton(){
           placement="top"
           arrow
         >
-          <IconButton aria-label="download" color="primary" size="small">
+          <IconButton aria-label="upload" color="primary" size="small">
             <CloudUploadIcon fontSize="inherit" />
           </IconButton>
         </Tooltip>

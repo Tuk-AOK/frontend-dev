@@ -27,7 +27,7 @@ export default function DescriptionBox() {
         is for Dino.This project is for Dino.This project is for Dino.This
         project is for Dino.This project is for Dino.This project is for Dino.
       </Box>
-      <Box display="flex">
+      <Box display="flex" flexWrap="wrap">
           <UserPreviewBox />
           <UserPreviewBox />
           <UserPreviewBox />
