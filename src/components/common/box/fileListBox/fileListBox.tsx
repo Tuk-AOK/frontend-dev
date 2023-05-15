@@ -3,7 +3,7 @@ import React from "react";
 import UploadButton from "../../button/uploadButton/uploadButton";
 import RefreshButton from "../../button/refreshButton/refreshButton";
 
-export default function FileBox() {
+export default function FileListBox() {
   return (
     <Box
       sx={{
