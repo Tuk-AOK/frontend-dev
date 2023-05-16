@@ -3,7 +3,7 @@ import React from "react";
 
 export default function PreviewBox() {
   return (
-    <Box>
+    <Box width="100%" maxWidth="500px" minWidth="300px">
       <Box
         height="28px"
         display="flex"
@@ -13,12 +13,11 @@ export default function PreviewBox() {
         preview
       </Box>
       <Box
+        height="400px"
         display="flex"
         alignItems="center"
         justifyContent="center"
         sx={{
-          width: "500px",
-          height: "400px",
           borderRadius: "3px",
           boxShadow: 1,
           backgroundColor: "#F0F0F0",

@@ -6,7 +6,7 @@ import FileBox from "../fileBox/fileBox";
 
 export default function FileListBox() {
   return (
-    <Box>
+    <Box width="100%" maxWidth="500px" minWidth="300px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box width="56px"></Box>
         <Box>upload files</Box>
@@ -17,7 +17,6 @@ export default function FileListBox() {
       </Box>
       <Box
         sx={{
-          width: "500px",
           height: "400px",
           borderRadius: "3px",
           boxShadow: 1,

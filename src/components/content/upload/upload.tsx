@@ -28,7 +28,7 @@ export function Upload() {
           <TextBox />
         </Box>
 
-        <Box width="1" display="flex" justifyContent="space-between">
+        <Box width="1" display="flex" justifyContent="space-between" flexWrap="wrap">
           <PreviewBox />
           <FileListBox />
         </Box>
