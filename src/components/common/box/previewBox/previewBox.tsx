@@ -3,12 +3,7 @@ import React from "react";
 
 export default function PreviewBox() {
   return (
-    <Box
-      sx={{
-        px: 3,
-        py: 1,
-      }}
-    >
+    <Box>
       <Box
         height="28px"
         display="flex"

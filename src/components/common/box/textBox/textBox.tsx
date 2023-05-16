@@ -1,4 +1,4 @@
-import { Box, Input, InputAdornment } from "@mui/material";
+import { Input, InputAdornment } from "@mui/material";
 import React from "react";
 import ApplyButton from "../../button/applyButton/applyButton";
 
