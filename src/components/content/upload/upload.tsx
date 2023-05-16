@@ -4,9 +4,6 @@ import BranchButton from "../../common/button/branchButton";
 import PreviewBox from "../../common/box/previewBox/previewBox";
 import FileListBox from "../../common/box/fileListBox";
 import TextBox from "../../common/box/textBox/textBox";
-import GlobalButton from "../../common/button/globalButton/globalButton";
-import ApplyButton from "../../common/button/applyButton/applyButton";
-import { Title } from "@mui/icons-material";
 import TitleBox from "../../common/box/titleBox/titleBox";
 
 export function Upload() {
