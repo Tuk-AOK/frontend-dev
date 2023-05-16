@@ -11,7 +11,7 @@ export default function FileBox() {
         height: "40px",
         borderRadius: "3px",
         boxShadow: 1,
-        backgroundColor: "#FFFFD2",
+        backgroundColor: "#FFFFFF",
         alignItems: "center",
       }}
     >

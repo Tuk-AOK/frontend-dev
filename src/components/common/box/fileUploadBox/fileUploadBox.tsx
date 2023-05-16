@@ -4,7 +4,7 @@ import UploadButton from "../../button/uploadButton/uploadButton";
 import RefreshButton from "../../button/refreshButton/refreshButton";
 import FileBox from "../fileBox/fileBox";
 
-export default function FileListBox() {
+export default function FileUploadBox() {
   return (
     <Box width="100%" maxWidth="500px" minWidth="300px">
       <Box display="flex" justifyContent="space-between" alignItems="center">

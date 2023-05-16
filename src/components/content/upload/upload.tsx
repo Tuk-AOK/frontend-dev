@@ -2,9 +2,9 @@ import { Box } from "@mui/material";
 import React from "react";
 import BranchButton from "../../common/button/branchButton";
 import PreviewBox from "../../common/box/previewBox/previewBox";
-import FileListBox from "../../common/box/fileListBox";
 import TextBox from "../../common/box/textBox/textBox";
 import TitleBox from "../../common/box/titleBox/titleBox";
+import FileUploadBox from "../../common/box/fileUploadBox";
 
 export function Upload() {
   return (
@@ -27,7 +27,7 @@ export function Upload() {
 
         <Box width="1" display="flex" justifyContent="space-between" flexWrap="wrap">
           <PreviewBox />
-          <FileListBox />
+          <FileUploadBox />
         </Box>
       </Box>
     </Box>
