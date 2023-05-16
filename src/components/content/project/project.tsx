@@ -1,9 +1,9 @@
 import React from "react";
 import { Box } from "@mui/material";
-import BranchButton from "../../common/branchButton/BranchButton";
-import DownloadButton from "../../common/downloadButton/downloadButton";
-import DescriptionBox from "../../common/descriptionBox/descriptionBox";
-import ImageBox from "../../common/imageBox/imageBox";
+import BranchButton from "../../common/button/branchButton/BranchButton";
+import DownloadButton from "../../common/button/downloadButton/downloadButton";
+import DescriptionBox from "../../common/box/descriptionBox/descriptionBox";
+import ImageBox from "../../common/box/imageBox/imageBox";
 
 export default function Project() {
   return (

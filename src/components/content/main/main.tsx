@@ -1,8 +1,9 @@
 import { Box, Pagination } from "@mui/material";
 import React from "react";
-import GlobalButton from "../../common/globalButton";
-import ProjectBox from "../../common/projectBox";
-import { ProjectData } from "../../common/projectBox/types";
+import GlobalButton from "../../common/button/globalButton";
+import ProjectBox from "../../common/box/projectBox";
+import { ProjectData } from "../../common/box/projectBox/types";
+import TitleBox from "../../common/box/titleBox/titleBox";
 
 export default function Main() {
   const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);
@@ -42,23 +43,14 @@ export default function Main() {
 
   return (
     <Box sx={{ px: 3, py: 3 }}>
-      <Box
-        sx={{
-          textAlign: "center",
-          pt: 3,
-          fontWeight: "bold",
-          letterSpacing: "3px",
-        }}
-      >
-        PROJECTS
-      </Box>
+      <TitleBox content="PROJECTS"/>
       <Box sx={{ px: 4 }}>
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Box
             sx={{ maxWidth: 1000, width: 1, height: 32, position: "relative" }}
           >
             <Box sx={{ position: "absolute", right: 12 }}>
-              <GlobalButton>create</GlobalButton>
+              <GlobalButton content="create"/>
             </Box>
           </Box>
         </Box>
