@@ -17,17 +17,22 @@ export function Upload() {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        sx={{ rowGap: 5, px: 20, py: 5, }}
+        sx={{ rowGap: 5, mx: 20, py: 5, pt: 0 }}
       >
         <TitleBox content="UPLOAD" />
 
-        <Box display="flex" sx={{ m: "0 0 0 auto", width: "300px" }}>
-          <TextBox />
-        </Box>
-
-        <Box width="1" display="flex" justifyContent="space-between" flexWrap="wrap">
+        <Box
+          width="1"
+          display="flex"
+          justifyContent="center"
+          gap={"16px"}
+          flexWrap="wrap"
+        >
           <PreviewBox />
           <FileUploadBox />
+        </Box>
+        <Box>
+          <TextBox />
         </Box>
       </Box>
     </Box>

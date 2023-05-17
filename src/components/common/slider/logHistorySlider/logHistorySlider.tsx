@@ -1,13 +1,15 @@
 import { Box, Slider } from "@mui/material";
 import React from "react";
 import UploadInfoBox from "../../box/uploadInfoBox";
+import { LogData } from "./types";
 
 function valuetext(value: number) {
   return `${value}`;
 }
 
-export default function LogHistorySlider(props: { branchUuid: string }) {
-  const { branchUuid } = props;
+export default function LogHistorySlider(props: {logData: Array<LogData>}) {
+  const { logData } = props;
+  const [currentTime,setCurrentTime] = React.useState<number>(0);
 
   return (
     <Box>
@@ -18,12 +20,15 @@ export default function LogHistorySlider(props: { branchUuid: string }) {
     /> 
     <Slider
       aria-label="log"
-      defaultValue={0}
+      defaultValue={currentTime}
       getAriaValueText={valuetext}
-      valueLabelFormat={branchUuid}
+      onChange={(e,v)=>{
+        setCurrentTime(v as number)
+      }}
+      valueLabelFormat={logData[currentTime].createTime}
       marks
       min={0}
-      max={20}
+      max={logData.length - 1}
       valueLabelDisplay="auto"
     />
     </Box>

@@ -8,6 +8,8 @@ import PreviewBox from "../../common/box/previewBox";
 import FileUploadBox from "../../common/box/fileUploadBox";
 
 export default function LogHistory() {
+  
+
   return (
     <Box>
       <Box sx={{ px: 5, pt: 3, alignItems: "center" }}>
@@ -18,14 +20,23 @@ export default function LogHistory() {
         <Box
           width="1"
           display="flex"
-          justifyContent="space-between"
+          justifyContent="center"
+          gap="16px"
           flexWrap="wrap"
         >
           <PreviewBox />
           <FileUploadBox />
         </Box>
 
-        <LogHistorySlider branchUuid="3410837049721390" />
+        <LogHistorySlider
+          logData={[
+            { createTime: "2001-07-07 12:00:00", logUuid: "asd" },
+            { createTime: "2001-07-10 12:00:00", logUuid: "asd" },
+            { createTime: "2001-07-11 12:00:00", logUuid: "asd" },
+            { createTime: "2001-07-12 12:00:00", logUuid: "asd" },
+            { createTime: "2001-07-13 12:00:00", logUuid: "asd" },
+          ]}
+        />
 
         <Box display="flex" justifyContent="center">
           <GlobalButton content="revert" />
