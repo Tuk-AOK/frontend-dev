@@ -5,7 +5,7 @@ import LogHistorySlider from "../../common/slider/logHistorySlider/logHistorySli
 import BranchButton from "../../common/button/branchButton";
 import GlobalButton from "../../common/button/globalButton/globalButton";
 import PreviewBox from "../../common/box/previewBox";
-import FileUploadBox from "../../common/box/fileUploadBox";
+import FileDownloadBox from "../../common/box/fileDownloadBox";
 
 export default function LogHistory() {
   
@@ -25,7 +25,7 @@ export default function LogHistory() {
           flexWrap="wrap"
         >
           <PreviewBox />
-          <FileUploadBox />
+          <FileDownloadBox />
         </Box>
 
         <LogHistorySlider

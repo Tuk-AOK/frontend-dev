@@ -3,6 +3,7 @@ import React from "react";
 import UploadButton from "../../button/uploadButton/uploadButton";
 import RefreshButton from "../../button/refreshButton/refreshButton";
 import FileBox from "../fileBox/fileBox";
+import DeleteButton from "../../button/deleteButton/deleteButton";
 
 export default function FileUploadBox() {
   return (
@@ -34,30 +35,54 @@ export default function FileUploadBox() {
             alignItems: "center",
           }}
         >
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
-          <FileBox />
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
+          <FileBox>
+            <DeleteButton />
+          </FileBox>
         </Box>
       </Box>
     </Box>
