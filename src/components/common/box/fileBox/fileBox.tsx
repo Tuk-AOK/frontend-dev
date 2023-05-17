@@ -2,7 +2,9 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 import DeleteButton from "../../button/deleteButton/deleteButton";
 
-export default function FileBox() {
+export default function FileBox(props: {children: React.ReactNode}) {
+  const {children} = props;
+
   return (
     <Box
     display="flex"
@@ -11,7 +13,7 @@ export default function FileBox() {
         height: "40px",
         borderRadius: "3px",
         boxShadow: 1,
-        backgroundColor: "#FFFFD2",
+        backgroundColor: "#FFFFFF",
         alignItems: "center",
       }}
     >
@@ -19,7 +21,7 @@ export default function FileBox() {
       <Typography style={{overflow: "hidden", textOverflow: "ellipsis", paddingLeft:"10px" }}>
         hiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihii
       </Typography>
-      <DeleteButton/>
+      {children}
 
     </Box>
   );

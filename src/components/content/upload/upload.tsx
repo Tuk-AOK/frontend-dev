@@ -2,12 +2,9 @@ import { Box } from "@mui/material";
 import React from "react";
 import BranchButton from "../../common/button/branchButton";
 import PreviewBox from "../../common/box/previewBox/previewBox";
-import FileListBox from "../../common/box/fileListBox";
 import TextBox from "../../common/box/textBox/textBox";
-import GlobalButton from "../../common/button/globalButton/globalButton";
-import ApplyButton from "../../common/button/applyButton/applyButton";
-import { Title } from "@mui/icons-material";
 import TitleBox from "../../common/box/titleBox/titleBox";
+import FileUploadBox from "../../common/box/fileUploadBox";
 
 export function Upload() {
   return (
@@ -20,17 +17,22 @@ export function Upload() {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        sx={{ rowGap: 5, px: 20, py: 5, }}
+        sx={{ rowGap: 5, mx: 20, py: 5, pt: 0 }}
       >
         <TitleBox content="UPLOAD" />
 
-        <Box display="flex" sx={{ m: "0 0 0 auto", width: "300px" }}>
-          <TextBox />
-        </Box>
-
-        <Box width="1" display="flex" justifyContent="space-between" flexWrap="wrap">
+        <Box
+          width="1"
+          display="flex"
+          justifyContent="center"
+          gap={"16px"}
+          flexWrap="wrap"
+        >
           <PreviewBox />
-          <FileListBox />
+          <FileUploadBox />
+        </Box>
+        <Box>
+          <TextBox />
         </Box>
       </Box>
     </Box>
