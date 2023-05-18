@@ -1,5 +1,8 @@
 import { Box, Fade } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUuid } from "../../../hooks/userSlice";
+import { RootState } from "../../../stores/store";
 import {
   Sidebar,
   Menu,
@@ -27,7 +30,7 @@ interface userInfo{
   email: string;
   nickname: string;
   photo: string;
-  uuid: string; 
+  userUuid: string; 
 }
 
 interface userUuid{
@@ -40,7 +43,55 @@ interface userUuid{
 export default function Example() {
   const { collapseSidebar, collapsed } = useProSidebar();
   const [nickname, setNickname] = useState('');
+  const [email, setEmail] = useState('');
+  const [Uuid, setUuidState] = useState('');
 
+  const dispatch = useDispatch();
+  const createTestData = () => {
+    axios.post('/api/v1/users',{
+      email: 'test03@naver.com',
+      password: '1111',
+      photo: '1111',
+      nickname: 'testname1'
+    })
+    .then((response) => {
+      console.log("유저 생성 완료");
+      console.log(response);
+
+      //uuid useState에 uuid값 저장
+      const uuidData = response.data.data.userUuid
+      console.log("발급된 uuid : ", uuidData)
+      const disp = dispatch(setUuid(uuidData))
+      console.log("안녕",disp)
+      setUuidState(uuidData)
+    })
+    .catch((error) => {
+      console.log("유저 데이터 생성 실패");
+      console.log(error);
+    })
+  }
+
+  let uuid = useSelector((state:RootState) => {
+    return state.user.userUuid
+})
+
+  console.log("uuid check : ", uuid)
+
+  useEffect(()=>{
+      (async () => {
+          await axios.get<userResponse>('/api/v1/users/'+ uuid)
+          .then((response)=>
+              {setNickname(response.data.data.nickname)
+              console.log("닉네임 불러오기 성공")
+              setEmail(response.data.data.email)
+              console.log("이메일 불러오기 성공")
+              }) 
+          .catch((error)=>{
+              console.log("닉네임, 이메일 데이터 불러오기 실패")
+              console.log(error)
+          })
+      })();
+  },[uuid]);
 
   return (
     <Box sx={{ boxShadow: 1, textOverflow: 'ellipsis', backgroundColor: "#FBFBFB"}}>
@@ -71,6 +122,7 @@ export default function Example() {
                     borderRadius: 85,
                     bgcolor: "#000000",
                   }}
+                  onClick={createTestData}
                 ></Box>
                 <Box
                   sx={{
@@ -78,7 +130,7 @@ export default function Example() {
                     mt: 2,
                   }}
                 >
-                  Ellie010707
+                  {nickname}
                 </Box>
                 <Box
                   sx={{
@@ -87,7 +139,7 @@ export default function Example() {
                     fontSize: 12,
                   }}
                 >
-                  doris0707@naver.com
+                  {email}
                 </Box>
               </Box>
             </Fade>
