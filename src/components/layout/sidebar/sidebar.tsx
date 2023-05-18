@@ -1,5 +1,5 @@
 import { Box, Fade } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import {
   Sidebar,
   Menu,
@@ -14,8 +14,33 @@ import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
+import axios from 'axios';
+
+interface userResponse{
+  status: string;
+  code: string;
+  message: string;
+  data: userInfo;
+}
+
+interface userInfo{
+  email: string;
+  nickname: string;
+  photo: string;
+  uuid: string; 
+}
+
+interface userUuid{
+  uuid: string; 
+}
+
+
+
+
 export default function Example() {
   const { collapseSidebar, collapsed } = useProSidebar();
+  const [nickname, setNickname] = useState('');
+
 
   return (
     <Box sx={{ boxShadow: 1, textOverflow: 'ellipsis', backgroundColor: "#FBFBFB"}}>
