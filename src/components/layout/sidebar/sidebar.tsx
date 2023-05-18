@@ -1,7 +1,9 @@
 import { Box, Fade } from "@mui/material";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUuid } from "../../../hooks/userSlice";
+import { setProjectUuid } from "../../../hooks/projectSlice";
 import { RootState } from "../../../stores/store";
 import {
   Sidebar,
@@ -37,6 +39,21 @@ interface userUuid{
   uuid: string; 
 }
 
+interface ProjectResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: ProjectsData;
+}
+
+interface Project{
+  projectName: string;
+  projectUuid: string;
+}
+
+interface ProjectsData{
+  projects: Project[] 
+}
 
 
 
@@ -47,6 +64,8 @@ export default function Example() {
   const [Uuid, setUuidState] = useState('');
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const createTestData = () => {
     axios.post('/api/v1/users',{
       email: 'test03@naver.com',
@@ -73,7 +92,7 @@ export default function Example() {
 
   let uuid = useSelector((state:RootState) => {
     return state.user.userUuid
-})
+  })
 
   console.log("uuid check : ", uuid)
 
@@ -92,6 +111,25 @@ export default function Example() {
           })
       })();
   },[uuid]);
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  
+  useEffect(() => {
+    (async () => {
+      await axios.get<ProjectResponse>('/api/v1/users/'+ uuid +'/projects')
+      .then((response)=> {
+        //console.log("프로젝트 정보 불러오기 성공");
+        console.log("가져온 project 데이터", response.data.data.projects);
+        setProjects(response.data.data.projects);
+        //console.log("저장상태", projects);
+      })
+      .catch((error)=>{
+        //console.log("프로젝트 정보 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [uuid]);
 
   return (
     <Box sx={{ boxShadow: 1, textOverflow: 'ellipsis', backgroundColor: "#FBFBFB"}}>
@@ -146,8 +184,18 @@ export default function Example() {
           )}
           <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
           <SubMenu icon={<FolderSharedIcon />} label="Projects">
-            <MenuItem icon={<ArticleIcon />}> project 1</MenuItem>
-            <MenuItem icon={<ArticleIcon />}> PPPPPPPPPPPPPPPPPPPPPP</MenuItem>
+            {projects.map(project => {
+              const clickEvent = () => {
+                dispatch(setProjectUuid(project.projectUuid));
+                navigate('/Project')
+                console.log("이동할 프로젝트 이름 : ", project.projectName);
+                window.location.reload();
+              }
+              return(
+                <MenuItem icon={<ArticleIcon />} onClick={clickEvent}>{project.projectName}</MenuItem>
+              );
+            })}
+
             <MenuItem icon={<AddCircleOutlineIcon />}>create new project</MenuItem>
           </SubMenu>
           <MenuItem icon={<PersonOutlineIcon />}>My Page</MenuItem>
