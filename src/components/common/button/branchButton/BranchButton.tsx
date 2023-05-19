@@ -33,6 +33,19 @@ interface Branch{
   branchUuid: string; 
 }
 
+interface currentBranchResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: branchInfo; 
+}
+
+interface branchInfo{
+  branchId: number;
+  branchName: string;
+}
+
+
 const options = ["main", 
 "branch 1", 
 "branch 2", 
@@ -41,7 +54,7 @@ const options = ["main",
 export default function SplitButton() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,6 +68,7 @@ export default function SplitButton() {
   });
 
   const [branchData, setBranchData] = useState<Branch[]>([]);
+  const [currentBranch, setCurrentBranch] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -66,11 +80,27 @@ export default function SplitButton() {
             
         })
         .catch((error)=>{
-            //console.log("프로젝트 정보 불러오기 실패");
             console.log(error);
         })
     })();
   }, []); 
+
+  useEffect(() => {
+    (async () => {
+        await axios.get('/api/v1/branches/' + branchUuid)
+        .then((response)=> {
+            console.log(" store 브랜치 정보 불러오기 성공");
+            console.log("가져온 store 데이터", response.data.data.branchName);
+            setCurrentBranch(response.data.data.branchName);
+            
+        })
+        .catch((error)=>{
+            
+            console.log(error);
+        })
+    })();
+  }, []); 
+  
 
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
@@ -108,7 +138,7 @@ export default function SplitButton() {
           sx={{ textTransform: "None", fontWeight: "bold", boxShadow: 1 }}
           endIcon={<KeyboardArrowDownIcon />}
         >
-          {options[selectedIndex]}
+          {currentBranch}
         </Button>
       </ButtonGroup>
       <Popper
@@ -143,7 +173,8 @@ export default function SplitButton() {
                   ))} */}
 
                   {branchData.map((branch, index) => {
-                    const clickEvent = () => {
+                    const clickEvent = (event:any) => {
+                      handleMenuItemClick(event, index);
                       dispatch(setBranchUuid(branch.branchUuid));
                       console.log("클릭된 로그 :", branch.branchUuid);
                       window.location.replace('/Project');
@@ -158,6 +189,10 @@ export default function SplitButton() {
                       </MenuItem>
                     );
                   })}
+                  <MenuItem
+                  >
+                    + create new branch
+                  </MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>
