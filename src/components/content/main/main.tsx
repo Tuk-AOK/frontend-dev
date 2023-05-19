@@ -1,9 +1,13 @@
 import { Box, Pagination } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import GlobalButton from "../../common/button/globalButton";
 import ProjectBox from "../../common/box/projectBox";
 import { ProjectData } from "../../common/box/projectBox/types";
 import TitleBox from "../../common/box/titleBox/titleBox";
+import { RootState } from "../../../stores/store";
+import axios from 'axios';
 
 export default function Main() {
   const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);

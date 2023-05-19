@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState, useCallback } from "react";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -8,6 +9,29 @@ import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setBranchUuid } from "../../../../hooks/branchSlice";
+import { RootState } from "../../../../stores/store";
+
+
+interface BranchResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: BranchesData;
+}
+
+
+interface BranchesData{
+  projectBranchInfos: Branch[]
+}
+
+interface Branch{
+  branchName: string;
+  branchUuid: string; 
+}
 
 const options = ["main", 
 "branch 1", 
@@ -18,6 +42,35 @@ export default function SplitButton() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(1);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  let projectUuid = useSelector((state: RootState)=>{
+    return state.project.uuid;  
+  });
+
+  let branchUuid = useSelector((state: RootState) => {
+    return state.branch.uuid;
+  });
+
+  const [branchData, setBranchData] = useState<Branch[]>([]);
+
+  useEffect(() => {
+    (async () => {
+        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches')
+        .then((response)=> {
+            console.log("브랜치 정보 불러오기 성공");
+            console.log("가져온 데이터", response.data.data.projectBranchInfos);
+            setBranchData(response.data.data.projectBranchInfos);
+            
+        })
+        .catch((error)=>{
+            //console.log("프로젝트 정보 불러오기 실패");
+            console.log(error);
+        })
+    })();
+  }, []); 
 
   const handleMenuItemClick = (
     event: React.MouseEvent<HTMLLIElement, MouseEvent>,
@@ -79,7 +132,7 @@ export default function SplitButton() {
             <Paper>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
-                  {options.map((option, index) => (
+                  {/* {options.map((option, index) => (
                     <MenuItem
                       key={option}
                       selected={index === selectedIndex}
@@ -87,7 +140,24 @@ export default function SplitButton() {
                     >
                       {option}
                     </MenuItem>
-                  ))}
+                  ))} */}
+
+                  {branchData.map((branch, index) => {
+                    const clickEvent = () => {
+                      dispatch(setBranchUuid(branch.branchUuid));
+                      console.log("클릭된 로그 :", branch.branchUuid);
+                      window.location.replace('/Project');
+                    }
+                    return(
+                      <MenuItem
+                        key={branch.branchName}
+                        selected={index === selectedIndex}
+                        onClick={clickEvent}
+                      >
+                        {branch.branchName}
+                      </MenuItem>
+                    );
+                  })}
                 </MenuList>
               </ClickAwayListener>
             </Paper>
