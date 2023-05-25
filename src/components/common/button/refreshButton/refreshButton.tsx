@@ -3,7 +3,11 @@ import React from "react";
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function RefreshButton(){
-    return(
+  const handleReload = () =>{
+    window.location.reload();
+  }
+  
+  return(
         <Box>
         <Tooltip
           TransitionComponent={Zoom}
@@ -11,7 +15,7 @@ export default function RefreshButton(){
           placement="top"
           arrow
         >
-          <IconButton aria-label="refresh" color="primary" size="small">
+          <IconButton aria-label="refresh" color="primary" size="small" onClick={handleReload}>
             <RefreshIcon fontSize="inherit" />
           </IconButton>
         </Tooltip>

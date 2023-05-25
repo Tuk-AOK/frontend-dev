@@ -6,6 +6,8 @@ import TextBox from "../../common/box/textBox/textBox";
 import TitleBox from "../../common/box/titleBox/titleBox";
 import FileUploadBox from "../../common/box/fileUploadBox";
 
+//import WholeFileUploadBox from "../../common/box/wholeFileUploadBox";
+
 export function Upload() {
   return (
     <Box display="block">
