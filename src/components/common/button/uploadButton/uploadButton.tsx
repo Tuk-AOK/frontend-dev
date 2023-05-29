@@ -2,9 +2,10 @@ import { Box, IconButton, Tooltip, Zoom } from "@mui/material";
 import React from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
+
 export default function UploadButton(){
     return(
-        <Box>
+      <Box>
         <Tooltip
           TransitionComponent={Zoom}
           title="upload"
@@ -17,4 +18,4 @@ export default function UploadButton(){
         </Tooltip>
       </Box>
     );
-}
+} 

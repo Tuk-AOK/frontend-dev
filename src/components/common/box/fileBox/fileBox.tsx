@@ -19,10 +19,9 @@ export default function FileBox(props: {children: React.ReactNode}) {
     >
 
       <Typography style={{overflow: "hidden", textOverflow: "ellipsis", paddingLeft:"10px" }}>
-        hiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihiihii
+        
       </Typography>
       {children}
-
     </Box>
   );
 }

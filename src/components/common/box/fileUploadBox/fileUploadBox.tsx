@@ -6,18 +6,25 @@ import RefreshButton from "../../button/refreshButton/refreshButton";
 import FileBox from "../fileBox/fileBox";
 import DeleteButton from "../../button/deleteButton/deleteButton";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Upload } from "../../../content/upload/upload";
 
-type IFileTypes = {
+
+type NewType = {
   id: number; //파일들의 고유값 id
   object: File;
   URL: string;
-  name: string; 
-}
+  name: string;
+};
+
+type IFileTypes = NewType
 
 type IFileList = {
   imageFiles: IFileTypes[];
 }
 
+interface UploadButtonProps {
+  onUpload: (files : FileList | null) => void;
+}
 
 
 export default function FileUploadBox() {
@@ -175,6 +182,10 @@ export default function FileUploadBox() {
   /*------------- 리스트 드래그 앤 드랍 관련 함수 ------------*/
   console.log("업로드 파일 목록", fileobjects)
   
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+  };
+
 
 
   return (
@@ -183,89 +194,92 @@ export default function FileUploadBox() {
         <Box width="56px"></Box>
         <Box>upload files</Box>
         <Box display="flex">
-          <label htmlFor="fileUploadbtn" ref={selectFile}>
-            <UploadButton />
-            <input
-                  type="file"
-                  id="fileUploadbtn"
-                  style={{display: "none"}}
-                  multiple={true}
-                  onChange={onChangeFiles}
-                  ref={selectFile}
-                  /> 
-          </label>
+          
+          <form style={{display: "flex", width: "30px", height: "30px"}} onSubmit={handleSubmit}>
+            <label style={{width: "30px", height: "30px", position:"relative", display:"inline-block", border:"1px solid black"}} htmlFor="fileUploadbtn" ref={selectFile}>
+              <input
+                type="file"
+                id="fileUploadbtn"
+                style={{display: "none", position: "absolute",top: 0, left:0, width: "100%", height:"100%",zIndex:-1  }}
+                multiple={true}
+                onChange={onChangeFiles}
+                ref={selectFile}
+              />
+              <UploadButton/>
+            </label>
+          </form>
+
           <RefreshButton />
         </Box>
       </Box>
-      <Box
-        sx={{
-          height: "400px",
-          borderRadius: "3px",
-          boxShadow: 1,
-          backgroundColor: "#F0F0F0",
-          overflow: "auto",
-        }}
+      
+      <label
+        className={isDragging? "DragDrop-File-Dragging" : "DragDrop-Files"}
+        htmlFor = "fileUpload"
+        ref={dragRef}
       >
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          sx={{
-            py: 6,
-            gap: "10px",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-          <FileBox>
-            <DeleteButton />
-          </FileBox>
-        </Box>
-      </Box>
+
+      <DragDropContext onDragEnd = {onDragEnd}>
+        <Droppable droppableId="DragDrop-files">
+          {(provided) => (
+            <Box
+              sx={{
+                height: "400px",
+                borderRadius: "3px",
+                boxShadow: 1,
+                backgroundColor: "#F0F0F0",
+                overflow: "auto",
+              }}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <Box
+                display="flex"
+                className="DragDrop-Files"
+                flexWrap="wrap"
+                sx={{
+                  py: 6,
+                  gap: "10px",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                {fileobjects.length > 0 &&
+                  fileobjects.map((file: IFileTypes, index:number) => {
+                    const {
+                      id,
+                      object: {name},
+                      URL
+                    } = file;
+
+                    return(
+                      <Draggable draggableId={name} index={index} key={id}>
+                        {(provided)=>(
+                          <Box
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps} 
+                          >
+                            <FileBox>
+                              {name}
+                            <Box onClick={() => handleFilterFile(id)}>
+                            <DeleteButton/>
+                            </Box>
+                            </FileBox>
+                          </Box>
+                        )}
+                      </Draggable>
+                    );
+                  })
+                }
+                
+              </Box>
+            </Box>
+          )} 
+          
+        </Droppable> 
+        </DragDropContext>
+      </label>
     </Box>
   );
 }
