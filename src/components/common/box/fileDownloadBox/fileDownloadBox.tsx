@@ -33,39 +33,10 @@ export default function FileDownloadBox() {
             alignItems: "center",
           }}
         >
-          <FileBox>
+          <FileBox text="hello, world!">
             <DownloadButton />
           </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
+          
         </Box>
       </Box>
     </Box>

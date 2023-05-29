@@ -260,8 +260,7 @@ export default function FileUploadBox() {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps} 
                           >
-                            <FileBox>
-                              {name}
+                            <FileBox text={name}>
                             <Box onClick={() => handleFilterFile(id)}>
                             <DeleteButton/>
                             </Box>
