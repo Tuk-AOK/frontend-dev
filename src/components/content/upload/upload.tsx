@@ -47,7 +47,7 @@ export function Upload() {
           <FileUploadBox onFilesChange={handleFilesChange}/>
         </Box>
         <Box>
-          <TextBox />
+          <TextBox fileobjects={fileobjects} />
         </Box>
       </Box>
     </Box>
