@@ -1,12 +1,13 @@
 import { Box } from "@mui/material";
-import React, { ChangeEvent } from "react";
-import { useCallback, useRef, useState, useEffect} from "react";
+import React from "react";
+import { ChangeEvent, createContext, useContext, useCallback, useRef, useState, useEffect} from "react";
 import UploadButton from "../../button/uploadButton/uploadButton";
 import RefreshButton from "../../button/refreshButton/refreshButton";
 import FileBox from "../fileBox/fileBox";
 import DeleteButton from "../../button/deleteButton/deleteButton";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Upload } from "../../../content/upload/upload";
+
 
 
 type NewType = {
@@ -16,23 +17,39 @@ type NewType = {
   name: string;
 };
 
-type IFileTypes = NewType
+type IFileTypes = NewType; 
 
 type IFileList = {
   imageFiles: IFileTypes[];
 }
+
+interface FileObjectType {
+  id: number;
+  object: File;
+  URL: string;
+  name: string;
+};
+
+interface FileUploadBoxProps {
+  onFilesChange: (files: FileObjectType[]) => void;
+};
+
+
 
 interface UploadButtonProps {
   onUpload: (files : FileList | null) => void;
 }
 
 
-export default function FileUploadBox() {
+export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [fileobjects, setFiles] = useState<IFileTypes[]>([]);
+  //const [fileobjects, setFiles] = useState<IFileTypes[]>([]);
+  const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
   const dragRef = useRef<HTMLLabelElement | null>(null);
   const selectFile = useRef(null);
   const fileId = useRef<number>(0)
+
+  
 
   var reversed_index;
 
@@ -75,9 +92,10 @@ export default function FileUploadBox() {
 
       }
 
-      setFiles(tempFiles);
+      setFileObjects(tempFiles);
+      onFilesChange(tempFiles);
     },
-    [fileobjects]
+    [fileobjects, onFilesChange]
   );
 
   //handleFilterFile => id 일치 여부를 확인해 필터링
@@ -86,18 +104,20 @@ export default function FileUploadBox() {
   const handleFilterFile = useCallback(
     (id: number): void => {
       //매개 변수로 받은 id와 일치 여부를 확인해 필터링 함
-      setFiles(fileobjects.filter((file: IFileTypes) => file.id !== id));
+      //setFiles(fileobjects.filter((file: IFileTypes) => file.id !== id));
+      setFileObjects(fileobjects.filter((file) => file.id !== id));
     },
     [fileobjects]
   );
   
   const handleDeleteFile = useCallback(
     (id: number): void => {
-      setFiles(fileobjects.filter((file: IFileTypes) => file.id === id));
+      //setFiles(fileobjects.filter((file: IFileTypes) => file.id === id));
+      setFileObjects(fileobjects.filter((file) => file.id !== id));
     },
     [fileobjects]
   );
-  
+
   /*------------- 이미지 업로드 드래그 앤 드랍 관련 함수 ------------*/
   const handleDragIn = useCallback((e: DragEvent): void => {
     e.preventDefault();
@@ -171,7 +191,7 @@ export default function FileUploadBox() {
         let selectItem = lists[result.source.index];
         lists.splice(result.source.index, 1);
         lists.splice(destination.index, 0, selectItem);
-        setFiles(lists);
+        setFileObjects(lists);
         console.log(lists)
       }
 
@@ -220,7 +240,7 @@ export default function FileUploadBox() {
       >
 
       <DragDropContext onDragEnd = {onDragEnd}>
-        <Droppable droppableId="DragDrop-files">
+        <Droppable droppableId="DragDrop-Files">
           {(provided) => (
             <Box
               sx={{
@@ -245,23 +265,17 @@ export default function FileUploadBox() {
                 }}
               >
                 {fileobjects.length > 0 &&
-                  fileobjects.map((file: IFileTypes, index:number) => {
-                    const {
-                      id,
-                      object: {name},
-                      URL
-                    } = file;
-
+                  fileobjects.map((file, index) => {
                     return(
-                      <Draggable draggableId={name} index={index} key={id}>
+                      <Draggable draggableId={file.id.toString()} index={index} key={file.id}>
                         {(provided)=>(
                           <Box
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps} 
                           >
-                            <FileBox text={name}>
-                            <Box onClick={() => handleFilterFile(id)}>
+                            <FileBox text={file.name}>
+                            <Box onClick={() => handleFilterFile(file.id)}>
                             <DeleteButton/>
                             </Box>
                             </FileBox>

@@ -5,7 +5,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 export default function UploadButton(){
     return(
-      <Box>
+      <Box component="span">
         <Tooltip
           TransitionComponent={Zoom}
           title="upload"

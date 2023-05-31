@@ -15,8 +15,11 @@ interface projectResponse{
 
 interface projectInfo{
   projectName: string;
-  projectUuid: string;
+  projectUserId: string;
   projectIntro: string;
+  projectPreview: string;
+  projectCreatedAt: string;
+  projectUpdatedAt: string;
 }
 
 export default function DescriptionBox() {

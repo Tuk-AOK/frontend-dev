@@ -9,41 +9,66 @@ import TitleBox from "../../common/box/titleBox/titleBox";
 import { RootState } from "../../../stores/store";
 import axios from 'axios';
 
+interface wholeProjectResponse {
+  status: number;
+  code: string;
+  message: string;
+  data: ProjectsData[];
+}
+
+interface ProjectsData {
+  projects: project[]
+}
+
+interface project {
+  projectName: string;
+  projectUuid: string;
+  projectIntro: string;
+  projectPreview: string;
+  projectCreatedAt: string;
+  projectUpdatedAt: string;
+}
+
 export default function Main() {
-  const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);
+  const [projects, setProjects] = React.useState<project[]>([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  /*
-  const getProjectData = async () => {
-    console.log(123)
-    const response = await fetch(
-      `/api/v1/users/{userUuid}/projects`,
-      {
-        method:"GET",
-      }
-    ).then((res) => res.json());
+  let userUuid = useSelector((state: RootState) => {
+    return state.user.userUuid;
+  });
 
-    console.log(response);
-    setProjectData(response?.data?.projects ?? []); //res가 undifined면 빈 배열 줌
-  };
-  */
+  useEffect(() => {
+    (async () => {
+        await axios.get<wholeProjectResponse>('/api/v1/projects?userUuid=' + userUuid)
+        .then((response)=> {
+          console.log("전체 프로젝트 조회 불러오기 성공");
+          console.log(response.data.data)
+        })
+        .catch((error)=>{
+          console.log(" 최근 로그 uuid 불러오기 실패");
+          console.log(error);
+        })
+    })();
+  }, []);
 
-  React.useEffect(() => {
-    //fetch logic
-    //getProjectData();
+  // React.useEffect(() => {
+  //   //fetch logic
+  //   //getProjectData();
 
     
-    setProjectData([
-      { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-    ]);
+  //   setProjectData([
+  //     { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //   ]);
   
-  }, []);
+  // }, []);
 
   return (
     <Box sx={{ px: 3, py: 3 }}>
@@ -69,9 +94,7 @@ export default function Main() {
               justifyContent: "center",
             }}
           >
-            {projectData.map((v) => {
-              return <ProjectBox {...v} />;
-            })}
+            {}
           </Box>
         </Box>
       </Box>
