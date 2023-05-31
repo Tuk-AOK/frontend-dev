@@ -106,16 +106,18 @@ export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
       //매개 변수로 받은 id와 일치 여부를 확인해 필터링 함
       //setFiles(fileobjects.filter((file: IFileTypes) => file.id !== id));
       setFileObjects(fileobjects.filter((file) => file.id !== id));
+      onFilesChange(fileobjects.filter((file)=>file.id !== id));
     },
-    [fileobjects]
+    [fileobjects, onFilesChange]
   );
   
   const handleDeleteFile = useCallback(
     (id: number): void => {
       //setFiles(fileobjects.filter((file: IFileTypes) => file.id === id));
       setFileObjects(fileobjects.filter((file) => file.id !== id));
+      onFilesChange(fileobjects.filter((file)=>file.id !== id));
     },
-    [fileobjects]
+    [fileobjects, onFilesChange]
   );
 
   /*------------- 이미지 업로드 드래그 앤 드랍 관련 함수 ------------*/
