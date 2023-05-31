@@ -116,7 +116,7 @@ export default function Example() {
   
   useEffect(() => {
     (async () => {
-      await axios.get<ProjectResponse>('/api/v1/users/'+ uuid +'/projects')
+      await axios.get<ProjectResponse>('/api/v1/projects?userUuid='+ uuid)
       .then((response)=> {
         //console.log("프로젝트 정보 불러오기 성공");
         console.log("가져온 project 데이터", response.data.data.projects);
@@ -124,7 +124,7 @@ export default function Example() {
         //console.log("저장상태", projects);
       })
       .catch((error)=>{
-        //console.log("프로젝트 정보 불러오기 실패");
+        console.log("프로젝트 정보 불러오기 실패");
         console.log(error);
       })
     })();
