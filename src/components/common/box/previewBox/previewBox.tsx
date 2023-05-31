@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
+import html2canvas from 'html2canvas';
 
 interface FileListProps {
   fileobjects: FileObjectType[];
@@ -16,6 +17,56 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
   console.log("프리뷰 파일 오브젝트 왔워", fileobjects);
   
   var reversed_index;
+
+  // const capturePreviewImg = async() => {
+  //   const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
+  //   let url = "";
+  //   let urlData = "";
+  //   html2canvas(canvas).then(async(canvasdata: any) => {
+  //     //url 출력되는 형식이 base64 형식
+  //     urlData = await canvasdata.toDataURL("image/png").split(",")[1]
+  //     url = await canvasdata.toDataURL("image/png")
+  //     console.log("만들어진 URL : ", url)
+  //     console.log("uri만 뽑아오기 : ", urlData)
+
+  //     const array = [] as any;
+  //     for(var i = 0; i < urlData.length; i++ ){
+  //       array.push(urlData.charCodeAt(i));
+  //     }
+
+  //     console.log(array);
+
+  //     const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/png'});
+  //     const imgfile = new File([fileBlob], "logCaptureImg.png");
+
+  //     console.log(imgfile);
+  //   })
+    
+  // }
+
+
+  const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
+    let url = "";
+    let urlData = "";
+    html2canvas(canvas).then(async(canvasdata: any) => {
+      //url 출력되는 형식이 base64 형식
+      urlData = await canvasdata.toDataURL("image/png").split(",")[1]
+      url = await canvasdata.toDataURL("image/png")
+      console.log("만들어진 URL : ", url)
+      //console.log("uri만 뽑아오기 : ", urlData)
+
+      const array = [] as any;
+      for(var i = 0; i < urlData.length; i++ ){
+        array.push(urlData.charCodeAt(i));
+      }
+
+      console.log(array);
+
+      const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/png'});
+      const imgfile = new File([fileBlob], "logCaptureImg.png");
+
+      console.log(imgfile);
+    })
 
   return (
     <Box width="100%" maxWidth="500px" minWidth="300px">
@@ -40,6 +91,7 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
       >
         {/* <img width="300px" height="300px" src="test.jpeg" alt="test" /> */}
         <div
+          id="capturePreview"
           style={{
             width: "300px",
             height: "300px",
@@ -48,19 +100,21 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
             position: "relative"
           }}
         >
-        {fileobjects.length > 0 && fileobjects.map((file: FileObjectType, index: number) => {
-          const { URL } = file;
+          
+          {fileobjects.length > 0 && fileobjects.map((file: FileObjectType, index: number) => {
+            const { URL } = file;
 
-          reversed_index = fileobjects.length - 1 - index;
-          return(
-            <div
-              key={index}
-              style={(reversed_index===0) ? {} :  {position: 'absolute', zIndex: reversed_index, display: "table-cell",top: "50%",left: "50%",transform: "translate(-50%, -50%)"}}
-            >
-              <img src={URL} style={{maxWidth: "300px", maxHeight: "300px"}}/>
-            </div>
-          );
-        })}
+            reversed_index = fileobjects.length - 1 - index;
+            return(
+              <div
+                key={index}
+                style={(reversed_index===0) ? {} :  {position: 'absolute', zIndex: reversed_index, display: "table-cell",top: "50%",left: "50%",transform: "translate(-50%, -50%)"}}
+              >
+                <img src={URL} style={{maxWidth: "300px", maxHeight: "300px"}}/>
+              </div>
+            );
+          })}
+        
         </div>
       </Box>
     </Box>
