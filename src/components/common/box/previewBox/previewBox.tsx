@@ -13,6 +13,7 @@ interface FileObjectType {
   name: string;
 }
 
+
 export default function PreviewBox({ fileobjects } : FileListProps) {
   console.log("프리뷰 파일 오브젝트 왔워", fileobjects);
   
@@ -26,11 +27,13 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
     const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
     let url = "";
     let urlData = "";
+
+
     html2canvas(canvas).then(async(canvasdata: any) => {
       //url 출력되는 형식이 base64 형식
       urlData = await canvasdata.toDataURL("image/png").split(",")[1]
-      url = await canvasdata.toDataURL("image/png")
-      //url = URL.createObjectURL(await (await fetch(urlData)).blob());
+      // url = await canvasdata.toDataURL("image/png")
+      url = URL.createObjectURL(await (await fetch(urlData)).blob());
       console.log("만들어진 URL (inside) : ", url)
       //console.log("uri만 뽑아오기(inside) : ", urlData)
 
