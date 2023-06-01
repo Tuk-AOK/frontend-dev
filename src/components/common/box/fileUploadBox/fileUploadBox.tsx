@@ -194,6 +194,7 @@ export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
         lists.splice(result.source.index, 1);
         lists.splice(destination.index, 0, selectItem);
         setFileObjects(lists);
+        onFilesChange(lists);
         console.log(lists)
       }
 
