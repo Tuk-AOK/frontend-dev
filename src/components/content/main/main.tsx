@@ -8,12 +8,15 @@ import { ProjectData } from "../../common/box/projectBox/types";
 import TitleBox from "../../common/box/titleBox/titleBox";
 import { RootState } from "../../../stores/store";
 import axios from 'axios';
+import Project from "../project/project";
+import { setProjectUuid } from "../../../hooks/projectSlice";
+
 
 interface wholeProjectResponse {
   status: number;
   code: string;
   message: string;
-  data: ProjectsData[];
+  data: ProjectsData;
 }
 
 interface ProjectsData {
@@ -42,11 +45,12 @@ export default function Main() {
     (async () => {
         await axios.get<wholeProjectResponse>('/api/v1/projects?userUuid=' + userUuid)
         .then((response)=> {
-          console.log("전체 프로젝트 조회 불러오기 성공");
-          console.log(response.data.data)
+          console.log("유저 플젝 불러오기 성공");
+          console.log(response.data.data.projects);
+          setProjects(response.data.data.projects);
         })
         .catch((error)=>{
-          console.log(" 최근 로그 uuid 불러오기 실패");
+          console.log("전체 프로젝트 불러오기 실패");
           console.log(error);
         })
     })();
@@ -94,7 +98,19 @@ export default function Main() {
               justifyContent: "center",
             }}
           >
-            {}
+            {projects.map(project => {
+              const clickEvent = () => {
+                dispatch(setProjectUuid(project.projectUuid));
+                navigate('/Project')
+                console.log("이동할 프로젝트 이름 : ", project.projectName);
+                window.location.reload();
+              } 
+              return(
+                <Box onClick={clickEvent}>
+                <ProjectBox {...project}/>
+                </Box>
+              );
+            })}
           </Box>
         </Box>
       </Box>

@@ -66,6 +66,7 @@ export default function Example() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const mainNavigate = () => navigate("/")
   const createTestData = () => {
     axios.post('/api/v1/users',{
       email: 'test03@naver.com',
@@ -182,14 +183,13 @@ export default function Example() {
               </Box>
             </Fade>
           )}
-          <MenuItem icon={<HomeOutlinedIcon />}>Home</MenuItem>
+          <MenuItem icon={<HomeOutlinedIcon />} onClick={mainNavigate}>Home</MenuItem>
           <SubMenu icon={<FolderSharedIcon />} label="Projects">
             {projects.map(project => {
               const clickEvent = () => {
                 dispatch(setProjectUuid(project.projectUuid));
                 navigate('/Project')
                 console.log("이동할 프로젝트 이름 : ", project.projectName);
-                window.location.reload();
               }
               return(
                 <MenuItem icon={<ArticleIcon />} onClick={clickEvent}>{project.projectName}</MenuItem>
