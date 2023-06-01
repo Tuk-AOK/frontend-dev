@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import html2canvas from 'html2canvas';
 
 interface FileListProps {
@@ -18,42 +18,20 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
   
   var reversed_index;
 
-  // const capturePreviewImg = async() => {
-  //   const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
-  //   let url = "";
-  //   let urlData = "";
-  //   html2canvas(canvas).then(async(canvasdata: any) => {
-  //     //url 출력되는 형식이 base64 형식
-  //     urlData = await canvasdata.toDataURL("image/png").split(",")[1]
-  //     url = await canvasdata.toDataURL("image/png")
-  //     console.log("만들어진 URL : ", url)
-  //     console.log("uri만 뽑아오기 : ", urlData)
+  useEffect(() => {
+    capturePreviewImg();
+  }, [fileobjects]);
 
-  //     const array = [] as any;
-  //     for(var i = 0; i < urlData.length; i++ ){
-  //       array.push(urlData.charCodeAt(i));
-  //     }
-
-  //     console.log(array);
-
-  //     const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/png'});
-  //     const imgfile = new File([fileBlob], "logCaptureImg.png");
-
-  //     console.log(imgfile);
-  //   })
-    
-  // }
-
-
-  const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
+  const capturePreviewImg = async() => {
+    const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
     let url = "";
     let urlData = "";
     html2canvas(canvas).then(async(canvasdata: any) => {
       //url 출력되는 형식이 base64 형식
       urlData = await canvasdata.toDataURL("image/png").split(",")[1]
       url = await canvasdata.toDataURL("image/png")
-      console.log("만들어진 URL : ", url)
-      //console.log("uri만 뽑아오기 : ", urlData)
+      console.log("만들어진 URL (inside) : ", url)
+      //console.log("uri만 뽑아오기(inside) : ", urlData)
 
       const array = [] as any;
       for(var i = 0; i < urlData.length; i++ ){
@@ -67,6 +45,9 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
 
       console.log(imgfile);
     })
+    
+  }
+
 
   return (
     <Box width="100%" maxWidth="500px" minWidth="300px">
@@ -103,7 +84,6 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
           
           {fileobjects.length > 0 && fileobjects.map((file: FileObjectType, index: number) => {
             const { URL } = file;
-
             reversed_index = fileobjects.length - 1 - index;
             return(
               <div
