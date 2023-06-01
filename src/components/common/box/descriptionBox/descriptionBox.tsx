@@ -67,11 +67,6 @@ export default function DescriptionBox() {
       </Box>
       <Box display="flex" flexWrap="wrap">
           <UserPreviewBox />
-          <UserPreviewBox />
-          <UserPreviewBox />
-          <UserPreviewBox />
-          <UserPreviewBox />
-          
       </Box>
     </Box>
   );
