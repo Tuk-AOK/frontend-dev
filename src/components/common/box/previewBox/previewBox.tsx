@@ -13,8 +13,15 @@ interface FileObjectType {
   name: string;
 }
 
+interface PreviewType{
+  url: string;
+}
 
-export default function PreviewBox({ fileobjects } : FileListProps) {
+interface previewProps{
+  onPreviewChange: (previewImg: PreviewType) => void;
+}
+
+export default function PreviewBox({ fileobjects, onPreviewChange } : FileListProps & previewProps) {
   console.log("프리뷰 파일 오브젝트 왔워", fileobjects);
   
   var reversed_index;
@@ -27,15 +34,15 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
     const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
     let url = "";
     let urlData = "";
+    let wholeUrlData = "";
 
 
     html2canvas(canvas).then(async(canvasdata: any) => {
       //url 출력되는 형식이 base64 형식
-      urlData = await canvasdata.toDataURL("image/png").split(",")[1]
-      // url = await canvasdata.toDataURL("image/png")
-      url = URL.createObjectURL(await (await fetch(urlData)).blob());
+      urlData = await canvasdata.toDataURL("image/jpeg", 0.8).split(",")[1];
+      wholeUrlData = await canvasdata.toDataURL("image/jpeg");
+      url = URL.createObjectURL(await (await fetch(wholeUrlData)).blob());
       console.log("만들어진 URL (inside) : ", url)
-      //console.log("uri만 뽑아오기(inside) : ", urlData)
 
       const array = [] as any;
       for(var i = 0; i < urlData.length; i++ ){
@@ -44,10 +51,12 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
 
       console.log(array);
 
-      const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/png'});
-      const imgfile = new File([fileBlob], "logCaptureImg.png");
+      const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/jpeg'});
+      const imgfile = new File([fileBlob], "logCaptureImg.jpeg");
 
       console.log(imgfile);
+
+      onPreviewChange({url});
     })
     
   }

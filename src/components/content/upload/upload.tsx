@@ -13,14 +13,23 @@ interface FileObjectType {
   name: string;
 }
 
+interface PreviewType{
+  url: string;
+}
+
 export function Upload() {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
-
+  const [previewImage, setPreviewImage] = useState('');
   
   const handleFilesChange = (files: FileObjectType[]) => {
-    console.log("파일 여기있지렁", files)
+    //console.log("파일 여기있지렁", files)
     setFileObjects(files)
   }
+
+  const handlePreviewChange = (previewImg: PreviewType) => {
+    //console.log("url 여기있어용! : ",previewImg.url);
+    setPreviewImage(previewImg.url);
+  };
   
   return (
     <Box display="block">
@@ -43,11 +52,11 @@ export function Upload() {
           gap={"16px"}
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={fileobjects}/>
+          <PreviewBox fileobjects={fileobjects} onPreviewChange={handlePreviewChange}/>
           <FileUploadBox onFilesChange={handleFilesChange}/>
         </Box>
         <Box>
-          <TextBox fileobjects={fileobjects} />
+          <TextBox fileobjects={fileobjects} url={previewImage}/>
         </Box>
       </Box>
     </Box>

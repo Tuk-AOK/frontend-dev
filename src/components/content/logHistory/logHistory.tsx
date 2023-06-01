@@ -24,7 +24,7 @@ export default function LogHistory() {
           gap="16px"
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={[]}/>
+          {/* <PreviewBox fileobjects={[]} onPreviewChange={}/> */}
           <FileDownloadBox />
         </Box>
 

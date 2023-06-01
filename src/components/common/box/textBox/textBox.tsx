@@ -15,13 +15,17 @@ interface FileObjectType {
   name: string;
 }
 
+interface PreviewType{
+  url: string;
+}
 
 
 
-export default function TextBox({ fileobjects } : FileListProps) {
+export default function TextBox({ fileobjects, url } : FileListProps & PreviewType) {
   const ariaLabel = { "aria-label": "description" };
   const [msg, setMsg] = useState('')
 
+  console.log("잘도착하셨읍니까: ", url);
 
   const createLog = async() => {
     if(fileobjects.length === 0 && msg === ''){
