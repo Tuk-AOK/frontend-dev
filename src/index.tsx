@@ -16,11 +16,11 @@ const root = ReactDOM.createRoot(
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <ProSidebarProvider>
       <App />
       </ProSidebarProvider>
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
     </PersistGate>
   </Provider>
 );

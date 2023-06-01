@@ -29,9 +29,10 @@ export default function PreviewBox({ fileobjects } : FileListProps) {
     html2canvas(canvas).then(async(canvasdata: any) => {
       //url 출력되는 형식이 base64 형식
       urlData = await canvasdata.toDataURL("image/png").split(",")[1]
-      url = await canvasdata.toDataURL("image/png")
+      //url = await canvasdata.toDataURL("image/png")
+      url = URL.createObjectURL(await (await fetch(urlData)).blob());
       console.log("만들어진 URL (inside) : ", url)
-      //console.log("uri만 뽑아오기(inside) : ", urlData)
+      console.log("uri만 뽑아오기(inside) : ", urlData)
 
       const array = [] as any;
       for(var i = 0; i < urlData.length; i++ ){
