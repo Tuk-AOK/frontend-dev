@@ -72,7 +72,7 @@ export default function SplitButton() {
 
   useEffect(() => {
     (async () => {
-        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches')
+        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
         .then((response)=> {
             console.log("브랜치 정보 불러오기 성공");
             console.log("가져온 데이터", response.data.data.projectBranchInfos);

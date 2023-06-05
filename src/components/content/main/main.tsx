@@ -43,7 +43,7 @@ export default function Main() {
 
   useEffect(() => {
     (async () => {
-        await axios.get<wholeProjectResponse>('/api/v1/projects?userUuid=' + userUuid)
+        await axios.get<wholeProjectResponse>('/api/v1/projects?userUuid=' + userUuid + '&page=0')
         .then((response)=> {
           console.log("유저 플젝 불러오기 성공");
           console.log(response.data.data.projects);

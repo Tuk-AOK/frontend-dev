@@ -33,7 +33,7 @@ export default function UserPreviewBox() {
 
   useEffect(() => {
     (async () => {
-        await axios.get<userResponse>('/api/v1/projects/'+ projectUuid +'/users')
+        await axios.get<userResponse>('/api/v1/projects/'+ projectUuid +'/users?page=0')
         .then((response)=> {
             console.log("유저들 정보 불러오기 성공");
             console.log("가져온 유저 데이터", response.data.data.userInfos);

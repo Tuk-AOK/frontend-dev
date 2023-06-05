@@ -56,8 +56,19 @@ interface userInfo{
   photo: string;
 }
 
-export default function LogHistorySlider(props: {logData: Array<LogData>}) {
-  const { logData } = props;
+interface currentData {
+  currentUuid : string; 
+}
+
+interface currentLogProps {
+  onCurrentLogsChange: (currentLogUuid : currentData) => void; 
+}
+
+export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
+  logData: Array<LogData>,
+  onCurrentLogsChange: (currentLogUuid: currentData) => void
+}) {
+  // const { logData, onCurrentLogsChange } = props;
   const [currentTime,setCurrentTime] = React.useState<number>(0);
   const [currentUuid, setCurrentUuid] = useState('');
   const [message, setLogMessage] = useState('');
@@ -108,13 +119,15 @@ export default function LogHistorySlider(props: {logData: Array<LogData>}) {
     user={nickname}
     createTime={createTime}
     /> 
-    <Slider
+    {logData.length > 0 && (
+      <Slider
       aria-label="log"
       defaultValue={currentTime}
       getAriaValueText={valuetext}
       onChange={(e,v)=>{
         setCurrentTime(v as number)
         setCurrentUuid(logData[currentTime].logUuid)
+        onCurrentLogsChange({currentUuid})
         console.log("체크 : ", currentUuid)
       }}
       valueLabelFormat={logData[currentTime].logUuid}
@@ -122,7 +135,8 @@ export default function LogHistorySlider(props: {logData: Array<LogData>}) {
       min={0}
       max={logData.length - 1}
       valueLabelDisplay="auto"
-    />
+      />
+    )}
     </Box>
   );
 }

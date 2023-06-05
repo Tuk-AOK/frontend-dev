@@ -49,6 +49,10 @@ interface ProjectResponse{
 interface Project{
   projectName: string;
   projectUuid: string;
+  projectIntro: string;
+  projectPreview: string;
+  projectCreatedAt: string;
+  projectUpdatedAt: string;
 }
 
 interface ProjectsData{
@@ -117,7 +121,7 @@ export default function Example() {
   
   useEffect(() => {
     (async () => {
-      await axios.get<ProjectResponse>('/api/v1/projects?userUuid='+ uuid)
+      await axios.get<ProjectResponse>('/api/v1/projects?userUuid='+ uuid +'&page=0')
       .then((response)=> {
         //console.log("프로젝트 정보 불러오기 성공");
         console.log("가져온 project 데이터", response.data.data.projects);
