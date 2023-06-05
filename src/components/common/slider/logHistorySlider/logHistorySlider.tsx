@@ -79,6 +79,7 @@ export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
     return state.branch.uuid
   })
 
+  console.log("현재 uuid 뭐임: ", currentUuid);
   useEffect(() => {
     (async () => {
       await axios.get('/api/v1/logs/'+ currentUuid)
@@ -130,7 +131,7 @@ export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
         onCurrentLogsChange({currentUuid})
         console.log("체크 : ", currentUuid)
       }}
-      valueLabelFormat={logData[currentTime].logUuid}
+      valueLabelFormat={logData[currentTime].logCreatedAt}
       marks
       min={0}
       max={logData.length - 1}

@@ -13,14 +13,7 @@ interface currentLogResponse{
   status: number;
   code: string;
   message: string;
-  data : currentLogData;
-}
-
-interface currentLogData{
-  status: number;
-  code: string;
-  message: string;
-  data: logInfo;
+  data : logInfo;
 }
 
 interface logInfo{
@@ -42,21 +35,16 @@ interface resource{
 
 export default function FileDownloadBox({currentLog} : logProps) {
   console.log("데이터 와쪄여 뿌우 : ", currentLog);
-  const [resourcefiles, setResourceFiles] = useState<resource[]>([]);
+  const [resourcefiles, setResourceFiles] = useState<resourcesData[]>([]);
 
   useEffect(() => {
     (async () => {
       await axios.get<currentLogResponse>('/api/v1/logs/'+ currentLog)
       .then((response)=> {
         console.log("(download) 현재 위치한 로그 정보 불러오기 성공");
-        console.log("(download) 현위치 로그 데이터 : ", response.data.data.data.resourceInfos);
-        const resources = response.data.data.data.resourceInfos;
-
-        if (resources.length > 0) {
-          const lastResource = resources[resources.length - 1];
-          // 또는 setResourceFiles([lastResource]);
-        }
+        console.log("(download) 현위치 로그 데이터 : ", response.data.data.resourceInfos)
         
+        setResourceFiles(response.data.data.resourceInfos)
       })
       .catch((error)=>{
         console.log("(download)현위치 로그 정보 불러오기 실패");
@@ -96,12 +84,12 @@ export default function FileDownloadBox({currentLog} : logProps) {
           }}
         >
         
-        {/* {resources.map(resources => {
+        {resourcefiles.map((resources: any) => {
           return(
           <FileBox text={resources.fileName}>
           <DownloadButton />
           </FileBox>);
-        })} */}
+        })}
         </Box>
       </Box>
     </Box>

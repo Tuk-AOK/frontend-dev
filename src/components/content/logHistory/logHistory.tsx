@@ -23,8 +23,7 @@ interface logsData {
 
 interface log {
   logUuid: string;
-  logMessage: string;
-  //logMessage -> 로그 생성시간으로 변경 필요
+  logCreatedAt: string;
 }
 
 interface currentData {
@@ -44,9 +43,10 @@ export default function LogHistory() {
     console.log("됐음? : ", currentLogUuid.currentUuid);
   }
 
+  console.log("store uuid test: ", uuid);
   useEffect(() => {
     (async () => {
-      await axios.get('/api/v1/branches/'+ uuid +'/logs')
+      await axios.get('/api/v1/branches/'+ uuid +'/logs?page=0')
       .then((response)=> {
         console.log("log history 불러오기 성공");
         console.log("log history 데이터 : ", response.data.data);
