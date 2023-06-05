@@ -1,14 +1,54 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TitleBox from "../../common/box/titleBox/titleBox";
 import LogHistorySlider from "../../common/slider/logHistorySlider/logHistorySlider";
 import BranchButton from "../../common/button/branchButton";
 import GlobalButton from "../../common/button/globalButton/globalButton";
 import PreviewBox from "../../common/box/previewBox";
 import FileDownloadBox from "../../common/box/fileDownloadBox";
+import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../stores/store";
+
+interface wholeLogResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: logsData;
+}
+
+interface logsData {
+  logs: log[]
+}
+
+interface log {
+  logUuid: string;
+  logMessage: string;
+  //logMessage -> 로그 생성시간으로 변경 필요
+}
 
 export default function LogHistory() {
+  const [logDatas, setLogDatas] = useState<log[]>([]);
   
+  let uuid = useSelector((state:RootState) => {
+    return state.branch.uuid
+  })
+
+  useEffect(() => {
+    (async () => {
+      await axios.get('/api/v1/branches/'+ uuid +'/logs')
+      .then((response)=> {
+        console.log("log history 불러오기 성공");
+        console.log("log history 데이터 : ", response.data.data);
+        setLogDatas(response.data.data.logs)
+      })
+      .catch((error)=>{
+        console.log("log history 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [uuid]);
 
   return (
     <Box>
@@ -29,13 +69,7 @@ export default function LogHistory() {
         </Box>
 
         <LogHistorySlider
-          logData={[
-            { createTime: "2001-07-07 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-10 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-11 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-12 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-13 12:00:00", logUuid: "asd" },
-          ]}
+          logData={logDatas}
         />
 
         <Box display="flex" justifyContent="center">
