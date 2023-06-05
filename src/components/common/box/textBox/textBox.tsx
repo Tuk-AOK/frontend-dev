@@ -81,8 +81,8 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
         ],
       }).then((response) => {
         console.log("로그 생성 성공")
-        console.log(response.data.data.uuid)
-        //window.location.replace("/project");
+        console.log(response.data.data)
+        window.location.replace("/project");
 
       }).catch((error) => {
         console.log("로그 생성 실패")
