@@ -21,7 +21,7 @@ interface FileObjectType {
 interface TextBoxProps {
   fileobjects: FileObjectType[];
   url: string;
-  imgFile: File | null; // Define imgFile prop
+  imgFile: File | null;
 }
 
 
@@ -51,6 +51,9 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
         formData.append("userId", '1');
         formData.append("branchId", '1');
         formData.append("message", msg);
+        if(imgFile !== null) {
+          formData.append("preview", imgFile);
+        }
 
       // FormData의 key 확인
       // @ts-ignore
@@ -79,7 +82,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
       }).then((response) => {
         console.log("로그 생성 성공")
         console.log(response.data.data.uuid)
-        window.location.replace("/project");
+        //window.location.replace("/project");
 
       }).catch((error) => {
         console.log("로그 생성 실패")
