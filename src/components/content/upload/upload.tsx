@@ -20,7 +20,8 @@ interface PreviewType{
 export function Upload() {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
   const [previewImage, setPreviewImage] = useState('');
-  
+  const [imgFile, setImgFile] = useState<File | null>(null);
+
   const handleFilesChange = (files: FileObjectType[]) => {
     //console.log("파일 여기있지렁", files)
     setFileObjects(files)
@@ -30,6 +31,11 @@ export function Upload() {
     //console.log("url 여기있어용! : ",previewImg.url);
     setPreviewImage(previewImg.url);
   };
+
+  const handleImgFileChange = (file: File | null) => {
+    setImgFile(file);
+    console.log("파일? : ", imgFile);
+  }
   
   return (
     <Box display="block">
@@ -52,11 +58,11 @@ export function Upload() {
           gap={"16px"}
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={fileobjects} onPreviewChange={handlePreviewChange}/>
+          <PreviewBox fileobjects={fileobjects} onPreviewChange={handlePreviewChange} onImgFileChange={handleImgFileChange}/>
           <FileUploadBox onFilesChange={handleFilesChange}/>
         </Box>
         <Box>
-          <TextBox fileobjects={fileobjects} url={previewImage}/>
+          <TextBox fileobjects={fileobjects} url={previewImage} imgFile={imgFile}/>
         </Box>
       </Box>
     </Box>

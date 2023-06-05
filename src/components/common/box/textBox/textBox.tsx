@@ -8,6 +8,7 @@ interface FileListProps {
   fileobjects: FileObjectType[];
 }
 
+
 interface FileObjectType {
   id: number;
   object: File;
@@ -15,17 +16,20 @@ interface FileObjectType {
   name: string;
 }
 
-interface PreviewType{
+
+
+interface TextBoxProps {
+  fileobjects: FileObjectType[];
   url: string;
+  imgFile: File | null; // Define imgFile prop
 }
 
 
-
-export default function TextBox({ fileobjects, url } : FileListProps & PreviewType) {
+export default function TextBox({ fileobjects, imgFile } : FileListProps & TextBoxProps) {
   const ariaLabel = { "aria-label": "description" };
   const [msg, setMsg] = useState('')
 
-  console.log("잘도착하셨읍니까: ", url);
+  console.log("잘도착하셨읍니까: ", imgFile);
 
   const createLog = async() => {
     if(fileobjects.length === 0 && msg === ''){

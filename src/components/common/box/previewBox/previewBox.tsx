@@ -18,10 +18,12 @@ interface PreviewType{
 }
 
 interface previewProps{
+  fileobjects: FileObjectType[];
   onPreviewChange: (previewImg: PreviewType) => void;
+  onImgFileChange: (file: File | null) => void; 
 }
 
-export default function PreviewBox({ fileobjects, onPreviewChange } : FileListProps & previewProps) {
+export default function PreviewBox({ fileobjects, onPreviewChange, onImgFileChange } : FileListProps & previewProps) {
   console.log("프리뷰 파일 오브젝트 왔워", fileobjects);
   
   var reversed_index;
@@ -55,7 +57,7 @@ export default function PreviewBox({ fileobjects, onPreviewChange } : FileListPr
       const imgfile = new File([fileBlob], "logCaptureImg.jpeg");
 
       console.log(imgfile);
-
+      onImgFileChange(imgfile);
       onPreviewChange({url});
     })
     
