@@ -1,45 +1,78 @@
 import { Box, Pagination } from "@mui/material";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import GlobalButton from "../../common/button/globalButton";
 import ProjectBox from "../../common/box/projectBox";
 import { ProjectData } from "../../common/box/projectBox/types";
 import TitleBox from "../../common/box/titleBox/titleBox";
+import { RootState } from "../../../stores/store";
+import axios from 'axios';
+import Project from "../project/project";
+import { setProjectUuid } from "../../../hooks/projectSlice";
+
+
+interface wholeProjectResponse {
+  status: number;
+  code: string;
+  message: string;
+  data: ProjectsData;
+}
+
+interface ProjectsData {
+  projects: project[]
+}
+
+interface project {
+  projectName: string;
+  projectUuid: string;
+  projectIntro: string;
+  projectPreview: string;
+  projectCreatedAt: string;
+  projectUpdatedAt: string;
+}
 
 export default function Main() {
-  const [projectData, setProjectData] = React.useState<Array<ProjectData>>([]);
+  const [projects, setProjects] = React.useState<project[]>([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  /*
-  const getProjectData = async () => {
-    console.log(123)
-    const response = await fetch(
-      `/api/v1/users/{userUuid}/projects`,
-      {
-        method:"GET",
-      }
-    ).then((res) => res.json());
+  let userUuid = useSelector((state: RootState) => {
+    return state.user.userUuid;
+  });
 
-    console.log(response);
-    setProjectData(response?.data?.projects ?? []); //res가 undifined면 빈 배열 줌
-  };
-  */
+  useEffect(() => {
+    (async () => {
+        await axios.get<wholeProjectResponse>('/api/v1/projects?userUuid=' + userUuid + '&page=0')
+        .then((response)=> {
+          console.log("유저 플젝 불러오기 성공");
+          console.log(response.data.data.projects);
+          setProjects(response.data.data.projects);
+        })
+        .catch((error)=>{
+          console.log("전체 프로젝트 불러오기 실패");
+          console.log(error);
+        })
+    })();
+  }, []);
 
-  React.useEffect(() => {
-    //fetch logic
-    //getProjectData();
+  // React.useEffect(() => {
+  //   //fetch logic
+  //   //getProjectData();
 
     
-    setProjectData([
-      { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-      { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
-    ]);
+  //   setProjectData([
+  //     { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test4", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test5", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test1", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test2", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //     { projectName: "test3", imageUrl: "/test.jpeg", createTime: "2023-05-09 23:00:00" },
+  //   ]);
   
-  }, []);
+  // }, []);
 
   return (
     <Box sx={{ px: 3, py: 3 }}>
@@ -65,8 +98,18 @@ export default function Main() {
               justifyContent: "center",
             }}
           >
-            {projectData.map((v) => {
-              return <ProjectBox {...v} />;
+            {projects.map(project => {
+              const clickEvent = () => {
+                dispatch(setProjectUuid(project.projectUuid));
+                navigate('/Project')
+                console.log("이동할 프로젝트 이름 : ", project.projectName);
+                window.location.reload();
+              } 
+              return(
+                <Box onClick={clickEvent}>
+                <ProjectBox {...project}/>
+                </Box>
+              );
             })}
           </Box>
         </Box>

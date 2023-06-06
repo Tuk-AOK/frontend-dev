@@ -1,9 +1,59 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FileBox from "../fileBox/fileBox";
 import DownloadButton from "../../button/downloadButton/downloadButton";
+import axios from "axios";
 
-export default function FileDownloadBox() {
+
+interface logProps {
+  currentLog : string;
+}
+
+interface currentLogResponse{
+  status: number;
+  code: string;
+  message: string;
+  data : logInfo;
+}
+
+interface logInfo{
+  userUuid: string;
+  logMessage: string;
+  logCreatedAt: string;
+  resourceInfos: resourcesData[];
+}
+
+interface resourcesData{
+  resources: resource[]
+}
+
+interface resource{
+  fileName: string;
+  fileLink: string;
+  fileUuid: string; 
+}
+
+export default function FileDownloadBox({currentLog} : logProps) {
+  console.log("데이터 와쪄여 뿌우 : ", currentLog);
+  const [resourcefiles, setResourceFiles] = useState<resourcesData[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      await axios.get<currentLogResponse>('/api/v1/logs/'+ currentLog)
+      .then((response)=> {
+        console.log("(download) 현재 위치한 로그 정보 불러오기 성공");
+        console.log("(download) 현위치 로그 데이터 : ", response.data.data.resourceInfos)
+        
+        setResourceFiles(response.data.data.resourceInfos)
+      })
+      .catch((error)=>{
+        console.log("(download)현위치 로그 정보 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [currentLog]);
+
   return (
     <Box width="100%" maxWidth="500px" minWidth="300px">
             <Box
@@ -33,39 +83,13 @@ export default function FileDownloadBox() {
             alignItems: "center",
           }}
         >
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
-          <FileBox>
-            <DownloadButton />
-          </FileBox>
+        
+        {resourcefiles.map((resources: any) => {
+          return(
+          <FileBox text={resources.fileName}>
+          <DownloadButton fileLink={resources.fileLink}/>
+          </FileBox>);
+        })}
         </Box>
       </Box>
     </Box>

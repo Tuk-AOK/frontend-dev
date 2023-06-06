@@ -1,14 +1,74 @@
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TitleBox from "../../common/box/titleBox/titleBox";
 import LogHistorySlider from "../../common/slider/logHistorySlider/logHistorySlider";
 import BranchButton from "../../common/button/branchButton";
 import GlobalButton from "../../common/button/globalButton/globalButton";
 import PreviewBox from "../../common/box/previewBox";
 import FileDownloadBox from "../../common/box/fileDownloadBox";
+import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../stores/store";
+
+interface wholeLogResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: logsData;
+}
+
+interface logsData {
+  logs: log[]
+}
+
+interface log {
+  logUuid: string;
+  logCreatedAt: string;
+}
+
+interface currentData {
+  currentUuid : string; 
+}
 
 export default function LogHistory() {
-  
+  const [logDatas, setLogDatas] = useState<log[]>([]);
+  const [currentLog, setCurrentLog] = useState(''); 
+
+  let uuid = useSelector((state:RootState) => {
+    return state.branch.uuid
+  })
+
+  const handleCurrentLogchange = (currentLogUuid : currentData) => {
+    setCurrentLog(currentLogUuid.currentUuid)
+    console.log("됐음? : ", currentLogUuid.currentUuid);
+  }
+
+  console.log("store uuid test: ", uuid);
+  useEffect(() => {
+    (async () => {
+      await axios.get('/api/v1/branches/'+ uuid +'/logs?page=0')
+      .then((response)=> {
+        console.log("log history 불러오기 성공");
+        console.log("log history 데이터 : ", response.data.data);
+        setLogDatas(response.data.data.logs)
+      })
+      .catch((error)=>{
+        console.log("log history 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [uuid]);
+
+  useEffect(() => {
+    if (logDatas.length > 0) {
+      setCurrentLog(logDatas[0].logUuid);
+    }
+  }, [logDatas]);
+
+
+  // 가장 최근 데이터 추출
+  const latestLogData = logDatas.length > 0 ? logDatas[0] : null;
 
   return (
     <Box>
@@ -24,18 +84,14 @@ export default function LogHistory() {
           gap="16px"
           flexWrap="wrap"
         >
-          <PreviewBox />
-          <FileDownloadBox />
+          <PreviewBox fileobjects={[]} onPreviewChange={()=> {}} onImgFileChange={()=>{}}/>
+          <FileDownloadBox currentLog={currentLog}/>
         </Box>
 
         <LogHistorySlider
-          logData={[
-            { createTime: "2001-07-07 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-10 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-11 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-12 12:00:00", logUuid: "asd" },
-            { createTime: "2001-07-13 12:00:00", logUuid: "asd" },
-          ]}
+          logData={logDatas}
+          latestLogData={latestLogData}
+          onCurrentLogsChange={handleCurrentLogchange}
         />
 
         <Box display="flex" justifyContent="center">
