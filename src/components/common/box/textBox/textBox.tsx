@@ -3,6 +3,8 @@ import { Box } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import ApplyButton from "../../button/applyButton/applyButton";
 import axios from 'axios';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../stores/store";
 
 interface FileListProps {
   fileobjects: FileObjectType[];
@@ -16,7 +18,31 @@ interface FileObjectType {
   name: string;
 }
 
+interface branchResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: branchData;
+}
 
+interface branchData{
+  branchId: number;
+  branchName: string;
+}
+
+interface userResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: userData;
+}
+
+interface userData {
+  userUuid: string;
+  email: string;
+  nickname: string;
+  photo: string;
+}
 
 interface TextBoxProps {
   fileobjects: FileObjectType[];
@@ -28,8 +54,37 @@ interface TextBoxProps {
 export default function TextBox({ fileobjects, imgFile } : FileListProps & TextBoxProps) {
   const ariaLabel = { "aria-label": "description" };
   const [msg, setMsg] = useState('')
-
+  const [currentBranchId, setCurrentBranchId] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
   console.log("잘도착하셨읍니까: ", imgFile);
+
+  let branchUuid = useSelector((state:RootState) => {
+    return state.branch.uuid
+  })
+
+  let userUuid = useSelector((state: RootState) =>{
+    return state.user.userUuid
+  })
+
+  useEffect(() => {
+    (async () => {
+      await axios.get<branchResponse>('/api/v1/branches/'+ branchUuid)
+      .then((response)=> {
+        console.log("현재 브랜치 데이터 : ", response.data.data.branchId);
+        const idValue = response.data.data.branchId
+        const stringBranchId = idValue.toString();
+        setCurrentBranchId(stringBranchId)
+        console.log("id data check : ", currentBranchId);
+      })
+      .catch((error)=>{
+        console.log("log history 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [currentBranchId]);
+
+
 
   const createLog = async() => {
     if(fileobjects.length === 0 && msg === ''){
@@ -49,7 +104,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
         formData.append("files", el);
       });
         formData.append("userId", '1');
-        formData.append("branchId", '1');
+        formData.append("branchId", currentBranchId);
         formData.append("message", msg);
         if(imgFile !== null) {
           formData.append("preview", imgFile);

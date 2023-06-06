@@ -58,7 +58,7 @@ export default function Header(props: { children: React.ReactNode }) {
         {children}
       </Box>
       <Tabs value={value} onChange={handleChange} aria-label="nav tabs example">
-      <Tab value="upload" label= {<Box onClick={Uploadnavigate} display={"flex"} justifyContent={"center"} alignItems={"center"}><UploadIcon sx={{mr:"5px", fontSize:"20px"}}/><Typography sx={{mr:"5px", fontSize:"15px"}}>upload</Typography></Box>} />
+        <Tab value="upload" label= {<Box onClick={Uploadnavigate} display={"flex"} justifyContent={"center"} alignItems={"center"}><UploadIcon sx={{mr:"5px", fontSize:"20px"}}/><Typography sx={{mr:"5px", fontSize:"15px"}}>upload</Typography></Box>} />
         <Tab value="merge" label= {<Box onClick={mergenavigate} display={"flex"} justifyContent={"center"} alignItems={"center"}><MergeIcon sx={{mr:"5px", fontSize:"20px"}}/><Typography sx={{mr:"5px", fontSize:"15px"}}>merge</Typography></Box>} />
         <Tab value="log history" label= {<Box onClick={Lognavigate} display={"flex"} justifyContent={"center"} alignItems={"center"}><HistoryIcon sx={{mr:"5px", fontSize:"20px"}}/><Typography sx={{mr:"5px", fontSize:"15px"}}>log history</Typography></Box>} />
         <Tab value="setting" label= {<Box display={"flex"} justifyContent={"center"} alignItems={"center"}><SettingsIcon sx={{mr:"5px", fontSize:"20px"}}/><Typography sx={{mr:"5px", fontSize:"15px"}}>setting</Typography></Box>} />
