@@ -87,7 +87,7 @@ export default function FileDownloadBox({currentLog} : logProps) {
         {resourcefiles.map((resources: any) => {
           return(
           <FileBox text={resources.fileName}>
-          <DownloadButton />
+          <DownloadButton fileLink={resources.fileLink}/>
           </FileBox>);
         })}
         </Box>

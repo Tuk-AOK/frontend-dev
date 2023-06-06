@@ -147,7 +147,7 @@ export default function Project() {
                   justifyContent: "flex-end",
                 }}
               >
-                <DownloadButton />
+                <DownloadButton fileLink={''}/>
               </Box>
             </Box>
             <ImageBox image="test.jpeg"/>
