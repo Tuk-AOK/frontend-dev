@@ -177,7 +177,7 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
     <Box width="100%" maxWidth="500px" minWidth="300px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Box width="56px"></Box>
-        <Box>upload files</Box>
+        <Box>uploaded files</Box>
         <Box display="flex">
         
           <RefreshButton />
@@ -210,7 +210,7 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
             mergeObjects.map((resources: any, index) => {
               if(resources.duplicated === true){
                 return(
-                  <FileMergeSelectBox text={resources.fileName} backgroundColor="#FFFFD2">
+                  <FileMergeSelectBox text={resources.fileName} backgroundColor="#FFFFD2" fileLink={resources.fileLink}>
                     <Box onClick={() => handleFilterFile(index)}>
                       <DeleteButton/>
                     </Box>
@@ -221,7 +221,7 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
               else if(resources.duplicated === false 
                 && resources.new === true){
                   return(
-                    <FileMergeSelectBox text={resources.fileName} backgroundColor="#BEFBFF">
+                    <FileMergeSelectBox text={resources.fileName} backgroundColor="#BEFBFF" fileLink={''}>
                       <Box onClick={() => handleFilterFile(index)}>
                         <DeleteButton/>
                       </Box>
