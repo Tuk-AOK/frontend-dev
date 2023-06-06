@@ -4,6 +4,7 @@ import ProjectPage from "./pages/projectPage";
 import UploadPage from "./pages/uploadPage";
 import LogHistoryPage from "./pages/logHistoryPage";
 import LoginPage from "./pages/loginPage";
+import MergePage from "./pages/mergePage";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -16,6 +17,7 @@ function App() {
       <Route path="/project" element={<ProjectPage/>} />
       <Route path="/upload" element={<UploadPage/>} />
       <Route path="/loghistory" element={<LogHistoryPage/>} />
+      <Route path="/merge" element={<MergePage/>} />
     </Routes> 
   </BrowserRouter>
   
