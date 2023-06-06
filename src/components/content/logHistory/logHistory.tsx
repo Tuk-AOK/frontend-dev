@@ -60,6 +60,16 @@ export default function LogHistory() {
     
   }, [uuid]);
 
+  useEffect(() => {
+    if (logDatas.length > 0) {
+      setCurrentLog(logDatas[0].logUuid);
+    }
+  }, [logDatas]);
+
+
+  // 가장 최근 데이터 추출
+  const latestLogData = logDatas.length > 0 ? logDatas[0] : null;
+
   return (
     <Box>
       <Box sx={{ px: 5, pt: 3, alignItems: "center" }}>
@@ -80,6 +90,7 @@ export default function LogHistory() {
 
         <LogHistorySlider
           logData={logDatas}
+          latestLogData={latestLogData}
           onCurrentLogsChange={handleCurrentLogchange}
         />
 

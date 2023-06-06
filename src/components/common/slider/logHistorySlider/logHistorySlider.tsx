@@ -64,8 +64,9 @@ interface currentLogProps {
   onCurrentLogsChange: (currentLogUuid : currentData) => void; 
 }
 
-export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
+export default function LogHistorySlider({ logData,latestLogData, onCurrentLogsChange }: {
   logData: Array<LogData>,
+  latestLogData: LogData | null;
   onCurrentLogsChange: (currentLogUuid: currentData) => void
 }) {
   // const { logData, onCurrentLogsChange } = props;
@@ -79,7 +80,47 @@ export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
     return state.branch.uuid
   })
 
+
   console.log("현재 uuid 뭐임: ", currentUuid);
+  
+  useEffect(() => {
+    if (latestLogData) {
+      setCurrentUuid(latestLogData.logUuid); // 가장 최근 데이터의 logUuid 설정
+
+      // 로그 정보 요청
+      (async () => {
+        try {
+          const response = await axios.get<currentLogResponse>(
+            `/api/v1/logs/${latestLogData.logUuid}`
+          );
+
+          console.log("현재 위치한 로그 정보 불러오기 성공");
+          console.log("현위치 로그 데이터 : ", response.data.data);
+
+          // 로그 생성 시간
+          console.log("로그 생성시간 ", response.data.data.data.logCreatedAt);
+          setCreateTime(response.data.data.data.logCreatedAt);
+
+          // 로그 정보의 유저 uuid
+          console.log(response.data.data.data.userUuid);
+          axios
+            .get<userResponse>(`/api/v1/users/${response.data.data.data.userUuid}`)
+            .then((response) => {
+              console.log("닉네임 : ", response.data.data.nickname);
+              setNickname(response.data.data.nickname);
+            });
+
+          // 로그 메시지
+          console.log("로그 메시지 ", response.data.data.data.logMessage);
+          setLogMessage(response.data.data.data.logMessage);
+        } catch (error) {
+          console.log("현위치 로그 정보 불러오기 실패");
+          console.log(error);
+        }
+      })();
+    }
+  }, [latestLogData]);
+
   useEffect(() => {
     (async () => {
       await axios.get('/api/v1/logs/'+ currentUuid)
@@ -112,7 +153,6 @@ export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
     
   }, [currentUuid]);
 
-
   return (
     <Box>
     <UploadInfoBox
@@ -123,15 +163,16 @@ export default function LogHistorySlider({ logData, onCurrentLogsChange }: {
     {logData.length > 0 && (
       <Slider
       aria-label="log"
-      defaultValue={currentTime}
+      defaultValue={logData.length - 1}
       getAriaValueText={valuetext}
       onChange={(e,v)=>{
-        setCurrentTime(v as number)
-        setCurrentUuid(logData[currentTime].logUuid)
-        onCurrentLogsChange({currentUuid})
-        console.log("체크 : ", currentUuid)
+        const reversedIndex = logData.length - 1 - (v as number);
+        setCurrentTime(reversedIndex);
+        console.log("체크 : ", logData[reversedIndex].logUuid);
+        setCurrentUuid(logData[reversedIndex].logUuid);
+        onCurrentLogsChange({ currentUuid: logData[reversedIndex].logUuid });
       }}
-      valueLabelFormat={logData[currentTime].logCreatedAt}
+      valueLabelFormat={logData[currentTime]?.logCreatedAt}
       marks
       min={0}
       max={logData.length - 1}
