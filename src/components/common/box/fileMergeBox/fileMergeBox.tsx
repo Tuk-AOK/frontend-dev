@@ -71,6 +71,8 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
   const fileId = useRef<number>(0)
   const [mergeObjects, setMergeObjects] = useState<resourcesData[]>([]);
+  // const [fetchedFiles, setFetchedFiles] = useState<File[]>([]);
+  const fetchedFiles = useRef<File[]>([]);
 
   let uuid = useSelector((state:RootState) => {
     return state.branch.uuid
@@ -85,44 +87,6 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
 
   //파일 오브젝트 추출
   const files: File[] = fileList.imageFiles.map((file) => file.object)
-
-  const onChangeFiles = useCallback(
-    (e: ChangeEvent<HTMLInputElement> | any): void => {
-      let selectFiles: File[] = [];
-      let tempFiles: IFileTypes[] = fileobjects;
-      //temp 변수를 통해 선택한 파일을 담음
-      if (e.type === "drop") {
-        //드래그 앤 드롭 했을 때
-        selectFiles = e.dataTransfer.files;
-      } else {
-        //파일 첨부 버튼을 눌러 이미지를 선택했을 때 
-        selectFiles = e.target.files;
-      }
-
-      for (const file of selectFiles) {
-        //스프레드 연산자를 통해 기존에 있던 파일들을 복사, 선택한 파일 append
-
-        if (!/\.(png)$/i.test(file.name)){
-          return alert('png 파일만 첨부할 수 있습니다.')
-        }
-        
-        tempFiles = [
-          ...tempFiles,
-          {
-            id: fileId.current++, //fileId의 값을 1씩 늘려주며 각 파일의 고유값으로 사용
-            object: file, //object 안에 선택했던 파일들의 정보 담김
-            URL: URL.createObjectURL(file), 
-            name: file.name
-          }
-        ];
-
-      }
-
-      setFileObjects(tempFiles);
-      onFilesChange(tempFiles);
-    },
-    [fileobjects, onFilesChange]
-  );
 
   
   //handleFilterFile => id 일치 여부를 확인해 필터링
@@ -153,7 +117,39 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   
   const handleSubmit = (event: any) => {
     event.preventDefault();
-  };
+  };  
+
+  // 파일 오브젝트를 저장할 배열 선언
+  const fileObjects: FileObjectType[] = [];
+
+  // mergeObjects에서 fileLink를 추출하여 파일 데이터 가져오기
+  useEffect(() => {
+    mergeObjects.forEach((resources: any) => {
+      if (resources.duplicated === true || (resources.duplicated === false && resources.new === true)) {
+        fetch(resources.fileLink)
+          .then((response) => response.blob())
+          .then((blobData) => {
+            const file = new File([blobData], resources.fileName, { type: "image/png" });
+            // 파일 오브젝트를 배열에 추가
+            fileObjects.push({
+              id: resources.id,
+              object: file,
+              URL: URL.createObjectURL(file),
+              name: resources.fileName,
+            });
+            onFilesChange(fileObjects);
+          })
+          .catch((error) => {
+            // 오류 처리
+            console.log(error);
+          });
+      }
+    });
+  }, [mergeObjects])
+
+  // 파일 오브젝트 배열 출력
+  console.log("파일오브젝트 배열: ", fileObjects);
+  
 
   useEffect(() => {
     (async () => {
@@ -171,6 +167,11 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
     })();
     
   }, [uuid]);
+
+  
+  // fetchedFiles 배열에 저장된 파일 데이터 사용 가능
+  console.log("fetch된 파일 데이터:", fetchedFiles);
+
 
 
   return (
@@ -209,6 +210,19 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
           {mergeObjects.length > 0 &&
             mergeObjects.map((resources: any, index) => {
               if(resources.duplicated === true){
+                fetch(resources.fileLink)
+                  .then(response => response.blob())
+                  .then(blobData => {
+                    const file = new File([blobData], resources.fileName, { type: "image/png" });
+                    // 변환된 File 객체를 활용하는 작업을 수행합니다.
+                    console.log(file);
+                    // 여기서부터는 file을 활용하여 원하는 작업을 수행할 수 있습니다.
+                  })
+                  .catch(error => {
+                    // 오류 처리
+                    console.log(error);
+                  });
+
                 return(
                   <FileMergeSelectBox text={resources.fileName} backgroundColor="#FFFFD2" fileLink={resources.fileLink}>
                     <Box onClick={() => handleFilterFile(index)}>
@@ -220,6 +234,19 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
 
               else if(resources.duplicated === false 
                 && resources.new === true){
+                  fetch(resources.fileLink)
+                  .then(response => response.blob())
+                  .then(blobData => {
+                    const file = new File([blobData], resources.fileName, { type: "image/png" });
+                    // 변환된 File 객체를 활용하는 작업을 수행합니다.
+                    console.log(file);
+                    // 여기서부터는 file을 활용하여 원하는 작업을 수행할 수 있습니다.
+                  })
+                  .catch(error => {
+                    // 오류 처리
+                    console.log(error);
+                  });
+
                   return(
                     <FileMergeSelectBox text={resources.fileName} backgroundColor="#BEFBFF" fileLink={''}>
                       <Box onClick={() => handleFilterFile(index)}>
@@ -228,15 +255,31 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
                     </FileMergeSelectBox>
                   );
               }
-              return(
-                <Box >
-                  <FileBox text={resources.fileName}>
-                  <Box onClick={() => handleFilterFile(index)}>
-                    <DeleteButton/>
+
+              else{
+                fetch(resources.fileLink)
+                  .then(response => response.blob())
+                  .then(blobData => {
+                    const file = new File([blobData], resources.fileName, { type: "image/png" });
+                    // 변환된 File 객체를 활용하는 작업을 수행합니다.
+                    console.log(file);
+                    // 여기서부터는 file을 활용하여 원하는 작업을 수행할 수 있습니다.
+                  })
+                  .catch(error => {
+                    // 오류 처리
+                    console.log(error);
+                  });
+
+                return(
+                  <Box >
+                    <FileBox text={resources.fileName}>
+                    <Box onClick={() => handleFilterFile(index)}>
+                      <DeleteButton/>
+                    </Box>
+                    </FileBox>
                   </Box>
-                  </FileBox>
-                </Box>
-              );
+                );
+              }
             })
           }
           

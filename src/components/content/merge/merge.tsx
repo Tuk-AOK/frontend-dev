@@ -22,8 +22,21 @@ interface branchData {
   branchName: string; 
 }
 
+interface FileObjectType {
+  id: number;
+  object: File;
+  URL: string;
+  name: string;
+}
+
 export default function Merge() {
-  
+  const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
+
+  const handleFilesChange = (files: FileObjectType[]) => {
+    console.log("merge로 온 파일은 여기! : ", files)
+    setFileObjects(files)
+  }
+
   let uuid = useSelector((state:RootState) => {
     return state.branch.uuid
   })
@@ -74,8 +87,8 @@ export default function Merge() {
           gap={"16px"}
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={[]} onPreviewChange={()=>{}} onImgFileChange={()=>{}}/>
-          <FileMergeBox onFilesChange={()=>{}}/>
+          <PreviewBox fileobjects={fileobjects} onPreviewChange={()=>{}} onImgFileChange={()=>{}}/>
+          <FileMergeBox onFilesChange={handleFilesChange}/>
         </Box>
         <Box>
           {/* <TextBox fileobjects={[]} url={''} imgFile={}/> */}
