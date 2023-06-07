@@ -70,7 +70,7 @@ export default function Example() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const mainNavigate = () => navigate("/")
+  const mainNavigate = () => navigate("/main")
   const createTestData = () => {
     axios.post('/api/v1/users',{
       email: 'test03@naver.com',
@@ -165,7 +165,7 @@ export default function Example() {
                     borderRadius: 85,
                     bgcolor: "#000000",
                   }}
-                  onClick={createTestData}
+                  // onClick={createTestData}
                 ></Box>
                 <Box
                   sx={{

@@ -12,8 +12,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { setUuid } from "../../../hooks/userSlice";
+
 
 function Copyright(props: any) {
+  
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright ©Crepe '}
@@ -30,6 +36,10 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const mainNavigate = () => navigate("/main")
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -38,6 +48,30 @@ export default function SignIn() {
       password: data.get('password'),
     });
   };
+
+  const createTestData = () => {
+    axios.post('/api/v1/users',{
+      email: 'test03@naver.com',
+      password: '1111',
+      photo: '1111',
+      nickname: 'testname1'
+    })
+    .then((response) => {
+      console.log("유저 생성 완료");
+      console.log(response);
+
+      //uuid useState에 uuid값 저장
+      const uuidData = response.data.data.userUuid
+      console.log("발급된 uuid : ", uuidData)
+      const disp = dispatch(setUuid(uuidData))
+      console.log("안녕",disp)
+      mainNavigate();
+    })
+    .catch((error) => {
+      console.log("유저 데이터 생성 실패");
+      console.log(error);
+    })
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -89,6 +123,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={createTestData}
             >
               Sign In
             </Button>
