@@ -48,29 +48,82 @@ export default function SignIn() {
       password: data.get('password'),
     });
   };
+  
+  
+  //const imagepath = "public\test.jpeg"
+  // fetch(imagepath)
+  // .then(response => response.blob())
+  // .then(blobData => {
+  //   const profileImageFile = new File([blobData], "test.jpeg", { type: "image/jpeg" });
+  //   // 변환된 File 객체를 활용하는 작업을 수행합니다.
+  //   console.log("fetch된 프로필 이미지 : ", profileImageFile);
+  // })
+  // .catch(error => {
+  //   // 오류 처리
+  //   console.log(error);
+  // });
+
 
   const createTestData = () => {
-    axios.post('/api/v1/users',{
-      email: 'test03@naver.com',
-      password: '1111',
-      photo: '1111',
-      nickname: 'testname1'
-    })
-    .then((response) => {
-      console.log("유저 생성 완료");
-      console.log(response);
+    const formData = new FormData();
+    const imagepath = "public\test.jpeg"
 
-      //uuid useState에 uuid값 저장
-      const uuidData = response.data.data.userUuid
-      console.log("발급된 uuid : ", uuidData)
-      const disp = dispatch(setUuid(uuidData))
-      console.log("안녕",disp)
-      mainNavigate();
+    fetch(imagepath)
+    .then(response => response.blob())
+    .then(blobData => {
+      const profileImageFile = new File([blobData], "test.jpeg", { type: "image/jpeg" });
+      // 변환된 File 객체를 활용하는 작업을 수행합니다.
+      console.log("fetch된 프로필 이미지 : ", profileImageFile);
+      
+      formData.append("userEmail", "test01@naver.com");
+      formData.append("userPassword", "1111"); 
+      formData.append("userNickname", "TestName");
+      formData.append("userPhoto", profileImageFile);
+      // FormData의 key 확인
+      // @ts-ignore
+      for (const key of formData.keys()) {
+        console.log("키값: ", key);
+      }
+      // FormData의 value 확인
+      // @ts-ignore
+      for (const value of formData.values()) {
+        console.log("밸류값: ", value);
+      }
+      console.log(formData);
+
+      axios.post('/api/v1/users',{
+        data: formData,
+      }, {
+        headers: {
+          "Content-Type" : "multipart/form-data",
+        },
+        transformRequest: [
+          function () {
+            return formData;
+          }
+        ],
+      })
+      .then((response) => {
+        console.log("유저 생성 완료");
+        console.log(response);
+
+        //uuid useState에 uuid값 저장
+        const uuidData = response.data.data.userUuid
+        console.log("발급된 uuid : ", uuidData)
+        const disp = dispatch(setUuid(uuidData))
+        console.log("안녕",disp)
+        mainNavigate();
+      })
+      .catch((error) => {
+        console.log("유저 데이터 생성 실패");
+        console.log(error);
+      })
     })
-    .catch((error) => {
-      console.log("유저 데이터 생성 실패");
+    .catch(error => {
+      // 오류 처리
       console.log(error);
-    })
+    });
+    
   }
 
   return (

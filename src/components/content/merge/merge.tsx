@@ -29,12 +29,28 @@ interface FileObjectType {
   name: string;
 }
 
+interface PreviewType{
+  url: string;
+}
+
 export default function Merge() {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
+  const [previewImage, setPreviewImage] = useState('');
+  const [imgFile, setImgFile] = useState<File | null>(null);
 
   const handleFilesChange = (files: FileObjectType[]) => {
     console.log("merge로 온 파일은 여기! : ", files)
     setFileObjects(files)
+  }
+
+  const handlePreviewChange = (previewImg: PreviewType) => {
+    console.log("merge url 여기! : ",previewImg.url);
+    setPreviewImage(previewImg.url);
+  };
+
+  const handleImgFileChange = (file: File | null) => {
+    setImgFile(file);
+    console.log("merge 이미지 파일 여기! : ", imgFile);
   }
 
   let uuid = useSelector((state:RootState) => {
@@ -87,11 +103,11 @@ export default function Merge() {
           gap={"16px"}
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={fileobjects} onPreviewChange={()=>{}} onImgFileChange={()=>{}}/>
+          <PreviewBox fileobjects={fileobjects} onPreviewChange={handlePreviewChange} onImgFileChange={handleImgFileChange}/>
           <FileMergeBox onFilesChange={handleFilesChange}/>
         </Box>
         <Box>
-          {/* <TextBox fileobjects={[]} url={''} imgFile={}/> */}
+          <TextBox fileobjects={fileobjects} url={previewImage} imgFile={imgFile}/>
         </Box>
       </Box>
     </Box>

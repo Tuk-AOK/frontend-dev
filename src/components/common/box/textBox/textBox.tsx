@@ -94,7 +94,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
       alert('이미지 파일을 업로드 해주세요.')
     }
     else if(msg === ''){
-      alert('업로드 메시지를 적어주세요.')
+      alert('메시지를 적어주세요.')
     } else {
       const formData = new FormData();
       const files: File[] = fileobjects.map((file) => file.object)
@@ -103,8 +103,15 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
       Array.from(files).forEach((el) => {
         formData.append("files", el);
       });
+        let branchId;
+        if(window.location.pathname === '/merge'){
+          branchId = '1';
+        } else {
+          branchId = currentBranchId; 
+        }
         formData.append("userId", '1');
-        formData.append("branchId", currentBranchId);
+        formData.append("branchId", branchId);
+        console.log("그렇다면 지금 브랜치 id는? : ", branchId);
         formData.append("message", msg);
         if(imgFile !== null) {
           formData.append("preview", imgFile);

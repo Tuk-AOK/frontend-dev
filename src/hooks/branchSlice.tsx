@@ -14,7 +14,7 @@ const BranchSlice = createSlice({
   reducers: {
     setBranchUuid: (state, action:PayloadAction<string>) => {
       state.uuid = action.payload; 
-    },
+    }
   }
 });
 
