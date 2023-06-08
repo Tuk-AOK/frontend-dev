@@ -32,12 +32,12 @@ interface logInfo{
   userUuid: string;
   logMessage: string;
   logCreatedAt: string;
+  logPreview: string;
   resourceInfos: resourcesData[];
-  feedbackInfos: feedbackData[];
 }
 
 interface resourcesData{
-  resources: resource[];
+  resources: resource[]
 }
 
 interface resource{
@@ -64,10 +64,11 @@ interface userResponse{
 }
 
 interface userInfo{
+  userEmail: string;
+  userNickname: string;
+  userPhoto: string;
   userUuid: string;
-  email: string;
-  nickname: string;
-  photo: string;
+  userId: number;
 }
 
 export default function Project() {
@@ -89,8 +90,10 @@ export default function Project() {
             console.log("최근 로그 정보 불러오기 성공");
             console.log(response.data);
 
-            //이미지는 후에 캡쳐 이미지 API 생기면 그때 구현
-
+            //로그 이미지 API
+            console.log("로그 프리뷰 이미지, ", response.data.data.logPreview)
+            setlogPreviewImg(response.data.data.logPreview);
+            
             //로그 생성 시간
             console.log("로그 생성시간 ",response.data.data.logCreatedAt);
             setCreateTime(response.data.data.logCreatedAt);
@@ -99,8 +102,8 @@ export default function Project() {
             console.log(response.data.data.userUuid);
             axios.get<userResponse>('/api/v1/users/'+ response.data.data.userUuid)
             .then((response) => {
-              console.log("닉네임 : ", response.data.data.nickname);
-              setNickname(response.data.data.nickname);
+              console.log("닉네임 : ", response.data.data.userNickname);
+              setNickname(response.data.data.userNickname);
             })
 
             //로그 메시지
@@ -117,7 +120,7 @@ export default function Project() {
   }, [recentLog]);
 
   const [message, setLogMessage] = useState('');
-  const [resourcefiles, setResourceFiles] = useState<resourcesData[]>([]);
+  const [logPreviewImg, setlogPreviewImg] = useState(''); 
   const [createTime, setCreateTime] = useState('');
   const [nickname, setNickname] = useState('');
 
@@ -150,7 +153,7 @@ export default function Project() {
                 <DownloadButton fileLink={''}/>
               </Box>
             </Box>
-            <ImageBox image="test.jpeg"/>
+            <ImageBox image={logPreviewImg}/>
             <UploadInfoBox
               message={message}
               user={nickname}

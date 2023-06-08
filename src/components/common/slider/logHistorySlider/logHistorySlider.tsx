@@ -50,10 +50,11 @@ interface userResponse{
 }
 
 interface userInfo{
+  userEmail: string;
+  userNickname: string;
+  userPhoto: string;
   userUuid: string;
-  email: string;
-  nickname: string;
-  photo: string;
+  userId: number;
 }
 
 interface currentData {
@@ -106,8 +107,8 @@ export default function LogHistorySlider({ logData,latestLogData, onCurrentLogsC
           axios
             .get<userResponse>(`/api/v1/users/${response.data.data.data.userUuid}`)
             .then((response) => {
-              console.log("닉네임 : ", response.data.data.nickname);
-              setNickname(response.data.data.nickname);
+              console.log("닉네임 : ", response.data.data.userNickname);
+              setNickname(response.data.data.userNickname);
             });
 
           // 로그 메시지
@@ -136,8 +137,8 @@ export default function LogHistorySlider({ logData,latestLogData, onCurrentLogsC
         console.log(response.data.data.userUuid);
         axios.get<userResponse>('/api/v1/users/'+ response.data.data.userUuid)
         .then((response) => {
-          console.log("닉네임 : ", response.data.data.nickname);
-          setNickname(response.data.data.nickname);
+          console.log("닉네임 : ", response.data.data.userNickname);
+          setNickname(response.data.data.userNickname);
         })
 
         //로그 메시지

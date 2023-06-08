@@ -3,6 +3,9 @@ import React from "react";
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckIcon from '@mui/icons-material/Check';
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/store";
+
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -18,12 +21,39 @@ const style = {
 };
 
 
+interface duplicateResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: string;
+}
+
 export default function FileMergeSelectBox(props: { children: React.ReactNode, text: string, backgroundColor: string, fileLink: string }) {
   const { children, text, backgroundColor, fileLink } = props;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [duplicateData, setDuplicateData] = React.useState(''); 
 
+  let projectUuid = useSelector((state: RootState) => {
+    return state.project.uuid; 
+  })
+
+  React.useEffect(() => {
+    (async () => {
+      await axios.get<duplicateResponse>('/api/v1/projects/'+ projectUuid +'/main/resources/' + text)
+      .then((response)=> {
+        console.log("log history 불러오기 성공");
+        console.log("log history 데이터 : ", response.data.data);
+        setDuplicateData(response.data.data)
+      })
+      .catch((error)=>{
+        console.log("log history 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [projectUuid]);
 
   console.log("파일 링크 왔냐?", fileLink);
   return (
@@ -85,7 +115,7 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
                           <Typography sx={{marginBottom: 1}} id="modal-modal-title" variant="h6" component="h2">
                             main
                           </Typography>
-                          <img style={{maxWidth: '300px', maxHeight: '300px', border: '1px solid #F0F0F0'}} src={fileLink} alt="Image"/>
+                          <img style={{maxWidth: '300px', maxHeight: '300px', border: '1px solid #F0F0F0'}} src={duplicateData} alt="Image"/>
                         </Box>
                       }
                       labelPlacement="top"

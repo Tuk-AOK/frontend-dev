@@ -103,7 +103,7 @@ export default function Merge() {
           gap={"16px"}
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={fileobjects} onPreviewChange={handlePreviewChange} onImgFileChange={handleImgFileChange}/>
+          <PreviewBox fileobjects={fileobjects} currentLogObjects="" onPreviewChange={handlePreviewChange} onImgFileChange={handleImgFileChange}/>
           <FileMergeBox onFilesChange={handleFilesChange}/>
         </Box>
         <Box>

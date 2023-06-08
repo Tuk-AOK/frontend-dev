@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useState ,useEffect } from "react";
 import html2canvas from 'html2canvas';
+import axios from "axios";
 
 interface FileListProps {
   fileobjects: FileObjectType[];
@@ -13,24 +14,72 @@ interface FileObjectType {
   name: string;
 }
 
+interface logResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: logInfo; 
+}
+
+interface logInfo{
+  userUuid: string;
+  logMessage: string;
+  logCreatedAt: string;
+  logPreview: string;
+  resourceInfos: resourcesData[];
+}
+
+interface resourcesData{
+  resources: resource[]
+}
+
+interface resource{
+  fileName: string;
+  fileLink: string;
+  fileUuid: string; 
+}
+
 interface PreviewType{
   url: string;
 }
 
 interface previewProps{
   fileobjects: FileObjectType[];
+  currentLogObjects: string; 
   onPreviewChange: (previewImg: PreviewType) => void;
   onImgFileChange: (file: File | null) => void; 
 }
 
-export default function PreviewBox({ fileobjects, onPreviewChange, onImgFileChange } : FileListProps & previewProps) {
+export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewChange, onImgFileChange } : FileListProps & previewProps) {
   console.log("프리뷰 파일 오브젝트 왔워", fileobjects);
-  
+  console.log("프리뷰 미리보기 링크 왔워", currentLogObjects);
   var reversed_index;
+
+  const [logPreviewImg, setlogPreviewImg] = useState(''); 
 
   useEffect(() => {
     capturePreviewImg();
   }, [fileobjects]);
+
+  useEffect(() => {
+    axios.get<logResponse>('/api/v1/logs/'+ currentLogObjects)
+          .then((response) => {
+            console.log("최근 로그 정보 불러오기 성공");
+            console.log(response.data);
+
+            //로그 이미지 API
+            console.log("history 로그 프리뷰 이미지, ", response.data.data.logPreview)
+            setlogPreviewImg(response.data.data.logPreview);
+
+
+          })
+          .catch((error)=>{
+            console.log(" 최근 로그  불러오기 실패");
+            console.log(error);
+          })
+  }, [currentLogObjects])
+        
+
 
   const capturePreviewImg = async() => {
     const canvas = document.getElementById("capturePreview") as HTMLCanvasElement;
@@ -96,7 +145,9 @@ export default function PreviewBox({ fileobjects, onPreviewChange, onImgFileChan
             position: "relative"
           }}
         >
-          
+          <div>
+            <img src={logPreviewImg} style={{maxWidth: "300px", maxHeight: "300px"}}/>
+          </div>
           {fileobjects.length > 0 && fileobjects.map((file: FileObjectType, index: number) => {
             const { URL } = file;
             reversed_index = fileobjects.length - 1 - index;

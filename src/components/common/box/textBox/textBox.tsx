@@ -38,10 +38,11 @@ interface userResponse{
 }
 
 interface userData {
+  userEmail: string;
+  userNickname: string;
+  userPhoto: string;
   userUuid: string;
-  email: string;
-  nickname: string;
-  photo: string;
+  userId: number;
 }
 
 interface TextBoxProps {
@@ -84,9 +85,27 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
     
   }, [currentBranchId]);
 
+  useEffect(() => {
+    (async () => {
+      axios.get<userResponse>('/api/v1/users/'+ userUuid)
+      .then((response)=> {
+        console.log("현재 유저 데이터 : ", response.data.data.userId);
+        const idValue = response.data.data.userId
+        const stringUserId = idValue.toString();
+        setCurrentUserId(stringUserId)
+        console.log("userId data check : ", currentUserId);
+      })
+      .catch((error)=>{
+        console.log("유저 데이터 불러오기 실패");
+        console.log(error);
+      })
+    })();
+    
+  }, [currentUserId]);
 
 
   const createLog = async() => {
+    
     if(fileobjects.length === 0 && msg === ''){
 
     }
@@ -103,13 +122,14 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
       Array.from(files).forEach((el) => {
         formData.append("files", el);
       });
-        let branchId;
+        let branchId, userId;
+        
         if(window.location.pathname === '/merge'){
           branchId = '1';
         } else {
           branchId = currentBranchId; 
         }
-        formData.append("userId", '1');
+        formData.append("userId", currentUserId);
         formData.append("branchId", branchId);
         console.log("그렇다면 지금 브랜치 id는? : ", branchId);
         formData.append("message", msg);
