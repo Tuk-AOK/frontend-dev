@@ -109,6 +109,10 @@ export default function Example() {
     return state.user.userUuid
   })
 
+  let projUuid = useSelector((state:RootState) => {
+    return state.project.uuid
+  })
+
   console.log("uuid check : ", uuid)
 
   useEffect(()=>{
@@ -238,7 +242,8 @@ export default function Example() {
             {projects.map(project => {
               const clickEvent = () => {
                 dispatch(setProjectUuid(project.projectUuid));
-                navigate('/Project')
+                console.log("현재 저장된 프로젝트 UUID : ", projUuid);
+                window.location.replace("/project")
                 console.log("이동할 프로젝트 이름 : ", project.projectName);
               }
               return(
@@ -247,9 +252,9 @@ export default function Example() {
             })}
 
             <Box>
-            <MenuItem icon={<AddCircleOutlineIcon />}
-              onClick={() => handleModalOpen()}
-            >create new project</MenuItem>
+              <MenuItem icon={<AddCircleOutlineIcon />}
+                onClick={() => handleModalOpen()}
+              >create new project</MenuItem>
 
               <Modal
                 open={isModalOpen}

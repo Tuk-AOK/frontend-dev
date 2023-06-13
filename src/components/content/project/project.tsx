@@ -72,6 +72,7 @@ interface userInfo{
 }
 
 export default function Project() {
+  
   const [recentLog, setRecentLog] = useState('');
 
   let branchUuid = useSelector((state: RootState) => {
