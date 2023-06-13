@@ -66,7 +66,7 @@ export default function SignIn() {
 
   const createTestData = () => {
     const formData = new FormData();
-    const imagepath = "public\test.jpeg"
+    const imagepath = "/test.jpeg"
 
     fetch(imagepath)
     .then(response => response.blob())

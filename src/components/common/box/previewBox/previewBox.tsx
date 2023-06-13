@@ -102,8 +102,10 @@ export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewCh
 
       console.log(array);
 
-      const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/jpeg'});
-      const imgfile = new File([fileBlob], "logCaptureImg.jpeg");
+      const unitArray = new Uint8Array(array);
+      const fileBlob = new Blob([unitArray], {type: "image/jpeg"});
+      //const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/jpeg'});
+      const imgfile = new File([fileBlob], "logCaptureImg.jpeg", {type: "image/jpeg"});
 
       console.log(imgfile);
       onImgFileChange(imgfile);
