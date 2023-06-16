@@ -48,7 +48,7 @@ interface userData {
 interface TextBoxProps {
   fileobjects: FileObjectType[];
   url: string;
-  imgFile: File | null;
+  imgFile: Blob | null;
 }
 
 
@@ -134,7 +134,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
         console.log("그렇다면 지금 브랜치 id는? : ", branchId);
         formData.append("message", msg);
         if(imgFile !== null) {
-          formData.append("preview", imgFile);
+          formData.append("preview", imgFile, "previewimg.jpeg");
         }
 
       // FormData의 key 확인
@@ -164,7 +164,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
       }).then((response) => {
         console.log("로그 생성 성공")
         console.log(response.data.data)
-        window.location.replace("/project");
+        //window.location.replace("/project");
 
       }).catch((error) => {
         console.log("로그 생성 실패")

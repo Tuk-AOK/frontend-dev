@@ -47,7 +47,7 @@ interface previewProps{
   fileobjects: FileObjectType[];
   currentLogObjects: string; 
   onPreviewChange: (previewImg: PreviewType) => void;
-  onImgFileChange: (file: File | null) => void; 
+  onImgFileChange: (file: Blob | null) => void; 
 }
 
 export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewChange, onImgFileChange } : FileListProps & previewProps) {
@@ -90,25 +90,23 @@ export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewCh
 
     html2canvas(canvas).then(async(canvasdata: any) => {
       //url 출력되는 형식이 base64 형식
-      urlData = await canvasdata.toDataURL("image/jpeg", 0.8).split(",")[1];
+      urlData = await canvasdata.toDataURL("image/jpeg", 0.9).split(",")[1];
       wholeUrlData = await canvasdata.toDataURL("image/jpeg");
       url = URL.createObjectURL(await (await fetch(wholeUrlData)).blob());
       console.log("만들어진 URL (inside) : ", url)
 
       const array = [] as any;
-      for(var i = 0; i < urlData.length; i++ ){
+      for(var i = 0; i < urlData.length; i += 1 ){
         array.push(urlData.charCodeAt(i));
       }
 
-      console.log(array);
-
       const unitArray = new Uint8Array(array);
       const fileBlob = new Blob([unitArray], {type: "image/jpeg"});
-      //const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/jpeg'});
+      // const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/jpeg'});
       const imgfile = new File([fileBlob], "logCaptureImg.jpeg", {type: "image/jpeg"});
 
-      console.log(imgfile);
-      onImgFileChange(imgfile);
+      console.log(fileBlob);
+      onImgFileChange(fileBlob);
       onPreviewChange({url});
     })
     

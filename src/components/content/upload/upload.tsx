@@ -20,7 +20,7 @@ interface PreviewType{
 export function Upload() {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
   const [previewImage, setPreviewImage] = useState('');
-  const [imgFile, setImgFile] = useState<File | null>(null);
+  const [imgFile, setImgFile] = useState<Blob | null>(null);
 
   const handleFilesChange = (files: FileObjectType[]) => {
     //console.log("파일 여기있지렁", files)
@@ -32,7 +32,7 @@ export function Upload() {
     setPreviewImage(previewImg.url);
   };
 
-  const handleImgFileChange = (file: File | null) => {
+  const handleImgFileChange = (file: Blob | null) => {
     setImgFile(file);
     console.log("파일? : ", imgFile);
   }

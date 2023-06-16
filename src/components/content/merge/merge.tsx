@@ -36,7 +36,7 @@ interface PreviewType{
 export default function Merge() {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
   const [previewImage, setPreviewImage] = useState('');
-  const [imgFile, setImgFile] = useState<File | null>(null);
+  const [imgFile, setImgFile] = useState<Blob | null>(null);
 
   const handleFilesChange = (files: FileObjectType[]) => {
     console.log("merge로 온 파일은 여기! : ", files)
@@ -48,7 +48,7 @@ export default function Merge() {
     setPreviewImage(previewImg.url);
   };
 
-  const handleImgFileChange = (file: File | null) => {
+  const handleImgFileChange = (file: Blob | null) => {
     setImgFile(file);
     console.log("merge 이미지 파일 여기! : ", imgFile);
   }
