@@ -90,8 +90,10 @@ export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewCh
 
     html2canvas(canvas).then(async(canvasdata: any) => {
       //url 출력되는 형식이 base64 형식
-      urlData = await canvasdata.toDataURL("image/jpeg", 0.9).split(",")[1];
-      wholeUrlData = await canvasdata.toDataURL("image/jpeg");
+      // urlData = await canvasdata.toDataURL("image/jpeg", 0.95).split(",")[1];
+
+      urlData = await atob(canvasdata.toDataURL("image/png").split(",")[1]);
+      wholeUrlData = await canvasdata.toDataURL("image/png");
       url = URL.createObjectURL(await (await fetch(wholeUrlData)).blob());
       console.log("만들어진 URL (inside) : ", url)
 
@@ -101,7 +103,7 @@ export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewCh
       }
 
       const unitArray = new Uint8Array(array);
-      const fileBlob = new Blob([unitArray], {type: "image/jpeg"});
+      const fileBlob = new Blob([unitArray], {type: "image/png"});
       // const fileBlob = new Blob([new ArrayBuffer(array)], {type: 'image/jpeg'});
       const imgfile = new File([fileBlob], "logCaptureImg.jpeg", {type: "image/jpeg"});
 

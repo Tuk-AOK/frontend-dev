@@ -134,7 +134,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
         console.log("그렇다면 지금 브랜치 id는? : ", branchId);
         formData.append("message", msg);
         if(imgFile !== null) {
-          formData.append("preview", imgFile, "previewimg.jpeg");
+          formData.append("preview", imgFile, "previewimg.png");
         }
 
       // FormData의 key 확인
