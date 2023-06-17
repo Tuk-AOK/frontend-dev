@@ -43,19 +43,53 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
     (async () => {
       await axios.get<duplicateResponse>('/api/v1/projects/'+ projectUuid +'/main/resources/' + text)
       .then((response)=> {
-        console.log("log history 불러오기 성공");
-        console.log("log history 데이터 : ", response.data.data);
+        console.log("특정 메인 리소스 데이터 불러오기 성공");
+        console.log("특정 메인 리소스 데이터 : ", response.data.data);
         setDuplicateData(response.data.data)
+        
       })
       .catch((error)=>{
-        console.log("log history 불러오기 실패");
+        console.log("특정 메인 리소스 데이터 불러오기 실패");
         console.log(error);
       })
     })();
     
   }, [projectUuid]);
 
-  console.log("파일 링크 왔냐?", fileLink);
+  
+  console.log("파일 링크 왔냐?(merge)", fileLink);
+
+  const [selectedValue, setSelectedValue] = React.useState("main");
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedValue(event.target.value);
+  };
+
+  const handleConfirm = () => {
+    if (selectedValue === "main") {
+      // 'main'이 선택된 경우 처리할 이벤트
+      console.log("main이 선택되었습니다.");
+      fetch(duplicateData)
+      .then((response) => {
+        return response.blob()
+      }).then((blobData) => {
+
+        const mainfile = new File([blobData], text ,{ type: "image/png" });
+        console.log(mainfile);
+
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+
+    } else if (selectedValue === "branchimg") {
+      // 'branchimg'가 선택된 경우 처리할 이벤트
+      console.log("current branch가 선택되었습니다.");
+      
+    }
+    //handleClose(); // 모달 닫기
+  };
+
   return (
     <Box
       display="flex"
@@ -100,7 +134,8 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
                     row
                     aria-labelledby="demo-form-control-label-placement"
                     name="position"
-                    defaultValue="main"
+                    value={selectedValue}
+                    onChange={handleChange}
                   >
                     <FormControlLabel
                       value="main"
@@ -143,7 +178,7 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
                   </RadioGroup>
                 </FormControl>
               </Box>
-              <Button variant="outlined" startIcon={<CheckIcon />} onClick={handleClose}>
+              <Button variant="outlined" startIcon={<CheckIcon />} onClick={handleConfirm}>
                 confirm
               </Button>
               </Box>
