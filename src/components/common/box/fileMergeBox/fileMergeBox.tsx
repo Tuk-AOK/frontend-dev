@@ -56,6 +56,7 @@ interface FileObjectType {
 
 interface FileUploadBoxProps {
   onFilesChange: (files: FileObjectType[]) => void;
+  
 };
 
 
@@ -69,10 +70,18 @@ interface UploadButtonProps {
 
 export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
+  const [currentMainFile, setCurrentMainFile] = useState<File | null>();
   const fileId = useRef<number>(0)
   const [mergeObjects, setMergeObjects] = useState<resourcesData[]>([]);
-  // const [fetchedFiles, setFetchedFiles] = useState<File[]>([]);
   const fetchedFiles = useRef<File[]>([]);
+
+  const handleMainFileUpdate = (file: File | null) => {
+    // mainfile 상태 업데이트 처리
+    console.log("Main file(fileMergeBox.tsx): ", file);
+    setCurrentMainFile(file);
+    console.log(currentMainFile);
+  };
+
 
   let uuid = useSelector((state:RootState) => {
     return state.branch.uuid
@@ -102,15 +111,6 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
     [fileobjects, onFilesChange]
   );
   
-  const handleDeleteFile = useCallback(
-    (id: number): void => {
-      //setFiles(fileobjects.filter((file: IFileTypes) => file.id === id));
-      setFileObjects(fileobjects.filter((file) => file.id !== id));
-      onFilesChange(fileobjects.filter((file)=>file.id !== id));
-    },
-    [fileobjects, onFilesChange]
-  );
-
 
 
   console.log("업로드 파일 목록", fileobjects)
@@ -125,30 +125,38 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   // mergeObjects에서 fileLink를 추출하여 파일 데이터 가져오기
   useEffect(() => {
     mergeObjects.forEach((resources: any) => {
-      if (resources.duplicated === true || (resources.duplicated === false && resources.new === true)) {
+      if(currentMainFile && resources.fileName === currentMainFile.name){
+        fileObjects.push({
+          id: resources.id,
+          object: currentMainFile,
+          URL: URL.createObjectURL(currentMainFile),
+          name: resources.fileName,
+        });
+        onFilesChange(fileObjects);
+      } else {
         fetch(resources.fileLink)
-          .then((response) => response.blob())
-          .then((blobData) => {
-            const file = new File([blobData], resources.fileName, { type: "image/png" });
-            // 파일 오브젝트를 배열에 추가
-            fileObjects.push({
-              id: resources.id,
-              object: file,
-              URL: URL.createObjectURL(file),
-              name: resources.fileName,
-            });
-            onFilesChange(fileObjects);
-          })
-          .catch((error) => {
-            // 오류 처리
-            console.log(error);
+        .then((response) => response.blob())
+        .then((blobData) => {
+          const file = new File([blobData], resources.fileName, { type: "image/png" });
+          
+          
+          // 파일 오브젝트를 배열에 추가
+          fileObjects.push({
+            id: resources.id,
+            object: file,
+            URL: URL.createObjectURL(file),
+            name: resources.fileName,
           });
+          onFilesChange(fileObjects);
+        })
+        .catch((error) => {
+          // 오류 처리
+          console.log(error);
+        });
       }
     });
   }, [mergeObjects])
 
-  // 파일 오브젝트 배열 출력
-  console.log("파일오브젝트 배열: ", fileObjects);
   
 
   useEffect(() => {
@@ -210,45 +218,21 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
           {mergeObjects.length > 0 &&
             mergeObjects.map((resources: any, index) => {
               if(resources.duplicated === true){
-                fetch(resources.fileLink)
-                  .then(response => response.blob())
-                  .then(blobData => {
-                    const file = new File([blobData], resources.fileName, { type: "image/png" });
-                    // 변환된 File 객체를 활용하는 작업을 수행합니다.
-                    console.log(file);
-                    // 여기서부터는 file을 활용하여 원하는 작업을 수행할 수 있습니다.
-                  })
-                  .catch(error => {
-                    // 오류 처리
-                    console.log(error);
-                  });
-
                 return(
-                  <FileMergeSelectBox text={resources.fileName} backgroundColor="#FFFFD2" fileLink={resources.fileLink}>
+                  <FileMergeSelectBox text={resources.fileName} backgroundColor="#FFFFD2" fileLink={resources.fileLink} onMainFileUpdate={handleMainFileUpdate}>
                     <Box onClick={() => handleFilterFile(index)}>
                       <DeleteButton/>
                     </Box>
                   </FileMergeSelectBox>
                 );
+
+                
               }
 
               else if(resources.duplicated === false 
                 && resources.new === true){
-                  fetch(resources.fileLink)
-                  .then(response => response.blob())
-                  .then(blobData => {
-                    const file = new File([blobData], resources.fileName, { type: "image/png" });
-                    // 변환된 File 객체를 활용하는 작업을 수행합니다.
-                    console.log(file);
-                    // 여기서부터는 file을 활용하여 원하는 작업을 수행할 수 있습니다.
-                  })
-                  .catch(error => {
-                    // 오류 처리
-                    console.log(error);
-                  });
-
                   return(
-                    <FileMergeSelectBox text={resources.fileName} backgroundColor="#BEFBFF" fileLink={''}>
+                    <FileMergeSelectBox text={resources.fileName} backgroundColor="#BEFBFF" fileLink={''} onMainFileUpdate={()=>{}}>
                       <Box onClick={() => handleFilterFile(index)}>
                         <DeleteButton/>
                       </Box>
@@ -257,18 +241,6 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
               }
 
               else{
-                fetch(resources.fileLink)
-                  .then(response => response.blob())
-                  .then(blobData => {
-                    const file = new File([blobData], resources.fileName, { type: "image/png" });
-                    // 변환된 File 객체를 활용하는 작업을 수행합니다.
-                    console.log(file);
-                    // 여기서부터는 file을 활용하여 원하는 작업을 수행할 수 있습니다.
-                  })
-                  .catch(error => {
-                    // 오류 처리
-                    console.log(error);
-                  });
 
                 return(
                   <Box >

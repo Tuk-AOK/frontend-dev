@@ -28,12 +28,15 @@ interface duplicateResponse{
   data: string;
 }
 
-export default function FileMergeSelectBox(props: { children: React.ReactNode, text: string, backgroundColor: string, fileLink: string }) {
-  const { children, text, backgroundColor, fileLink } = props;
+export default function FileMergeSelectBox(props: { children: React.ReactNode, text: string, backgroundColor: string, fileLink: string, onMainFileUpdate: (file: File | null) => void}) {
+  const { children, text, backgroundColor, fileLink,  } = props;
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [duplicateData, setDuplicateData] = React.useState(''); 
+
+  const [mainfile, setMainFile] = React.useState<File | null>(null);
+
 
   let projectUuid = useSelector((state: RootState) => {
     return state.project.uuid; 
@@ -76,7 +79,8 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
 
         const mainfile = new File([blobData], text ,{ type: "image/png" });
         console.log(mainfile);
-
+        setMainFile(mainfile);
+        handleClose();
       })
       .catch((error) => {
         console.log(error);
@@ -85,10 +89,16 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
     } else if (selectedValue === "branchimg") {
       // 'branchimg'가 선택된 경우 처리할 이벤트
       console.log("current branch가 선택되었습니다.");
-      
+      setMainFile(null);
+      handleClose();
     }
-    //handleClose(); // 모달 닫기
   };
+
+
+  // mainfile 상태를 상위 컴포넌트로 전달
+  React.useEffect(() => {
+    props.onMainFileUpdate(mainfile);
+  }, [mainfile, props]);
 
   return (
     <Box
