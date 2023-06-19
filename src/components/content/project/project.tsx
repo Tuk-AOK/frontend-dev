@@ -8,6 +8,8 @@ import ImageBox from "../../common/box/imageBox/imageBox";
 import UploadInfoBox from "../../common/box/uploadInfoBox/uploadInfoBox";
 import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
+import { setMainBranchId } from "../../../hooks/branchSlice";
+import { setMainBranchUuid } from "../../../hooks/branchSlice";
 import { RootState } from "../../../stores/store";
 
 interface recentLogResponse{
@@ -71,14 +73,76 @@ interface userInfo{
   userId: number;
 }
 
+
+interface BranchResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: BranchesData;
+}
+
+
+interface BranchesData{
+  projectBranchInfos: Branch[]
+}
+
+interface Branch{
+  branchName: string;
+  branchUuid: string;
+  branchId: string; 
+}
+
 export default function Project() {
-  
+
   const [recentLog, setRecentLog] = useState('');
 
   let branchUuid = useSelector((state: RootState) => {
     return state.branch.uuid;
   });
 
+  let projectUuid = useSelector((state: RootState) => {
+    return state.project.uuid
+  })
+
+  let mainUuid = useSelector((state: RootState) => {
+    return state.branch.mainBranchUuid
+  })
+
+  let mainId = useSelector((state: RootState) => {
+    return state.branch.mainBranchId
+  })
+
+  const dispatch = useDispatch();
+
+  const [branchData, setBranchData] = useState<Branch[]>([]);
+  useEffect(() => {
+    (async () => {
+        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
+        .then((response)=> {
+            console.log("브랜치 정보 불러오기 성공");
+            console.log("가져온 데이터", response.data.data.projectBranchInfos);
+            setBranchData(response.data.data.projectBranchInfos);
+            
+            branchData.map((branches) => {
+              if(branches.branchName === 'main'){
+                dispatch(setMainBranchId(branches.branchId.toString()));
+                dispatch(setMainBranchUuid(branches.branchUuid));
+
+              }
+            })
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    })();
+  }, [projectUuid]);
+
+
+
+  console.log("mainbranchId: ", mainId);
+  console.log("mainbranchUuid : ", mainUuid);
+
+  
   useEffect(() => {
     (async () => {
         await axios.get<recentLogResponse>('/api/v1/branches/' + branchUuid + '/logs/recent')
@@ -114,7 +178,7 @@ export default function Project() {
           })
         })
         .catch((error)=>{
-          console.log(" 최근 로그 uuid 불러오기 실패");
+          console.log(" 최근 로그 uuid 불러오기 실패(project.tsx)");
           console.log(error);
         })
     })();
