@@ -63,6 +63,10 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
     return state.branch.uuid
   })
 
+  let mainId = useSelector((state:RootState) => {
+    return state.branch.mainBranchId
+  })
+
   let userUuid = useSelector((state: RootState) =>{
     return state.user.userUuid
   })
@@ -125,7 +129,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
         let branchId, userId;
         
         if(window.location.pathname === '/merge'){
-          branchId = '1';
+          branchId = mainId;
         } else {
           branchId = currentBranchId; 
         }

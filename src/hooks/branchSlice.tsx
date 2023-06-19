@@ -3,7 +3,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 interface BranchState {
   uuid: string;
   mainBranchUuid: string; 
-  mainBranchId: String;
+  mainBranchId: string;
 }
 
 const initialState: BranchState = {
