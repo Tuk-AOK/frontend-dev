@@ -57,9 +57,6 @@ export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewCh
 
   const [logPreviewImg, setlogPreviewImg] = useState(''); 
 
-  useEffect(() => {
-    capturePreviewImg();
-  }, [fileobjects]);
 
   useEffect(() => {
     axios.get<logResponse>('/api/v1/logs/'+ currentLogObjects)
@@ -111,6 +108,11 @@ export default function PreviewBox({ fileobjects, currentLogObjects, onPreviewCh
     
   }
 
+  useEffect(() => {
+    if (fileobjects.length > 0) {
+      capturePreviewImg();
+    }
+  }, [fileobjects]);
 
   return (
     <Box width="100%" maxWidth="500px" minWidth="300px">
