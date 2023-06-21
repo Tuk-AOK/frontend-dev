@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 import DeleteButton from "../../button/deleteButton/deleteButton";
 
-export default function FileBox(props: {children: React.ReactNode, text: string}) {
+export default function FileBox(props: {children: React.ReactNode, text: string,}) {
   const {children, text} = props;
 
   return (

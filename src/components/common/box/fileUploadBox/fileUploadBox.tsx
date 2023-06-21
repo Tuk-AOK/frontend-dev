@@ -219,7 +219,7 @@ export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
         <Box display="flex">
           
           <form style={{display: "flex", width: "30px", height: "30px"}} onSubmit={handleSubmit}>
-            <label style={{width: "30px", height: "30px", position:"relative", display:"inline-block", border:"1px solid black"}} htmlFor="fileUploadbtn" ref={selectFile}>
+            <label style={{width: "30px", height: "30px", position:"relative", display:"inline-block", }} htmlFor="fileUploadbtn" ref={selectFile}>
               <input
                 type="file"
                 id="fileUploadbtn"

@@ -48,12 +48,12 @@ export default function LogHistory() {
     (async () => {
       await axios.get('/api/v1/branches/'+ uuid +'/logs?page=0')
       .then((response)=> {
-        console.log("log history 불러오기 성공");
+        console.log("log history 불러오기 성공(loghistory)");
         console.log("log history 데이터 : ", response.data.data);
         setLogDatas(response.data.data.logs)
       })
       .catch((error)=>{
-        console.log("log history 불러오기 실패");
+        console.log("log history 불러오기 실패(loghistory)");
         console.log(error);
       })
     })();
@@ -66,6 +66,30 @@ export default function LogHistory() {
     }
   }, [logDatas]);
 
+  const revertEvent = () => {
+    if(logDatas.length <= 1){
+      alert("로그의 수가 너무 적습니다.");
+    } 
+    else{
+      alert("hi hello")
+      if(currentLog){
+        const currentLogIndex = logDatas.findIndex((log) => log.logUuid === currentLog)
+        if(currentLogIndex !== -1) {
+          const logsToDelete = logDatas.slice(0, currentLogIndex);
+          logsToDelete.map((log) =>
+            axios.delete('/api/v1/logs/'+ log.logUuid)
+            .then((response)=>{
+              console.log("로그 제거 성공(logHistory)");
+              console.log(response.data);
+            }).catch((error)=>{
+              console.log("로그 제거 실패(logHistory)");
+              console.log(error);
+            })
+          )
+        }
+      }
+    }
+  }
 
   // 가장 최근 데이터 추출
   const latestLogData = logDatas.length > 0 ? logDatas[0] : null;
@@ -84,7 +108,7 @@ export default function LogHistory() {
           gap="16px"
           flexWrap="wrap"
         >
-          <PreviewBox fileobjects={[]} onPreviewChange={()=> {}} onImgFileChange={()=>{}}/>
+          <PreviewBox fileobjects={[]} currentLogObjects={currentLog} onPreviewChange={()=> {}} onImgFileChange={()=>{}}/>
           <FileDownloadBox currentLog={currentLog}/>
         </Box>
 
@@ -94,7 +118,7 @@ export default function LogHistory() {
           onCurrentLogsChange={handleCurrentLogchange}
         />
 
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" justifyContent="center" onClick={revertEvent}>
           <GlobalButton content="revert" />
         </Box>
       </Box>

@@ -19,9 +19,10 @@ interface projectUserInfos{
 
 interface user{
   userUuid: string;
-  email: string;
-  nickname: string;
-  photo: string;
+  userEmail: string; 
+  userId: string;
+  userNickname: string;
+  userPhoto: string;
 }
 
 export default function UserPreviewBox() {
@@ -48,8 +49,8 @@ export default function UserPreviewBox() {
 
 
   return (
-    <Box>
-    {userData.map(user => {
+    <Box sx={{display: "flex"}}>
+    {userData.reverse().map(user => {
       return(
       <Box
       sx={{ px: "2px", py: "4px" }}
@@ -66,8 +67,8 @@ export default function UserPreviewBox() {
             overflow: "hidden",
           }}
         >
-          <Tooltip TransitionComponent={Zoom} title={user.nickname} followCursor>
-          <img width="100%" height="100%" src="test.jpeg" alt="test" />
+          <Tooltip TransitionComponent={Zoom} title={user.userNickname} followCursor>
+          <img width="100%" height="100%" src={user.userPhoto} alt="test" />
           </Tooltip>
         </Box>
         <Box sx={{pl:"1px"}}>

@@ -12,8 +12,14 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { setUuid } from "../../../hooks/userSlice";
+
 
 function Copyright(props: any) {
+  
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright ©Crepe '}
@@ -30,6 +36,10 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function SignIn() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const mainNavigate = () => navigate("/main")
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -38,6 +48,83 @@ export default function SignIn() {
       password: data.get('password'),
     });
   };
+  
+  
+  //const imagepath = "public\test.jpeg"
+  // fetch(imagepath)
+  // .then(response => response.blob())
+  // .then(blobData => {
+  //   const profileImageFile = new File([blobData], "test.jpeg", { type: "image/jpeg" });
+  //   // 변환된 File 객체를 활용하는 작업을 수행합니다.
+  //   console.log("fetch된 프로필 이미지 : ", profileImageFile);
+  // })
+  // .catch(error => {
+  //   // 오류 처리
+  //   console.log(error);
+  // });
+
+
+  const createTestData = () => {
+    const formData = new FormData();
+    const imagepath = "/test.jpeg"
+
+    fetch(imagepath)
+    .then(response => response.blob())
+    .then(blobData => {
+      const profileImageFile = new File([blobData], "test.jpeg", { type: "image/jpeg" });
+      // 변환된 File 객체를 활용하는 작업을 수행합니다.
+      console.log("fetch된 프로필 이미지 : ", profileImageFile);
+      
+      formData.append("userEmail", "test01@naver.com");
+      formData.append("userPassword", "1111"); 
+      formData.append("userNickname", "TestName");
+      formData.append("userPhoto", profileImageFile);
+      // FormData의 key 확인
+      // @ts-ignore
+      for (const key of formData.keys()) {
+        console.log("키값: ", key);
+      }
+      // FormData의 value 확인
+      // @ts-ignore
+      for (const value of formData.values()) {
+        console.log("밸류값: ", value);
+      }
+      console.log(formData);
+
+      axios.post('/api/v1/users',{
+        data: formData,
+      }, {
+        headers: {
+          "Content-Type" : "multipart/form-data",
+        },
+        transformRequest: [
+          function () {
+            return formData;
+          }
+        ],
+      })
+      .then((response) => {
+        console.log("유저 생성 완료");
+        console.log(response);
+
+        //uuid useState에 uuid값 저장
+        const uuidData = response.data.data.userUuid
+        console.log("발급된 uuid : ", uuidData)
+        const disp = dispatch(setUuid(uuidData))
+        console.log("안녕",disp)
+        mainNavigate();
+      })
+      .catch((error) => {
+        console.log("유저 데이터 생성 실패");
+        console.log(error);
+      })
+    })
+    .catch(error => {
+      // 오류 처리
+      console.log(error);
+    });
+    
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -89,6 +176,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={createTestData}
             >
               Sign In
             </Button>

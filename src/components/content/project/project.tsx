@@ -8,6 +8,8 @@ import ImageBox from "../../common/box/imageBox/imageBox";
 import UploadInfoBox from "../../common/box/uploadInfoBox/uploadInfoBox";
 import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
+import { setMainBranchId } from "../../../hooks/branchSlice";
+import { setMainBranchUuid } from "../../../hooks/branchSlice";
 import { RootState } from "../../../stores/store";
 
 interface recentLogResponse{
@@ -32,12 +34,12 @@ interface logInfo{
   userUuid: string;
   logMessage: string;
   logCreatedAt: string;
+  logPreview: string;
   resourceInfos: resourcesData[];
-  feedbackInfos: feedbackData[];
 }
 
 interface resourcesData{
-  resources: resource[];
+  resources: resource[]
 }
 
 interface resource{
@@ -64,19 +66,83 @@ interface userResponse{
 }
 
 interface userInfo{
+  userEmail: string;
+  userNickname: string;
+  userPhoto: string;
   userUuid: string;
-  email: string;
-  nickname: string;
-  photo: string;
+  userId: number;
+}
+
+
+interface BranchResponse{
+  status: number;
+  code: string;
+  message: string;
+  data: BranchesData;
+}
+
+
+interface BranchesData{
+  projectBranchInfos: Branch[]
+}
+
+interface Branch{
+  branchName: string;
+  branchUuid: string;
+  branchId: string; 
 }
 
 export default function Project() {
+
   const [recentLog, setRecentLog] = useState('');
 
   let branchUuid = useSelector((state: RootState) => {
     return state.branch.uuid;
   });
 
+  let projectUuid = useSelector((state: RootState) => {
+    return state.project.uuid
+  })
+
+  let mainUuid = useSelector((state: RootState) => {
+    return state.branch.mainBranchUuid
+  })
+
+  let mainId = useSelector((state: RootState) => {
+    return state.branch.mainBranchId
+  })
+
+  const dispatch = useDispatch();
+
+  const [branchData, setBranchData] = useState<Branch[]>([]);
+  useEffect(() => {
+    (async () => {
+        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
+        .then((response)=> {
+            console.log("브랜치 정보 불러오기 성공");
+            console.log("가져온 데이터", response.data.data.projectBranchInfos);
+            setBranchData(response.data.data.projectBranchInfos);
+            
+            branchData.map((branches) => {
+              if(branches.branchName === 'main'){
+                dispatch(setMainBranchId(branches.branchId.toString()));
+                dispatch(setMainBranchUuid(branches.branchUuid));
+
+              }
+            })
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    })();
+  }, [projectUuid]);
+
+
+
+  console.log("mainbranchId: ", mainId);
+  console.log("mainbranchUuid : ", mainUuid);
+
+  
   useEffect(() => {
     (async () => {
         await axios.get<recentLogResponse>('/api/v1/branches/' + branchUuid + '/logs/recent')
@@ -89,8 +155,10 @@ export default function Project() {
             console.log("최근 로그 정보 불러오기 성공");
             console.log(response.data);
 
-            //이미지는 후에 캡쳐 이미지 API 생기면 그때 구현
-
+            //로그 이미지 API
+            console.log("로그 프리뷰 이미지, ", response.data.data.logPreview)
+            setlogPreviewImg(response.data.data.logPreview);
+            
             //로그 생성 시간
             console.log("로그 생성시간 ",response.data.data.logCreatedAt);
             setCreateTime(response.data.data.logCreatedAt);
@@ -99,8 +167,8 @@ export default function Project() {
             console.log(response.data.data.userUuid);
             axios.get<userResponse>('/api/v1/users/'+ response.data.data.userUuid)
             .then((response) => {
-              console.log("닉네임 : ", response.data.data.nickname);
-              setNickname(response.data.data.nickname);
+              console.log("닉네임 : ", response.data.data.userNickname);
+              setNickname(response.data.data.userNickname);
             })
 
             //로그 메시지
@@ -110,14 +178,14 @@ export default function Project() {
           })
         })
         .catch((error)=>{
-          console.log(" 최근 로그 uuid 불러오기 실패");
+          console.log(" 최근 로그 uuid 불러오기 실패(project.tsx)");
           console.log(error);
         })
     })();
   }, [recentLog]);
 
   const [message, setLogMessage] = useState('');
-  const [resourcefiles, setResourceFiles] = useState<resourcesData[]>([]);
+  const [logPreviewImg, setlogPreviewImg] = useState(''); 
   const [createTime, setCreateTime] = useState('');
   const [nickname, setNickname] = useState('');
 
@@ -150,7 +218,7 @@ export default function Project() {
                 <DownloadButton fileLink={''}/>
               </Box>
             </Box>
-            <ImageBox image="test.jpeg"/>
+            <ImageBox image={logPreviewImg}/>
             <UploadInfoBox
               message={message}
               user={nickname}
@@ -162,7 +230,7 @@ export default function Project() {
           <Box sx={{ pt: 2, px: 5 }}>
             <DescriptionBox />
             <Box sx={{ pt: 6 }}>
-              <DescriptionBox />
+              {/* <DescriptionBox /> */}
             </Box>
           </Box>
         </Box>
