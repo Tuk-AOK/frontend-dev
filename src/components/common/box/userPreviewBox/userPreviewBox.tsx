@@ -49,8 +49,8 @@ export default function UserPreviewBox() {
 
 
   return (
-    <Box>
-    {userData.map(user => {
+    <Box sx={{display: "flex"}}>
+    {userData.reverse().map(user => {
       return(
       <Box
       sx={{ px: "2px", py: "4px" }}
