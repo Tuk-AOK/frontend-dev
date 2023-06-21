@@ -21,6 +21,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import CheckIcon from '@mui/icons-material/Check';
 
 import axios from 'axios';
+import { setBranchUuid } from "../../../hooks/branchSlice";
 
 interface userResponse{
   status: string;
@@ -113,6 +114,10 @@ export default function Example() {
     return state.project.uuid
   })
 
+  let branUuid = useSelector((state:RootState) => {
+    return state.branch.uuid
+  })
+
   console.log("uuid check : ", uuid)
 
   useEffect(()=>{
@@ -177,7 +182,23 @@ export default function Example() {
         console.log(response);
         console.log(response.data.data.projectUuid)
         dispatch(setProjectUuid(response.data.data.projectUuid));
+
+        // axios.get('/api/v1/projects/'+ response.data.data.projectUuid + '/branches')
+        // .then((response) => {
+        //   console.log("메인 브랜치 가져오기")
+        //   response.data.data.projectBranchInfos.map((branch : any) => {
+        //     dispatch(setBranchUuid(branch.branchUuid));
+        //     console.log("저장된 브랜치 UUID (sidebar project 생성시) : ", branUuid);
+            
+        //   })
+        // }).catch((error)=>{
+        //   console.log("생성된 브랜치 리스트 가져오기 실패")
+        // })
+
         navigate("/project")
+      }).catch((error) => {
+        console.log("프로젝트 생성 실패");
+        console.log(error); 
       })
     }
   }

@@ -112,7 +112,7 @@ export default function SplitButton() {
             console.log(error);
         })
     })();
-  }, []); 
+  }, [projectUuid]); 
 
   useEffect(() => {
     (async () => {
@@ -121,7 +121,6 @@ export default function SplitButton() {
             console.log(" store 브랜치 정보 불러오기 성공");
             console.log("가져온 store 데이터", response.data.data.branchName);
             setCurrentBranch(response.data.data.branchName);
-            
         })
         .catch((error)=>{
             
@@ -169,7 +168,7 @@ export default function SplitButton() {
         console.log(response);
         console.log(response.data.data.branchUuid)
         dispatch(setBranchUuid(response.data.data.branchUuid));
-        navigate("/project")
+        window.location.replace("/project");
       })
     }
   }
