@@ -38,19 +38,19 @@ export default function Merge() {
   const [previewImage, setPreviewImage] = useState('');
   const [imgFile, setImgFile] = useState<Blob | null>(null);
 
-  const handleFilesChange = (files: FileObjectType[]) => {
-    console.log("merge로 온 파일은 여기! : ", files)
-    setFileObjects(files)
+  const handleFilesChange = async (files: FileObjectType[]) => {
+    await console.log("merge로 온 파일은 여기! : ", files)
+    await setFileObjects(files)
   }
 
-  const handlePreviewChange = (previewImg: PreviewType) => {
-    console.log("merge url 여기! : ",previewImg.url);
-    setPreviewImage(previewImg.url);
+  const handlePreviewChange = async (previewImg: PreviewType) => {
+    await console.log("merge url 여기! : ",previewImg.url);
+    await setPreviewImage(previewImg.url);
   };
 
-  const handleImgFileChange = (file: Blob | null) => {
-    setImgFile(file);
-    console.log("merge 이미지 파일 여기! : ", imgFile);
+  const handleImgFileChange = async (file: Blob | null) => {
+    await setImgFile(file);
+    await console.log("merge 이미지 파일 여기! : ", imgFile);
   }
 
   let uuid = useSelector((state:RootState) => {
