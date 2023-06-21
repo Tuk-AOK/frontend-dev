@@ -1,4 +1,4 @@
-import { Box, IconButton, Popper, Paper } from "@mui/material";
+import { Box, IconButton, Grow, Popper, Paper, MenuItem, MenuList, ButtonGroup } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import ApplyButton from "../../button/applyButton/applyButton";
 import axios from 'axios';
@@ -7,6 +7,7 @@ import { RootState } from "../../../../stores/store";
 import PendingRoundedIcon from '@mui/icons-material/PendingRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 interface currentFeedbackResponse{
   status: number;
@@ -29,11 +30,8 @@ interface feedback{
 
 
 export default function CommentBox(){
-  const [open, setOpen] = useState(false);
-  const handleClick = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
+  const [open, setOpen] = useState<{ [key: string]: boolean }>({});
+  const anchorRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [feedbacks, setFeedbacks] = useState<feedback[]>([])
   const [userNickname, setUserNickname] = useState('');
   const [userProfileImg, setUserProfileImg] = useState('');
@@ -57,6 +55,31 @@ export default function CommentBox(){
   })();
   }, [branchUuid])
 
+
+  
+
+  const handleToggle = (feedbackUuid: string) => {
+    setOpen((prevOpen) => ({
+      ...prevOpen,
+      [feedbackUuid]: !prevOpen[feedbackUuid],
+    }));
+  };
+
+  const handleClose = (event: Event, feedbackUuid: string) => {
+    if (
+
+      anchorRefs.current[feedbackUuid] &&
+      anchorRefs.current[feedbackUuid]?.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen((prevOpen) => ({
+      ...prevOpen,
+      [feedbackUuid]: false,
+    }));
+  };
+
   return(
     <Box>
       {feedbacks.length > 0 && 
@@ -64,14 +87,12 @@ export default function CommentBox(){
 
           axios.get('/api/v1/users/' + datas.feedbackUserUuid)
           .then((response)=>{
-            console.log(response.data.data.userNickname)
             setUserNickname(response.data.data.userNickname)
-            console.log(response.data.data.userPhoto)
             setUserProfileImg(response.data.data.userPhoto)
           })
 
           return(
-            <Box sx={{pb: 2, display: "flex", flex: "1 0 40%"}}>
+            <Box sx={{pb: 2, display: "flex", flex: "1 0 40%"}} key={datas.feedbackUuid}>
               <Box
                 sx={{
                   width: 50,
@@ -107,9 +128,54 @@ export default function CommentBox(){
                 }}
               >
                 <React.Fragment>
-                  <IconButton>
-                    <PendingRoundedIcon/>
-                  </IconButton>
+                  <ButtonGroup ref={(node) => (anchorRefs.current[datas.feedbackUuid] = node)}>
+                    <IconButton 
+                    aria-controls={open[datas.feedbackUuid] ? "split-button-menu" : undefined}
+                    aria-expanded={open[datas.feedbackUuid] ? "true" : undefined}
+                    aria-label="select merge strategy"
+                    onClick={()=>handleToggle(datas.feedbackUuid)}>
+                      <PendingRoundedIcon />
+                    </IconButton>
+                  </ButtonGroup>
+                  <Popper
+                    sx={{
+                      zIndex: 1,
+                    }}
+                    open={open[datas.feedbackUuid]}
+                    anchorEl={anchorRefs.current[datas.feedbackUuid]}
+                    role={undefined}
+                    transition
+                    disablePortal
+                  >
+                    {({ TransitionProps, placement }) => (
+                      <Grow
+                        {...TransitionProps}
+                        style={{
+                          transformOrigin:
+                            placement === "bottom" ? "center top" : "center bottom",
+                        }}
+                      >
+                        <Paper>
+                          <ClickAwayListener onClickAway={(event)=> handleClose(event, datas.feedbackUuid)}>
+                            <MenuList id="split-button-menu" autoFocusItem>  
+                              <MenuItem
+                              >
+                                <PendingRoundedIcon sx={{pr: 0.8, color: "#1856A5"}}/> in progress
+                              </MenuItem>
+                              <MenuItem
+                              >
+                                <CheckCircleRoundedIcon sx={{pr: 0.8, color: "#8BAF55"}}/> executed
+                              </MenuItem>
+                              <MenuItem
+                              >
+                                <ErrorRoundedIcon sx={{pr: 0.8, color: "#E93547"}}/> rejected
+                              </MenuItem>
+                            </MenuList>
+                          </ClickAwayListener>
+                        </Paper>
+                      </Grow>
+                    )}
+                  </Popper>
                 </React.Fragment>
               </Box>
             </Box>
