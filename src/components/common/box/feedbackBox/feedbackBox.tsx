@@ -8,8 +8,9 @@ import { RootState } from "../../../../stores/store";
 import CommentBox from "../commentBox/commentBox";
 import CommentTextBox from "../commentTextBox/commentTextBox";
 
-export default function FeedbackBox(){
 
+export default function FeedbackBox(){
+  
   return(
     <Box>
       <Box
@@ -21,11 +22,6 @@ export default function FeedbackBox(){
       </Box>
       <Divider/>
       <Box sx={{border: "1px solid #dddddd", borderRadius: 5 , mt:3, pt: 3, px: 2, pb: 2, maxHeight: 250, overflowY: "auto"}}>
-        <CommentBox></CommentBox>
-        <CommentBox></CommentBox>
-        <CommentBox></CommentBox>
-        <CommentBox></CommentBox>
-        <CommentBox></CommentBox>
         <CommentBox></CommentBox>
       </Box>
     </Box>
