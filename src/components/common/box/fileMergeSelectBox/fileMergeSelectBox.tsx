@@ -98,7 +98,7 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
   // mainfile 상태를 상위 컴포넌트로 전달
   React.useEffect(() => {
     props.onMainFileUpdate(mainfile);
-  }, [mainfile, props]);
+  }, [mainfile]);
 
   return (
     <Box
