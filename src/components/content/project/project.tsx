@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMainBranchId } from "../../../hooks/branchSlice";
 import { setMainBranchUuid } from "../../../hooks/branchSlice";
 import { RootState } from "../../../stores/store";
+import FeedbackBox from "../../common/box/feedbackBox/feedbackBox";
+import CommentTextBox from "../../common/box/commentTextBox/commentTextBox";
 
 interface recentLogResponse{
   status: number;
@@ -230,7 +232,10 @@ export default function Project() {
           <Box sx={{ pt: 2, px: 5 }}>
             <DescriptionBox />
             <Box sx={{ pt: 6 }}>
-              {/* <DescriptionBox /> */}
+              <FeedbackBox/>
+              <Box sx={{px: 3, pt: 4}}>
+                <CommentTextBox/>
+              </Box>
             </Box>
           </Box>
         </Box>
