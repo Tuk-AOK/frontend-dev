@@ -5,6 +5,7 @@ import UploadPage from "./pages/uploadPage";
 import LogHistoryPage from "./pages/logHistoryPage";
 import LoginPage from "./pages/loginPage";
 import MergePage from "./pages/mergePage";
+import SignupPage from "./pages/signupPage";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -18,6 +19,7 @@ function App() {
       <Route path="/upload" element={<UploadPage/>} />
       <Route path="/loghistory" element={<LogHistoryPage/>} />
       <Route path="/merge" element={<MergePage/>} />
+      <Route path="/signup" element={<SignupPage/>} />
     </Routes> 
   </BrowserRouter>
   
