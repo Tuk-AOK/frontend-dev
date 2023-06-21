@@ -236,8 +236,11 @@ export default function Example() {
                     height: 85,
                     borderRadius: 85,
                     bgcolor: "#000000",
+                    overflow: "hidden",
                   }}
-                ></Box>
+                >
+                  <img width="100%" height="100%" src={profileImg} alt="test" />
+                </Box>
                 <Box
                   sx={{
                     color: "black",
