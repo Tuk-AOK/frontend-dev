@@ -147,8 +147,10 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   console.log("fetch된 파일 데이터:", fetchedFiles);
 
   useEffect(() => {
-    const updatedFileObjects = [...fileObjects]; // fileObjects 배열을 복사하여 업데이트에 사용
+    const updatedFileObjects = [...fileObjects].sort((a,b) => a.id - b.id); // fileObjects 배열을 복사하여 업데이트에 사용
+    console.log("정렬된 updatedFileObjects(fileMergeBox.tsx) : ", updatedFileObjects);
     let fileid = 0;
+    
     mergeObjects.map(async (resources: any) => {
       try {
         const response = await fetch(resources.fileLink);

@@ -40,8 +40,11 @@ export default function Merge() {
 
   const handleFilesChange = async (files: FileObjectType[]) => {
     await console.log("merge로 온 파일은 여기! : ", files)
-    await setFileObjects(files)
+    const updatedFileObjects = [...files].sort((a,b) => a.id - b.id);
+    await setFileObjects(updatedFileObjects)
   }
+
+  //const updatedFileObjects = [...fileObjects].sort((a,b) => a.id - b.id);
 
   const handlePreviewChange = async (previewImg: PreviewType) => {
     await console.log("merge url 여기! : ",previewImg.url);
