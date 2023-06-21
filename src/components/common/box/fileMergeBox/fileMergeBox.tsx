@@ -69,23 +69,41 @@ interface UploadButtonProps {
 
 
 export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
-  const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
-  const [currentMainFile, setCurrentMainFile] = useState<File | null>();
+  const [currentMainFile, setCurrentMainFile] = useState<File | null>(null);
   const fileId = useRef<number>(0)
   const [mergeObjects, setMergeObjects] = useState<resourcesData[]>([]);
   const fetchedFiles = useRef<File[]>([]);
-
-  const handleMainFileUpdate = (file: File | null) => {
-    // mainfile 상태 업데이트 처리
-    console.log("Main file(fileMergeBox.tsx): ", file);
-    setCurrentMainFile(file);
-    console.log(currentMainFile);
-  };
-
+  const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
 
   let uuid = useSelector((state:RootState) => {
     return state.branch.uuid
   })
+
+  useEffect(() => {
+    const fetchMergeData = async () => {
+      try {
+        const response = await axios.get<mergeResponse>('/api/v1/branches/'+ uuid +'/merge');
+        console.log("merge data 불러오기 성공");
+        console.log("merge data: ", response.data.data.mergeResourceInfos);
+        setMergeObjects(response.data.data.mergeResourceInfos);
+        console.log("저장된 mergeData : " , mergeObjects)
+      } catch (error) {
+        console.log("log history 불러오기 실패");
+        console.log(error);
+      }
+    };
+  
+    fetchMergeData();
+  }, [uuid]);
+
+
+  const handleMainFileUpdate = async (file: File | null) => {
+    // mainfile 상태 업데이트 처리
+    //console.log("Main file(fileMergeBox.tsx): ", file);
+    await setCurrentMainFile(file);
+    console.log("저장된 Main file(fileMergeBox)", currentMainFile);
+  };
+
   
 
   var reversed_index;
@@ -101,16 +119,16 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   //handleFilterFile => id 일치 여부를 확인해 필터링
   
 
-  const handleFilterFile = useCallback(
-    (id: number): void => {
-      //매개 변수로 받은 id와 일치 여부를 확인해 필터링 함
-      //setFiles(fileobjects.filter((file: IFileTypes) => file.id !== id));
-      setFileObjects(fileobjects.filter((file) => file.id !== id));
-      onFilesChange(fileobjects.filter((file)=>file.id !== id));
-    },
-    [fileobjects, onFilesChange]
-  );
-  
+  // const handleFilterFile = useCallback(
+  //   (id: number): void => {
+  //     //매개 변수로 받은 id와 일치 여부를 확인해 필터링 함
+  //     //setFiles(fileobjects.filter((file: IFileTypes) => file.id !== id));
+  //     setFileObjects(fileobjects.filter((file) => file.id !== id));
+  //     onFilesChange(fileobjects.filter((file)=>file.id !== id));
+  //   },
+  //   [fileobjects, onFilesChange]
+  // );
+
 
 
   console.log("업로드 파일 목록", fileobjects)
@@ -119,66 +137,65 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
     event.preventDefault();
   };  
 
-  // 파일 오브젝트를 저장할 배열 선언
+  // 파일 오브젝트를 저장할 배열, 그것을 복사할 선언
   const fileObjects: FileObjectType[] = [];
+  const copyFileObjects = [...fileObjects]
 
-  // mergeObjects에서 fileLink를 추출하여 파일 데이터 가져오기
-  useEffect(() => {
-    mergeObjects.forEach((resources: any) => {
-      if(currentMainFile && resources.fileName === currentMainFile.name){
-        fileObjects.push({
-          id: resources.id,
-          object: currentMainFile,
-          URL: URL.createObjectURL(currentMainFile),
-          name: resources.fileName,
-        });
-        onFilesChange(fileObjects);
-      } else {
-        fetch(resources.fileLink)
-        .then((response) => response.blob())
-        .then((blobData) => {
-          const file = new File([blobData], resources.fileName, { type: "image/png" });
-          
-          
-          // 파일 오브젝트를 배열에 추가
-          fileObjects.push({
-            id: resources.id,
-            object: file,
-            URL: URL.createObjectURL(file),
-            name: resources.fileName,
-          });
-          onFilesChange(fileObjects);
-        })
-        .catch((error) => {
-          // 오류 처리
-          console.log(error);
-        });
-      }
-    });
-  }, [mergeObjects])
-
-  
-
-  useEffect(() => {
-    (async () => {
-      await axios.get<mergeResponse>('/api/v1/branches/'+ uuid +'/merge')
-      .then((response)=> {
-        console.log("merge data 불러오기 성공");
-        console.log("merge data : ", response.data.data.mergeResourceInfos);
-        setMergeObjects(response.data.data.mergeResourceInfos);
-        console.log("test",mergeObjects);
-      })
-      .catch((error)=>{
-        console.log("log history 불러오기 실패");
-        console.log(error);
-      })
-    })();
-    
-  }, [uuid]);
 
   
   // fetchedFiles 배열에 저장된 파일 데이터 사용 가능
   console.log("fetch된 파일 데이터:", fetchedFiles);
+
+  useEffect(() => {
+    const updatedFileObjects = [...fileObjects]; // fileObjects 배열을 복사하여 업데이트에 사용
+    let fileid = 0;
+    mergeObjects.map(async (resources: any) => {
+      try {
+        const response = await fetch(resources.fileLink);
+        const blobData = await response.blob();
+        const file = new File([blobData], resources.fileName, { type: "image/png" });
+  
+        // 현재의 currentMainFile이 기존 파일 객체를 대체해야 하는지 확인
+        if (currentMainFile != null) {
+          const index = updatedFileObjects.findIndex((resource: FileObjectType) => resource.name === currentMainFile.name);
+          if (index !== -1) {
+            updatedFileObjects[index] = {
+              ...updatedFileObjects[index],
+              object: currentMainFile,
+              URL: URL.createObjectURL(currentMainFile),
+            };
+          }
+        }
+        
+
+        // 새 파일 객체를 updatedFileObjects 배열에 추가
+        await updatedFileObjects.push({
+          id: fileid++,
+          object: file,
+          URL: URL.createObjectURL(file),
+          name: resources.fileName,
+        });
+        
+        
+        // 상태를 업데이트
+        setFileObjects(updatedFileObjects);
+        onFilesChange(updatedFileObjects);
+        console.log("main이 적용된 updatedFileObjects: ", updatedFileObjects);
+      } catch (error) {
+        // 오류 처리
+        console.log("mergeObjects 처리 오류 발생");
+        console.log(error);
+      }
+    });
+  }, [mergeObjects, currentMainFile]);
+
+  //console.log("카피한 fileObjects(fileMergeBox.tsx) : ", copyFileObjects);
+
+
+
+
+
+
 
 
 
@@ -220,22 +237,20 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
               if(resources.duplicated === true){
                 return(
                   <FileMergeSelectBox text={resources.fileName} backgroundColor="#FFFFD2" fileLink={resources.fileLink} onMainFileUpdate={handleMainFileUpdate}>
-                    <Box onClick={() => handleFilterFile(index)}>
+                    {/* <Box onClick={() => handleFilterFile(index)}>
                       <DeleteButton/>
-                    </Box>
+                    </Box> */}
                   </FileMergeSelectBox>
                 );
-
-                
               }
 
               else if(resources.duplicated === false 
                 && resources.new === true){
                   return(
                     <FileMergeSelectBox text={resources.fileName} backgroundColor="#BEFBFF" fileLink={''} onMainFileUpdate={()=>{}}>
-                      <Box onClick={() => handleFilterFile(index)}>
+                      {/* <Box onClick={() => handleFilterFile(index)}>
                         <DeleteButton/>
-                      </Box>
+                      </Box> */}
                     </FileMergeSelectBox>
                   );
               }
@@ -245,9 +260,9 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
                 return(
                   <Box >
                     <FileBox text={resources.fileName}>
-                    <Box onClick={() => handleFilterFile(index)}>
+                    {/* <Box onClick={() => handleFilterFile(index)}>
                       <DeleteButton/>
-                    </Box>
+                    </Box> */}
                     </FileBox>
                   </Box>
                 );

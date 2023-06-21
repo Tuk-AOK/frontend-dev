@@ -72,11 +72,11 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
     if (selectedValue === "main") {
       // 'main'이 선택된 경우 처리할 이벤트
       console.log("main이 선택되었습니다.");
+      
       fetch(duplicateData)
       .then((response) => {
         return response.blob()
       }).then((blobData) => {
-
         const mainfile = new File([blobData], text ,{ type: "image/png" });
         console.log(mainfile);
         setMainFile(mainfile);
