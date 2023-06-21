@@ -66,8 +66,26 @@ export default function DescriptionBox() {
         {intro}
       </Box>
       <Box display="flex" flexWrap="wrap">
-          <UserPreviewBox />
+        
+      </Box>
+      
+      <Box sx ={{pt: 6}}>
+        <Box
+          sx={{
+            //pt: 3,
+            letterSpacing: "3px",
+          }}
+        >
+          Contributors
+        </Box>
+        <Divider />
+        <Box sx={{ pt: 1 }}>
+          <Box display="flex" flexWrap="wrap">
+              <UserPreviewBox />
+          </Box>
+        </Box>
       </Box>
     </Box>
+
   );
 }

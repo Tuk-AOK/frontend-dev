@@ -230,7 +230,7 @@ export default function Project() {
           <Box sx={{ pt: 2, px: 5 }}>
             <DescriptionBox />
             <Box sx={{ pt: 6 }}>
-              <DescriptionBox />
+              {/* <DescriptionBox /> */}
             </Box>
           </Box>
         </Box>
