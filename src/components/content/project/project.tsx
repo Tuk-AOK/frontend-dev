@@ -122,6 +122,7 @@ export default function Project() {
   const dispatch = useDispatch();
 
   const [branchData, setBranchData] = useState<Branch[]>([]);
+  
   useEffect(() => {
     (async () => {
         await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
@@ -142,7 +143,7 @@ export default function Project() {
             console.log(error);
         })
     })();
-  }, [projectUuid]);
+  }, []);
 
   useEffect(() => {
     (async () => {

@@ -44,9 +44,11 @@ export default function DescriptionBox() {
     return state.project.uuid
   })
 
+
   const [intro, setIntro] = useState(''); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inviteUserName, setInviteUserName] = useState('');
+  const [projectId, setProjectId] = useState<number>(0); 
   
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -60,11 +62,12 @@ export default function DescriptionBox() {
 
   useEffect(() => {
     (async () => {
-        await axios.get('/api/v1/projects/' + projectUuid)
+        await axios.get<projectResponse>('/api/v1/projects/' + projectUuid)
         .then((response)=> {
-            console.log(" intro 브랜치 정보 불러오기 성공");
+            console.log(" 프로젝트 DATA : ", response.data.data);
             console.log("가져온 intro 데이터", response.data.data.projectIntro);
             setIntro(response.data.data.projectIntro);
+            setProjectId(response.data.data.projectId);
             
         })
         .catch((error)=>{
@@ -72,7 +75,7 @@ export default function DescriptionBox() {
             console.log(error);
         })
     })();
-  }, []);
+  }, [projectUuid]);
 
   const inviteMember = () => {
     if(inviteUserName === ""){
@@ -80,7 +83,7 @@ export default function DescriptionBox() {
     }
     else {
       axios.post('/api/v1/projects/users', {
-        projectId: 1,
+        projectId: projectId,
         userId: 2
       })
       .then((response) => {

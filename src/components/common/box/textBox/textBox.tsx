@@ -107,7 +107,7 @@ export default function TextBox({ fileobjects, imgFile } : FileListProps & TextB
     
   }, [currentUserId]);
 
-
+  console.log("mainid check : ", mainId);
   const createLog = async() => {
     
     if(fileobjects.length === 0 && msg === ''){
