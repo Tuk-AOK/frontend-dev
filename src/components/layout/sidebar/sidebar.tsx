@@ -200,7 +200,7 @@ export default function Example() {
         //   console.log("생성된 브랜치 리스트 가져오기 실패")
         // })
 
-        navigate("/project")
+        window.location.replace("/project");
       }).catch((error) => {
         console.log("프로젝트 생성 실패");
         console.log(error); 
