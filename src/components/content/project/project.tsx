@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 import { setMainBranchId } from "../../../hooks/branchSlice";
 import { setMainBranchUuid } from "../../../hooks/branchSlice";
+import { setProjectId } from "../../../hooks/projectSlice";
 import { RootState } from "../../../stores/store";
 import FeedbackBox from "../../common/box/feedbackBox/feedbackBox";
 import CommentTextBox from "../../common/box/commentTextBox/commentTextBox";
@@ -105,6 +106,10 @@ export default function Project() {
   let projectUuid = useSelector((state: RootState) => {
     return state.project.uuid
   })
+  let projectId = useSelector((state: RootState) => {
+    return state.project.projectId
+  })
+
 
   let mainUuid = useSelector((state: RootState) => {
     return state.branch.mainBranchUuid
@@ -139,7 +144,24 @@ export default function Project() {
     })();
   }, [projectUuid]);
 
+  useEffect(() => {
+    (async () => {
+        await axios.get('/api/v1/projects/'+ projectUuid)
+        .then((response)=> {
+            console.log("현위치 프로젝트 정보(project.tsx)");
+            console.log("가져온 데이터", response.data.data.projectId);
+            const idValue = response.data.data.projectId;
+            const stringIdValue = idValue.toString();
 
+            console.log("현재 store된 프로젝트 ID : ", projectId);
+            dispatch(setProjectId(stringIdValue));
+          
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+    })();
+  }, [projectUuid]);
 
   console.log("mainbranchId: ", mainId);
   console.log("mainbranchUuid : ", mainUuid);
