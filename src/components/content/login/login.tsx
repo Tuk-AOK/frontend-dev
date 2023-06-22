@@ -66,20 +66,39 @@ export default function SignIn() {
   //   console.log(error);
   // });
 
+  // const login = () => {
+  //   axios.post('/api/v1/users/signin', {
+  //     userEmail: email,
+  //     userPassword: password
+  //   }).then((response) => {
+  //     console.log("로그인 성공?");
+  //     console.log(response);
+  //   }).catch((error) => {
+  //     alert("로그인에 실패하였습니다. 다시 시도해 주세요.");
+  //     console.log("로그인 실패");
+  //     console.log(error);
+  //   })
+  // }
+
+
   const login = () => {
     axios.post('/api/v1/users/signin', {
-      email: email,
-      password: password
+      userEmail: email,
+      userPassword: password
     }).then((response) => {
-      console.log("로그인 성공?");
+      console.log("로그인 성공!");
       console.log(response);
+      if(response.data.message === "로그인 성공"){
+        dispatch(setUuid(response.data.data.userUuid))
+        navigate('/main');
+      }
+
     }).catch((error) => {
       alert("로그인에 실패하였습니다. 다시 시도해 주세요.");
       console.log("로그인 실패");
+      console.log(error);
     })
   }
-
-  
 
   return (
     <ThemeProvider theme={defaultTheme}>
