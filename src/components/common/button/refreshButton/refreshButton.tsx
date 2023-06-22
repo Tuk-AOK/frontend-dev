@@ -4,7 +4,11 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 export default function RefreshButton(){
   const handleReload = () =>{
-    window.location.reload();
+    if(window.location.pathname === '/merge'){
+      window.location.replace('/merge')
+    }else{
+      window.location.reload();
+    }
   }
   
   return(

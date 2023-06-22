@@ -2,12 +2,14 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 interface BranchState {
   uuid: string;
+  branchId: string;
   mainBranchUuid: string; 
   mainBranchId: string;
 }
 
 const initialState: BranchState = {
   uuid: '',
+  branchId: '', 
   mainBranchUuid: '',
   mainBranchId: '',
 
@@ -21,6 +23,10 @@ const BranchSlice = createSlice({
       state.uuid = action.payload; 
     },
 
+    setBranchId: (state, action:PayloadAction<string>) => {
+      state.branchId = action.payload; 
+    },
+
     setMainBranchId: (state, action:PayloadAction<string>) => {
       state.mainBranchId = action.payload; 
     },
@@ -31,5 +37,5 @@ const BranchSlice = createSlice({
   }
 });
 
-export const { setBranchUuid, setMainBranchId, setMainBranchUuid } = BranchSlice.actions;
+export const { setBranchUuid, setBranchId, setMainBranchId, setMainBranchUuid } = BranchSlice.actions;
 export default BranchSlice.reducer;

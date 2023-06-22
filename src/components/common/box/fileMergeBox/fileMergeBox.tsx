@@ -97,10 +97,10 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   }, [uuid]);
 
 
-  const handleMainFileUpdate = async (file: File | null) => {
+  const handleMainFileUpdate = (file: File | null) => {
     // mainfile 상태 업데이트 처리
     //console.log("Main file(fileMergeBox.tsx): ", file);
-    await setCurrentMainFile(file);
+    setCurrentMainFile(file);
     console.log("저장된 Main file(fileMergeBox)", currentMainFile);
   };
 
@@ -137,9 +137,6 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
     event.preventDefault();
   };  
 
-  // 파일 오브젝트를 저장할 배열, 그것을 복사할 선언
-  const fileObjects: FileObjectType[] = [];
-  const copyFileObjects = [...fileObjects]
 
 
   
@@ -147,16 +144,19 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
   console.log("fetch된 파일 데이터:", fetchedFiles);
 
   useEffect(() => {
-    const updatedFileObjects = [...fileObjects].sort((a,b) => a.id - b.id); // fileObjects 배열을 복사하여 업데이트에 사용
-    console.log("정렬된 updatedFileObjects(fileMergeBox.tsx) : ", updatedFileObjects);
+    const updatedFileObjects = [...fileobjects]; // fileObjects 배열을 복사하여 업데이트에 사용
+    console.log("선언 직후의 updatedFileObjects(fileMergeBox.tsx) : ", updatedFileObjects);
     let fileid = 0;
     
-    mergeObjects.map(async (resources: any) => {
+    console.log("currentMainFile 값 : ", currentMainFile)
+    
+
+    mergeObjects.map(async (resources: any, index) => {
       try {
         const response = await fetch(resources.fileLink);
         const blobData = await response.blob();
         const file = new File([blobData], resources.fileName, { type: "image/png" });
-  
+        
         // 현재의 currentMainFile이 기존 파일 객체를 대체해야 하는지 확인
         if (currentMainFile != null) {
           const index = updatedFileObjects.findIndex((resource: FileObjectType) => resource.name === currentMainFile.name);
@@ -168,15 +168,15 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
             };
           }
         }
-        
 
-        // 새 파일 객체를 updatedFileObjects 배열에 추가
-        await updatedFileObjects.push({
-          id: fileid++,
-          object: file,
-          URL: URL.createObjectURL(file),
-          name: resources.fileName,
-        });
+        else{
+          await updatedFileObjects.push({
+            id: index++,
+            object: file,
+            URL: URL.createObjectURL(file),
+            name: resources.fileName,
+          });
+        }
         
         
         // 상태를 업데이트

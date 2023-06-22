@@ -9,6 +9,7 @@ import FileDownloadBox from "../../common/box/fileDownloadBox";
 import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../stores/store";
+import { useNavigate } from "react-router-dom";
 
 interface wholeLogResponse{
   status: number;
@@ -34,6 +35,7 @@ export default function LogHistory() {
   const [logDatas, setLogDatas] = useState<log[]>([]);
   const [currentLog, setCurrentLog] = useState(''); 
 
+  const navigate = useNavigate();
   let uuid = useSelector((state:RootState) => {
     return state.branch.uuid
   })
@@ -71,7 +73,6 @@ export default function LogHistory() {
       alert("로그의 수가 너무 적습니다.");
     } 
     else{
-      alert("hi hello")
       if(currentLog){
         const currentLogIndex = logDatas.findIndex((log) => log.logUuid === currentLog)
         if(currentLogIndex !== -1) {
@@ -81,7 +82,9 @@ export default function LogHistory() {
             .then((response)=>{
               console.log("로그 제거 성공(logHistory)");
               console.log(response.data);
+              navigate('/project');
             }).catch((error)=>{
+              alert("로그 제거에 실패하였습니다.")
               console.log("로그 제거 실패(logHistory)");
               console.log(error);
             })

@@ -41,6 +41,7 @@ export default function Header(props: { children: React.ReactNode }) {
   }; 
   const mergenavigate = () => {
     navigate("/merge")
+    window.location.replace('/merge')
   }
 
   return (

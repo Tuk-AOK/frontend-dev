@@ -19,6 +19,7 @@ import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import CheckIcon from '@mui/icons-material/Check';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import axios from 'axios';
 import { setBranchUuid } from "../../../hooks/branchSlice";
@@ -50,6 +51,7 @@ interface ProjectResponse{
 }
 
 interface Project{
+  projectId: number; 
   projectName: string;
   projectUuid: string;
   projectIntro: string;
@@ -92,6 +94,9 @@ export default function Example() {
   const navigate = useNavigate();
 
   const mainNavigate = () => navigate("/main");
+  const SignInNavigate = () => {
+    window.location.replace("/")
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -195,7 +200,7 @@ export default function Example() {
         //   console.log("생성된 브랜치 리스트 가져오기 실패")
         // })
 
-        navigate("/project")
+        window.location.replace("/project");
       }).catch((error) => {
         console.log("프로젝트 생성 실패");
         console.log(error); 
@@ -236,8 +241,11 @@ export default function Example() {
                     height: 85,
                     borderRadius: 85,
                     bgcolor: "#000000",
+                    overflow: "hidden",
                   }}
-                ></Box>
+                >
+                  <img width="100%" height="100%" src={profileImg} alt="test" />
+                </Box>
                 <Box
                   sx={{
                     color: "black",
@@ -320,6 +328,7 @@ export default function Example() {
             </Box>
           </SubMenu>
           <MenuItem icon={<PersonOutlineIcon />}>My Page</MenuItem>
+          <MenuItem icon={<LogoutIcon />} onClick={SignInNavigate}>Logout</MenuItem>
         </Menu>
       </Sidebar>
     </Box>

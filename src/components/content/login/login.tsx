@@ -22,7 +22,7 @@ function Copyright(props: any) {
   
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright ©Crepe '}
+      {'Copyright © Crepe '}
       {/* <Link color="inherit" href="https://mui.com/">
         Your Website
       </Link>{' '} */}
@@ -38,6 +38,9 @@ const defaultTheme = createTheme();
 export default function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const mainNavigate = () => navigate("/main")
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -63,67 +66,38 @@ export default function SignIn() {
   //   console.log(error);
   // });
 
+  // const login = () => {
+  //   axios.post('/api/v1/users/signin', {
+  //     userEmail: email,
+  //     userPassword: password
+  //   }).then((response) => {
+  //     console.log("로그인 성공?");
+  //     console.log(response);
+  //   }).catch((error) => {
+  //     alert("로그인에 실패하였습니다. 다시 시도해 주세요.");
+  //     console.log("로그인 실패");
+  //     console.log(error);
+  //   })
+  // }
 
-  const createTestData = () => {
-    const formData = new FormData();
-    const imagepath = "/test.jpeg"
 
-    fetch(imagepath)
-    .then(response => response.blob())
-    .then(blobData => {
-      const profileImageFile = new File([blobData], "test.jpeg", { type: "image/jpeg" });
-      // 변환된 File 객체를 활용하는 작업을 수행합니다.
-      console.log("fetch된 프로필 이미지 : ", profileImageFile);
-      
-      formData.append("userEmail", "test01@naver.com");
-      formData.append("userPassword", "1111"); 
-      formData.append("userNickname", "TestName");
-      formData.append("userPhoto", profileImageFile);
-      // FormData의 key 확인
-      // @ts-ignore
-      for (const key of formData.keys()) {
-        console.log("키값: ", key);
+  const login = () => {
+    axios.post('/api/v1/users/signin', {
+      userEmail: email,
+      userPassword: password
+    }).then((response) => {
+      console.log("로그인 성공!");
+      console.log(response);
+      if(response.data.message === "로그인 성공"){
+        dispatch(setUuid(response.data.data.userUuid))
+        navigate('/main');
       }
-      // FormData의 value 확인
-      // @ts-ignore
-      for (const value of formData.values()) {
-        console.log("밸류값: ", value);
-      }
-      console.log(formData);
 
-      axios.post('/api/v1/users',{
-        data: formData,
-      }, {
-        headers: {
-          "Content-Type" : "multipart/form-data",
-        },
-        transformRequest: [
-          function () {
-            return formData;
-          }
-        ],
-      })
-      .then((response) => {
-        console.log("유저 생성 완료");
-        console.log(response);
-
-        //uuid useState에 uuid값 저장
-        const uuidData = response.data.data.userUuid
-        console.log("발급된 uuid : ", uuidData)
-        const disp = dispatch(setUuid(uuidData))
-        console.log("안녕",disp)
-        mainNavigate();
-      })
-      .catch((error) => {
-        console.log("유저 데이터 생성 실패");
-        console.log(error);
-      })
-    })
-    .catch(error => {
-      // 오류 처리
+    }).catch((error) => {
+      alert("로그인에 실패하였습니다. 다시 시도해 주세요.");
+      console.log("로그인 실패");
       console.log(error);
-    });
-    
+    })
   }
 
   return (
@@ -148,24 +122,24 @@ export default function SignIn() {
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
-              margin="normal"
-              required
               fullWidth
-              id="id"
-              label="ID"
-              name="id"
-              autoComplete="id"
-              autoFocus
+              id="email"
+              label="email"
+              name="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event)=>(setEmail(event.target.value))}
             />
             <TextField
               margin="normal"
-              required
               fullWidth
               name="password"
               label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(event)=>(setPassword(event.target.value))}
             />
             {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -176,7 +150,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={createTestData}
+              onClick={login}
             >
               Sign In
             </Button>
@@ -187,7 +161,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signup" variant="body2">
                   {"sign up"}
                 </Link>
               </Grid>
