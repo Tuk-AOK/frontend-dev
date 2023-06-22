@@ -81,10 +81,10 @@ export default function CommentBox(){
     }));
   };
 
-  const handleMenuItemClick = (feedbackUuid: string, icon: React.ReactNode) => {
+  const handleMenuItemClick = (feedbackUuid: string, icon: React.ReactNode, iconstatus: string) => {
     setSelectedIcon((prevSelectedIcon) => ({
       ...prevSelectedIcon,
-      [feedbackUuid]: icon
+      [feedbackUuid]: icon, iconstatus
     }));
 
     setOpen((prevOpen) => ({
@@ -95,28 +95,42 @@ export default function CommentBox(){
     console.log("얘의 피드백 uuid:", feedbackUuid);
     // 선택한 아이콘에 따라 상태를 전송하는 axios 요청을 수행합니다.
     let feedbackStatus = "";
-    if (icon === <PendingRoundedIcon sx={{ pr: 0.8, color: "#1856A5" }} />) {
-      feedbackStatus = "in progress";
-    } else if (icon === <CheckCircleRoundedIcon sx={{ pr: 0.8, color: "#8BAF55" }} />) {
+    if (iconstatus === "inprogress") {
+      feedbackStatus = "inProgress";
+    } else if (iconstatus === "executed") {
       feedbackStatus = "executed";
-    } else if (icon === <ErrorRoundedIcon sx={{ pr: 0.8, color: "#E93547" }} />) {
+    } else if (iconstatus === "rejected") {
       feedbackStatus = "rejected";
     }
 
-    if (feedbackStatus !== null) {
+    console.log("현재 feedbackStatus: ", feedbackStatus);
+    if (feedbackStatus) {
       axios
         .patch('/api/v1/feedbacks/' + feedbackUuid , {
           feedbackStatus: feedbackStatus
         })
         .then((response) => {
-          console.log("상태 업데이트 성공:", response.data.data);
+          console.log("상태 업데이트 성공:", response.data);
         })
         .catch((error) => {
           console.log("상태 업데이트 실패:", error);
         });
+    } 
+
+
+  };
+
+  const getInitialIcon = (feedbackStatus: string): React.ReactNode => {
+    if (feedbackStatus === "inProgress") {
+      return <PendingRoundedIcon sx={{pr: 0.8, color: "#1856A5"}}/>;
+    } else if (feedbackStatus === "executed") {
+      return <CheckCircleRoundedIcon sx={{ pr: 0.8, color: "#8BAF55" }} />;
+    } else if (feedbackStatus === "rejected") {
+      return <ErrorRoundedIcon sx={{ pr: 0.8, color: "#E93547" }} />;
+    } else {
+      // 기본 아이콘
+      return <PendingRoundedIcon />;
     }
-
-
   };
 
   return(
@@ -173,7 +187,7 @@ export default function CommentBox(){
                     aria-expanded={open[datas.feedbackUuid] ? "true" : undefined}
                     aria-label="select merge strategy"
                     onClick={()=>handleToggle(datas.feedbackUuid)}>
-                      {selectedIcon[datas.feedbackUuid] || <PendingRoundedIcon />}
+                      {selectedIcon[datas.feedbackUuid] || getInitialIcon(datas.feedbackStatus)}
                     </IconButton>
                   </ButtonGroup>
                   <Popper
@@ -198,17 +212,17 @@ export default function CommentBox(){
                           <ClickAwayListener onClickAway={(event)=> handleClose(event, datas.feedbackUuid)}>
                             <MenuList id="split-button-menu" autoFocusItem>  
                               <MenuItem
-                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <PendingRoundedIcon sx={{ pr: 0.8, color: "#1856A5" }} />)}
+                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <PendingRoundedIcon sx={{ pr: 0.8, color: "#1856A5" }}/>, "inprogress")}
                               >
                                 <PendingRoundedIcon sx={{pr: 0.8, color: "#1856A5"}}/> in progress
                               </MenuItem>
                               <MenuItem
-                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <CheckCircleRoundedIcon sx={{ pr: 0.8, color: "#8BAF55" }} />)}
+                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <CheckCircleRoundedIcon sx={{ pr: 0.8, color: "#8BAF55" }} />, "executed")}
                               >
                                 <CheckCircleRoundedIcon sx={{pr: 0.8, color: "#8BAF55"}}/> executed
                               </MenuItem>
                               <MenuItem
-                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <ErrorRoundedIcon sx={{ pr: 0.8, color: "#E93547" }} />)}
+                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <ErrorRoundedIcon sx={{ pr: 0.8, color: "#E93547" }} />, "rejected")}
                               >
                                 <ErrorRoundedIcon sx={{pr: 0.8, color: "#E93547"}}/> rejected
                               </MenuItem>
