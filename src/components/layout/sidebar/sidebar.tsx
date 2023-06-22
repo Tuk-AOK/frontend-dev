@@ -51,6 +51,7 @@ interface ProjectResponse{
 }
 
 interface Project{
+  projectId: number; 
   projectName: string;
   projectUuid: string;
   projectIntro: string;
