@@ -136,7 +136,7 @@ export default function CommentBox(){
   return(
     <Box>
       {feedbacks.length > 0 && 
-        feedbacks.reverse().map((datas: any) => {
+        feedbacks.map((datas: any) => {
 
           axios.get('/api/v1/users/' + datas.feedbackUserUuid)
           .then((response)=>{
