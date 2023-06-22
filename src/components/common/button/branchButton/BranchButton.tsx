@@ -96,6 +96,10 @@ export default function SplitButton() {
     return state.branch.uuid;
   });
 
+  let storeProjectId = useSelector((state: RootState) => {
+    return state.project.projectId
+  })
+
   const [branchData, setBranchData] = useState<Branch[]>([]);
   const [currentBranch, setCurrentBranch] = useState('');
 
@@ -113,6 +117,8 @@ export default function SplitButton() {
         })
     })();
   }, [projectUuid]); 
+
+
 
   useEffect(() => {
     (async () => {
@@ -161,7 +167,7 @@ export default function SplitButton() {
     else {
       axios.post('/api/v1/branches', {
         name: branchName,
-        projectId: "1",
+        projectId: storeProjectId,
       })
       .then((response) => {
         console.log("브랜치 생성 완료");
@@ -237,6 +243,7 @@ export default function SplitButton() {
                       </MenuItem>
                     );
                   })}
+                  
                   <MenuItem onClick={() => handleModalOpen()}
                   >
                     + create new branch
