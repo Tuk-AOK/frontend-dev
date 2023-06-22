@@ -19,6 +19,7 @@ import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import CheckIcon from '@mui/icons-material/Check';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 import axios from 'axios';
 import { setBranchUuid } from "../../../hooks/branchSlice";
@@ -92,6 +93,9 @@ export default function Example() {
   const navigate = useNavigate();
 
   const mainNavigate = () => navigate("/main");
+  const SignInNavigate = () => {
+    window.location.replace("/")
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   
@@ -323,6 +327,7 @@ export default function Example() {
             </Box>
           </SubMenu>
           <MenuItem icon={<PersonOutlineIcon />}>My Page</MenuItem>
+          <MenuItem icon={<LogoutIcon />} onClick={SignInNavigate}>Logout</MenuItem>
         </Menu>
       </Sidebar>
     </Box>
