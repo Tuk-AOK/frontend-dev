@@ -42,9 +42,9 @@ export default function Merge() {
     await console.log("merge로 온 파일은 여기! : ", files)
     const updatedFileObjects = [...files].sort((a,b) => a.id - b.id);
     await setFileObjects(updatedFileObjects)
+    await setFileObjects(updatedFileObjects)
   }
 
-  //const updatedFileObjects = [...fileObjects].sort((a,b) => a.id - b.id);
 
   const handlePreviewChange = async (previewImg: PreviewType) => {
     await console.log("merge url 여기! : ",previewImg.url);

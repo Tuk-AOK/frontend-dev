@@ -145,12 +145,13 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
 
   useEffect(() => {
     const updatedFileObjects = [...fileobjects]; // fileObjects 배열을 복사하여 업데이트에 사용
-    console.log("정렬된 updatedFileObjects(fileMergeBox.tsx) : ", updatedFileObjects);
+    console.log("선언 직후의 updatedFileObjects(fileMergeBox.tsx) : ", updatedFileObjects);
     let fileid = 0;
     
     console.log("currentMainFile 값 : ", currentMainFile)
+    
 
-    mergeObjects.map(async (resources: any) => {
+    mergeObjects.map(async (resources: any, index) => {
       try {
         const response = await fetch(resources.fileLink);
         const blobData = await response.blob();
@@ -169,8 +170,8 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
         }
 
         else{
-          updatedFileObjects.push({
-            id: fileid++,
+          await updatedFileObjects.push({
+            id: index++,
             object: file,
             URL: URL.createObjectURL(file),
             name: resources.fileName,
