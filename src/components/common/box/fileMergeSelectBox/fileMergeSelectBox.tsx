@@ -2,6 +2,7 @@ import { Box, Button, Typography, IconButton, Modal, Radio, RadioGroup, FormCont
 import React from "react";
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckIcon from '@mui/icons-material/Check';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/store";
@@ -36,7 +37,7 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
   const [duplicateData, setDuplicateData] = React.useState(''); 
 
   const [mainfile, setMainFile] = React.useState<File | null>(null);
-
+  const [isConfirmed, setIsConfirmed] = React.useState(false);
 
   let projectUuid = useSelector((state: RootState) => {
     return state.project.uuid; 
@@ -80,6 +81,7 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
         const mainfile = new File([blobData], text ,{ type: "image/png" });
         console.log(mainfile);
         setMainFile(mainfile);
+        setIsConfirmed(true);
         handleClose();
       })
       .catch((error) => {
@@ -90,6 +92,7 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
       // 'branchimg'가 선택된 경우 처리할 이벤트
       console.log("current branch가 선택되었습니다.");
       setMainFile(null);
+      setIsConfirmed(true);
       handleClose();
     }
   };
@@ -115,9 +118,15 @@ export default function FileMergeSelectBox(props: { children: React.ReactNode, t
     
       {backgroundColor === "#FFFFD2" && (
         <Box>
-          <IconButton onClick={handleOpen} aria-label="error">
-            <ErrorIcon/>
-          </IconButton>
+          {isConfirmed ? ( // isConfirmed 상태에 따라 아이콘을 조건부로 렌더링
+            <IconButton disabled>
+              <CheckCircleRoundedIcon sx={{color: "#7adb4a"}}/>
+            </IconButton>
+          ) : (
+            <IconButton onClick={handleOpen} aria-label="error">
+              <ErrorIcon />
+            </IconButton>
+          )}
           <Modal
           open={open}
           onClose={handleClose}
