@@ -195,7 +195,31 @@ export default function FileMergeBox({ onFilesChange } : FileUploadBoxProps) {
 
 
 
+/*------------- 리스트 드래그 앤 드랍 관련 함수 ------------*/
+const onDragEnd = (result: any) => {
+  if(!result.destination){
+    return;
+  }
 
+  const { source, destination } = result;
+  let lists = [...fileobjects];
+  let index;
+
+  console.log(lists)
+
+  if(source.index !== destination.index){
+    let selectItem = lists[result.source.index];
+    lists.splice(result.source.index, 1);
+    lists.splice(destination.index, 0, selectItem);
+    setFileObjects(lists);
+    onFilesChange(lists);
+    console.log(lists)
+  }
+
+};
+
+
+/*------------- 리스트 드래그 앤 드랍 관련 함수 ------------*/
 
 
 
