@@ -243,6 +243,8 @@ export default function FileMergeBox({ onFilesChange }: FileUploadBoxProps) {
         };
       }
     );
+
+    console.log('onDragEnd 후 fileobjects: ', updatedFileObjects);
     setFileObjects(updatedFileObjects);
     onFilesChange(updatedFileObjects);
   };
