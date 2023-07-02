@@ -291,7 +291,7 @@ export default function FileMergeBox({ onFilesChange }: FileUploadBoxProps) {
                     if (resources.duplicated === true) {
                       return (
                         <Draggable
-                          draggableId={index.toString()}
+                          draggableId={resources.fileName}
                           index={index}
                           key={resources.fileName}
                         >
@@ -321,7 +321,7 @@ export default function FileMergeBox({ onFilesChange }: FileUploadBoxProps) {
                     ) {
                       return (
                         <Draggable
-                          draggableId={index.toString()}
+                          draggableId={resources.fileName}
                           index={index}
                           key={resources.fileName}
                         >
@@ -348,7 +348,7 @@ export default function FileMergeBox({ onFilesChange }: FileUploadBoxProps) {
                     } else {
                       return (
                         <Draggable
-                          draggableId={index.toString()}
+                          draggableId={resources.fileName}
                           index={index}
                           key={resources.fileName}
                         >
