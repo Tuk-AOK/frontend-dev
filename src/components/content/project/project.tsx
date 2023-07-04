@@ -92,7 +92,7 @@ interface BranchesData{
 interface Branch{
   branchName: string;
   branchUuid: string;
-  branchId: string; 
+  branchId: number; 
 }
 
 export default function Project() {
@@ -130,20 +130,12 @@ export default function Project() {
             console.log("브랜치 정보 불러오기 성공");
             console.log("가져온 데이터", response.data.data.projectBranchInfos);
             setBranchData(response.data.data.projectBranchInfos);
-            
-            branchData.map((branches) => {
-              if(branches.branchName === 'main'){
-                dispatch(setMainBranchId(branches.branchId.toString()));
-                dispatch(setMainBranchUuid(branches.branchUuid));
-
-              }
-            })
         })
         .catch((error)=>{
             console.log(error);
         })
     })();
-  }, []);
+  }, [projectUuid]);
 
   useEffect(() => {
     (async () => {
@@ -164,8 +156,6 @@ export default function Project() {
     })();
   }, [projectUuid]);
 
-  console.log("mainbranchId: ", mainId);
-  console.log("mainbranchUuid : ", mainUuid);
 
   
   useEffect(() => {
@@ -214,6 +204,15 @@ export default function Project() {
   const [createTime, setCreateTime] = useState('');
   const [nickname, setNickname] = useState('');
 
+  branchData.map((branchData) => {
+    if(branchData.branchName === 'main'){
+      dispatch(setMainBranchId(branchData.branchId.toString()));
+      console.log("mainbranchId: ", mainId);
+      dispatch(setMainBranchUuid(branchData.branchUuid));
+      console.log("mainbranchUuid : ", mainUuid);
+
+    }
+  })
 
   return (
     <Box display="block">
