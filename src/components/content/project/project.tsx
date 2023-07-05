@@ -273,7 +273,7 @@ export default function Project() {
                     justifyContent: 'flex-end',
                   }}
                 >
-                  <DownloadButton fileLink={''} />
+                  <DownloadButton fileLink={logPreviewImg} />
                 </Box>
               </Box>
               <ImageBox image={logPreviewImg} />
