@@ -4,9 +4,13 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 interface DownloadButtonProps {
   fileLink: string;
+  fileName: string;
 }
 
-export default function DownloadButton({ fileLink }: DownloadButtonProps) {
+export default function DownloadButton({
+  fileLink,
+  fileName,
+}: DownloadButtonProps) {
   console.log('file Link 왔나 테스트 : ', fileLink);
 
   const downloadLinkRef = useRef<HTMLAnchorElement | null>(null);
@@ -24,7 +28,7 @@ export default function DownloadButton({ fileLink }: DownloadButtonProps) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = '';
+        a.download = fileName;
         document.body.appendChild(a);
         a.click();
         setTimeout((_) => {

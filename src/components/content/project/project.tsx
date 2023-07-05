@@ -247,9 +247,7 @@ export default function Project() {
                     display: 'flex',
                     justifyContent: 'flex-end',
                   }}
-                >
-                  <DownloadButton fileLink={''} />
-                </Box>
+                ></Box>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
                 <div
@@ -273,7 +271,10 @@ export default function Project() {
                     justifyContent: 'flex-end',
                   }}
                 >
-                  <DownloadButton fileLink={logPreviewImg} />
+                  <DownloadButton
+                    fileLink={logPreviewImg}
+                    fileName={'previewImage'}
+                  />
                 </Box>
               </Box>
               <ImageBox image={logPreviewImg} />
