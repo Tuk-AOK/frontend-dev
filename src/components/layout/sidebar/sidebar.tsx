@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUuid } from "../../../hooks/userSlice";
+import { setBranchUuid } from "../../../hooks/branchSlice";
 import { setProjectUuid } from "../../../hooks/projectSlice";
+import { setMainBranchId } from '../../../hooks/branchSlice';
+import { setMainBranchUuid } from '../../../hooks/branchSlice';
 import { RootState } from "../../../stores/store";
 import {
   Sidebar,
@@ -22,7 +25,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 import axios from 'axios';
-import { setBranchUuid } from "../../../hooks/branchSlice";
 
 interface userResponse{
   status: string;
@@ -64,6 +66,12 @@ interface ProjectsData{
   projects: Project[] 
 }
 
+interface Branch {
+  branchName: string;
+  branchUuid: string;
+  branchId: number;
+}
+
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -89,6 +97,8 @@ export default function Example() {
   const [projectIntro, setProjectIntro] = useState('');
 
   const [userId, setUserId] = useState('');
+
+  const [branchData, setBranchData] = useState<Branch[]>([]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -122,6 +132,14 @@ export default function Example() {
   let branUuid = useSelector((state:RootState) => {
     return state.branch.uuid
   })
+
+  let mainUuid = useSelector((state: RootState) => {
+    return state.branch.mainBranchUuid;
+  });
+
+  let mainId = useSelector((state: RootState) => {
+    return state.branch.mainBranchId;
+  });
 
   console.log("uuid check : ", uuid)
 
@@ -188,17 +206,27 @@ export default function Example() {
         console.log(response.data.data.projectUuid)
         dispatch(setProjectUuid(response.data.data.projectUuid));
 
-        // axios.get('/api/v1/projects/'+ response.data.data.projectUuid + '/branches')
-        // .then((response) => {
-        //   console.log("메인 브랜치 가져오기")
-        //   response.data.data.projectBranchInfos.map((branch : any) => {
-        //     dispatch(setBranchUuid(branch.branchUuid));
-        //     console.log("저장된 브랜치 UUID (sidebar project 생성시) : ", branUuid);
-            
-        //   })
-        // }).catch((error)=>{
-        //   console.log("생성된 브랜치 리스트 가져오기 실패")
-        // })
+        axios.get(
+          '/api/v1/projects/' + projUuid + '/branches?page=0'
+        )
+        .then((response) => {
+          console.log('브랜치 정보 불러오기 성공');
+          console.log('가져온 데이터(sidebar.tsx)', response.data.data.projectBranchInfos);
+          setBranchData(response.data.data.projectBranchInfos);
+
+          branchData.map((branchData) => {
+            if (branchData.branchName === 'main') {
+              dispatch(setMainBranchId(branchData.branchId.toString()));
+              console.log('mainbranchId: ', mainId);
+              dispatch(setMainBranchUuid(branchData.branchUuid));
+              console.log('mainbranchUuid : ', mainUuid);
+              dispatch(setBranchUuid(branchData.branchUuid));
+            }
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
         window.location.replace("/project");
       }).catch((error) => {
@@ -272,7 +300,28 @@ export default function Example() {
               const clickEvent = () => {
                 dispatch(setProjectUuid(project.projectUuid));
                 console.log("현재 저장된 프로젝트 UUID : ", projUuid);
-                window.location.replace("/project")
+                
+                axios.get(
+                  '/api/v1/projects/' + projUuid + '/branches?page=0'
+                )
+                .then((response) => {
+                  console.log('브랜치 정보 불러오기 성공');
+                  console.log('가져온 데이터(sidebar.tsx)', response.data.data.projectBranchInfos);
+                  setBranchData(response.data.data.projectBranchInfos);
+        
+                  branchData.map((branchData) => {
+                    if (branchData.branchName === 'main') {
+                      dispatch(setMainBranchId(branchData.branchId.toString()));
+                      console.log('mainbranchId: ', mainId);
+                      dispatch(setMainBranchUuid(branchData.branchUuid));
+                      console.log('mainbranchUuid : ', mainUuid);
+                      dispatch(setBranchUuid(branchData.branchUuid));
+                      console.log("설정한 branchUuid : ", branUuid);
+                    }
+                  });
+                })
+
+                //window.location.replace("/project")
                 console.log("이동할 프로젝트 이름 : ", project.projectName);
               }
               return(

@@ -205,7 +205,7 @@ export default function Project() {
           console.log(error);
         });
     })();
-  }, [recentLog]);
+  }, [recentLog, branchUuid]);
 
   const [message, setLogMessage] = useState('');
   const [logPreviewImg, setlogPreviewImg] = useState('');
