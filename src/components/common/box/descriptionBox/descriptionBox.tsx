@@ -1,21 +1,29 @@
-import { Box, Divider, IconButton, Modal, Button, Typography, Input } from "@mui/material";
-import { useState, useEffect } from "react";
-import React from "react";
-import UserPreviewBox from "../userPreviewBox/userPreviewBox";
+import {
+  Box,
+  Divider,
+  IconButton,
+  Modal,
+  Button,
+  Typography,
+  Input,
+} from '@mui/material';
+import { useState, useEffect } from 'react';
+import React from 'react';
+import UserPreviewBox from '../userPreviewBox/userPreviewBox';
 import { useSelector } from 'react-redux';
-import { RootState } from "../../../../stores/store";
+import { RootState } from '../../../../stores/store';
 import axios from 'axios';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 
-interface projectResponse{
+interface projectResponse {
   status: number;
   code: string;
   message: string;
-  data: projectInfo; 
+  data: projectInfo;
 }
 
-interface projectInfo{
+interface projectInfo {
   projectId: number;
   projectName: string;
   projectUserId: string;
@@ -41,64 +49,82 @@ const style = {
 
 export default function DescriptionBox() {
   let projectUuid = useSelector((state: RootState) => {
-    return state.project.uuid
-  })
+    return state.project.uuid;
+  });
 
-
-  const [intro, setIntro] = useState(''); 
+  const [intro, setIntro] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inviteUserName, setInviteUserName] = useState('');
-  const [projectId, setProjectId] = useState<number>(0); 
-  
+  const [projectId, setProjectId] = useState<number>(0);
+
   const handleModalOpen = () => {
     setIsModalOpen(true);
-  }
+  };
 
-  const handleModalClose = () =>{
+  const handleModalClose = () => {
     setIsModalOpen(false);
-  }
+  };
 
   const ariaLabel = { 'aria-label': 'description' };
 
   useEffect(() => {
     (async () => {
-        await axios.get<projectResponse>('/api/v1/projects/' + projectUuid)
-        .then((response)=> {
-            console.log(" 프로젝트 DATA : ", response.data.data);
-            console.log("가져온 intro 데이터", response.data.data.projectIntro);
-            setIntro(response.data.data.projectIntro);
-            setProjectId(response.data.data.projectId);
-            
+      await axios
+        .get<projectResponse>('/api/v1/projects/' + projectUuid)
+        .then((response) => {
+          console.log(' 프로젝트 DATA : ', response.data.data);
+          console.log('가져온 intro 데이터', response.data.data.projectIntro);
+          setIntro(response.data.data.projectIntro);
+          setProjectId(response.data.data.projectId);
         })
-        .catch((error)=>{
-            console.log("intro 불러오기 실패")
-            console.log(error);
-        })
+        .catch((error) => {
+          console.log('intro 불러오기 실패');
+          console.log(error);
+        });
     })();
   }, [projectUuid]);
 
   const inviteMember = () => {
-    if(inviteUserName === ""){
-      alert("초대를 원하는 유저의 이름을 입력하세요.")
+    if (inviteUserName === '') {
+      alert('초대를 원하는 유저의 이름을 입력하세요.');
+    } else {
+      axios
+        .get('/api/v1/users/nickname/' + inviteUserName)
+        .then((response) => {
+          console.log('해당 닉네임의 uuid : ', response.data.data.userUuid);
+
+          axios
+            .get('/api/v1/users/' + response.data.data.userUuid)
+            .then((response) => {
+              console.log('유저 id: ', response.data.data.userId);
+              axios
+                .post('/api/v1/projects/users', {
+                  projectId: projectId,
+                  userId: response.data.data.userId,
+                })
+                .then((response) => {
+                  console.log('유저 초대 완료');
+                  console.log(response);
+                  console.log(response.data.data);
+                  //window.location.replace("/project");
+                })
+                .catch((error) => {
+                  alert('유저 초대에 실패했습니다.');
+                  console.log('유저 초대 실패');
+                  console.log(error);
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
-    else {
-      axios.post('/api/v1/projects/users', {
-        projectId: projectId,
-        userId: 2
-      })
-      .then((response) => {
-        console.log("유저 초대 완료");
-        console.log(response);
-        console.log(response.data.data);
-        window.location.replace("/project");
-      })
-      .catch((error)=> {
-        alert("유저 초대에 실패했습니다.");
-        console.log("유저 초대 실패");
-        console.log(error);
-      })
-    }
-  }
+  };
+
+  console.log('초대되는 아이디 : ', inviteUserName);
 
   return (
     <Box
@@ -111,62 +137,71 @@ export default function DescriptionBox() {
       <Box
         sx={{
           //pt: 3,
-          letterSpacing: "3px",
+          letterSpacing: '3px',
         }}
       >
         Intro
       </Box>
       <Divider />
-      <Box sx={{ pt: 1 }}>
-        {intro}
-      </Box>
-      <Box display="flex" flexWrap="wrap">
-        
-      </Box>
-      
-      <Box sx ={{pt: 6}}>
-        <Box sx ={{ display: "flex",
-                  justifyItems: 'center',
-                  alignItems: 'center',}}>
+      <Box sx={{ pt: 1 }}>{intro}</Box>
+      <Box display='flex' flexWrap='wrap'></Box>
+
+      <Box sx={{ pt: 6 }}>
+        <Box
+          sx={{ display: 'flex', justifyItems: 'center', alignItems: 'center' }}
+        >
           <Box
             sx={{
               //pt: 3,
-              letterSpacing: "3px",
+              letterSpacing: '3px',
             }}
           >
             Contributors
           </Box>
-          <IconButton aria-label="add" size="small" onClick={() => handleModalOpen()}>
-            <AddIcon fontSize="inherit" />
+          <IconButton
+            aria-label='add'
+            size='small'
+            onClick={() => handleModalOpen()}
+          >
+            <AddIcon fontSize='inherit' />
           </IconButton>
-          
+
           <Modal
             open={isModalOpen}
             onClose={handleModalClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+            aria-labelledby='modal-modal-title'
+            aria-describedby='modal-modal-description'
           >
             <Box sx={style}>
-              <Box sx = {{
-              display: "flex",
-              flexDirection: 'column',
-              justifyItems: 'center',
-              alignItems: 'center',
-              }}>
-                <Typography id="modal-modal-title" variant="h4" component="h2">
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyItems: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography id='modal-modal-title' variant='h4' component='h2'>
                   Invite Member
                 </Typography>
-                
-                <Input 
-                  placeholder="name" 
+
+                <Input
+                  placeholder='name'
                   inputProps={ariaLabel}
                   value={inviteUserName}
-                  onChange={(event)=>(setInviteUserName(event.target.value))}
-                  sx={{width:'300px', marginBottom: '30px', marginTop: '50px'}}
+                  onChange={(event) => setInviteUserName(event.target.value)}
+                  sx={{
+                    width: '300px',
+                    marginBottom: '30px',
+                    marginTop: '50px',
+                  }}
                 />
-                
 
-                <Button variant="outlined" startIcon={<CheckIcon />} onClick={inviteMember}>
+                <Button
+                  variant='outlined'
+                  startIcon={<CheckIcon />}
+                  onClick={inviteMember}
+                >
                   invite
                 </Button>
               </Box>
@@ -175,12 +210,11 @@ export default function DescriptionBox() {
         </Box>
         <Divider />
         <Box sx={{ pt: 1 }}>
-          <Box display="flex" flexWrap="wrap">
-              <UserPreviewBox />
+          <Box display='flex' flexWrap='wrap'>
+            <UserPreviewBox />
           </Box>
         </Box>
       </Box>
     </Box>
-
   );
 }
