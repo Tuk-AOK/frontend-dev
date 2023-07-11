@@ -115,54 +115,32 @@ export default function Project() {
     return state.branch.mainBranchId;
   });
 
+  console.log('저장된 BranchUuid(project.tsx) : ', branchUuid);
+  //여기서 store로 저장된 branchUuid를 콘솔로 찍어봤을 때 잘 안나옴
   const dispatch = useDispatch();
 
   const [branchData, setBranchData] = useState<Branch[]>([]);
 
-  useEffect(() => {
-    (async () => {
-      await axios
-        .get<BranchResponse>(
-          '/api/v1/projects/' + projectUuid + '/branches?page=0'
-        )
-        .then((response) => {
-          console.log('브랜치 정보 불러오기 성공');
-          console.log('가져온 데이터', response.data.data.projectBranchInfos);
-          setBranchData(response.data.data.projectBranchInfos);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })();
-  }, [projectUuid]);
+  //현재 위치한 브랜치의 최근 로그 정보
+  //문제 상황, branchUuid를 제대로 못받아옴
+  //이동할 때 branchUuid 저장이 제대로 안되나봄
 
   useEffect(() => {
     (async () => {
-      await axios
-        .get('/api/v1/projects/' + projectUuid)
-        .then((response) => {
-          console.log('현위치 프로젝트 정보(project.tsx)');
-          console.log('가져온 데이터', response.data.data.projectId);
-          const idValue = response.data.data.projectId;
-          const stringIdValue = idValue.toString();
+      await console.log(
+        '현재 로그 안에 있는 branchUuid(project.tsx): ',
+        branchUuid
+      );
 
-          console.log('현재 store된 프로젝트 ID : ', projectId);
-          dispatch(setProjectId(stringIdValue));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })();
-  }, [projectUuid]);
-
-  useEffect(() => {
-    (async () => {
       await axios
         .get<recentLogResponse>(
           '/api/v1/branches/' + branchUuid + '/logs/recent'
         )
         .then((response) => {
-          console.log(' 최근 로그 uuid 불러오기 성공');
+          console.log(
+            ' 최근 로그 uuid 불러오기 성공, : ',
+            response.data.data.logUuid
+          );
           setRecentLog(response.data.data.logUuid);
 
           axios
@@ -203,9 +181,48 @@ export default function Project() {
         .catch((error) => {
           console.log(' 최근 로그 uuid 불러오기 실패(project.tsx)');
           console.log(error);
+          setNoneProduct(true);
         });
     })();
-  }, [recentLog, branchUuid]);
+  }, [branchUuid, recentLog]);
+
+  //현재 위치한 프로젝트의 브랜치 목록 가져오기 위한 useEffect
+  useEffect(() => {
+    (async () => {
+      await axios
+        .get<BranchResponse>(
+          '/api/v1/projects/' + projectUuid + '/branches?page=0'
+        )
+        .then((response) => {
+          console.log('브랜치 정보 불러오기 성공');
+          console.log('가져온 데이터', response.data.data.projectBranchInfos);
+          setBranchData(response.data.data.projectBranchInfos);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })();
+  }, [projectUuid]);
+
+  //project ID 저장하기 위한 useEffect
+  useEffect(() => {
+    (async () => {
+      await axios
+        .get('/api/v1/projects/' + projectUuid)
+        .then((response) => {
+          console.log('현위치 프로젝트 정보(project.tsx)');
+          console.log('가져온 데이터', response.data.data.projectId);
+          const idValue = response.data.data.projectId;
+          const stringIdValue = idValue.toString();
+
+          console.log('현재 store된 프로젝트 ID : ', projectId);
+          dispatch(setProjectId(stringIdValue));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    })();
+  }, [projectUuid]);
 
   const [message, setLogMessage] = useState('');
   const [logPreviewImg, setlogPreviewImg] = useState('');
@@ -213,14 +230,15 @@ export default function Project() {
   const [nickname, setNickname] = useState('');
   const [noneProduct, setNoneProduct] = useState(true);
 
-  branchData.map((branchData) => {
-    if (branchData.branchName === 'main') {
-      dispatch(setMainBranchId(branchData.branchId.toString()));
-      console.log('mainbranchId: ', mainId);
-      dispatch(setMainBranchUuid(branchData.branchUuid));
-      console.log('mainbranchUuid : ', mainUuid);
-    }
-  });
+  //브랜치 map 배열을 통해 이름이 main일 때 dispatch로 저장
+  // branchData.map((branchData) => {
+  //   if (branchData.branchName === 'main') {
+  //     dispatch(setMainBranchId(branchData.branchId.toString()));
+  //     console.log('mainbranchId: ', mainId);
+  //     dispatch(setMainBranchUuid(branchData.branchUuid));
+  //     console.log('mainbranchUuid : ', mainUuid);
+  //   }
+  // });
 
   return (
     <Box display='block'>
