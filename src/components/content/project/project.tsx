@@ -95,11 +95,17 @@ interface Branch {
 
 export default function Project() {
   const [recentLog, setRecentLog] = useState('');
+  const [message, setLogMessage] = useState('');
+  const [logPreviewImg, setlogPreviewImg] = useState('');
+  const [createTime, setCreateTime] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [noneProduct, setNoneProduct] = useState(true);
 
   let branchUuid = useSelector((state: RootState) => {
     return state.branch.uuid;
   });
 
+  console.log('branchUuid 왔냐? => ', branchUuid);
   let projectUuid = useSelector((state: RootState) => {
     return state.project.uuid;
   });
@@ -122,15 +128,10 @@ export default function Project() {
   const [branchData, setBranchData] = useState<Branch[]>([]);
 
   //현재 위치한 브랜치의 최근 로그 정보
-  //문제 상황, branchUuid를 제대로 못받아옴
-  //이동할 때 branchUuid 저장이 제대로 안되나봄
 
   useEffect(() => {
     (async () => {
-      await console.log(
-        '현재 로그 안에 있는 branchUuid(project.tsx): ',
-        branchUuid
-      );
+      console.log('현재 로그 안에 있는 branchUuid(project.tsx): ', branchUuid);
 
       await axios
         .get<recentLogResponse>(
@@ -174,35 +175,33 @@ export default function Project() {
               //로그 메시지
               console.log('로그 메시지 ', response.data.data.logMessage);
               setLogMessage(response.data.data.logMessage);
-
               setNoneProduct(false);
             });
         })
         .catch((error) => {
           console.log(' 최근 로그 uuid 불러오기 실패(project.tsx)');
           console.log(error);
-          setNoneProduct(true);
         });
     })();
   }, [branchUuid, recentLog]);
 
   //현재 위치한 프로젝트의 브랜치 목록 가져오기 위한 useEffect
-  useEffect(() => {
-    (async () => {
-      await axios
-        .get<BranchResponse>(
-          '/api/v1/projects/' + projectUuid + '/branches?page=0'
-        )
-        .then((response) => {
-          console.log('브랜치 정보 불러오기 성공');
-          console.log('가져온 데이터', response.data.data.projectBranchInfos);
-          setBranchData(response.data.data.projectBranchInfos);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    })();
-  }, [projectUuid]);
+  // useEffect(() => {
+  //   (async () => {
+  //     await axios
+  //       .get<BranchResponse>(
+  //         '/api/v1/projects/' + projectUuid + '/branches?page=0'
+  //       )
+  //       .then((response) => {
+  //         console.log('브랜치 정보 불러오기 성공');
+  //         console.log('가져온 데이터', response.data.data.projectBranchInfos);
+  //         setBranchData(response.data.data.projectBranchInfos);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   })();
+  // }, [projectUuid]);
 
   //project ID 저장하기 위한 useEffect
   useEffect(() => {
@@ -222,13 +221,7 @@ export default function Project() {
           console.log(error);
         });
     })();
-  }, [projectUuid]);
-
-  const [message, setLogMessage] = useState('');
-  const [logPreviewImg, setlogPreviewImg] = useState('');
-  const [createTime, setCreateTime] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [noneProduct, setNoneProduct] = useState(true);
+  }, [dispatch, projectId, projectUuid]);
 
   //브랜치 map 배열을 통해 이름이 main일 때 dispatch로 저장
   // branchData.map((branchData) => {
