@@ -73,6 +73,7 @@ export default function Main() {
   const [projectIntro, setProjectIntro] = useState('');
   const [userId, setUserId] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [noneProduct, setNoneProduct] = useState(true);
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -181,13 +182,17 @@ export default function Main() {
           console.log('유저 플젝 불러오기 성공');
           console.log(response.data.data.projects);
           setProjects(response.data.data.projects);
+
+          if (projects.length !== 0) {
+            setNoneProduct(false);
+          }
         })
         .catch((error) => {
           console.log('전체 프로젝트 불러오기 실패');
           console.log(error);
         });
     })();
-  }, []);
+  }, [projects.length]);
 
   return (
     <Box sx={{ px: 3, py: 3 }}>
@@ -269,41 +274,47 @@ export default function Main() {
               justifyContent: 'center',
             }}
           >
-            {projects.map((project) => {
-              const clickEvent = () => {
-                dispatch(setProjectUuid(project.projectUuid));
-                axios
-                  .get('/api/v1/projects/' + projUuid + '/branches?page=0')
-                  .then((response) => {
-                    console.log('브랜치 정보 불러오기 성공');
-                    console.log(
-                      '가져온 데이터(sidebar.tsx)',
-                      response.data.data.projectBranchInfos
-                    );
-                    setBranchData(response.data.data.projectBranchInfos);
-
-                    branchData.map((branchData) => {
-                      if (branchData.branchName === 'main') {
-                        dispatch(
-                          setMainBranchId(branchData.branchId.toString())
+            {noneProduct ? (
+              <Box> 프로젝트가 없습니다. 멋진 프로젝트를 생성해 보세요!</Box>
+            ) : (
+              <Box>
+                {projects.map((project) => {
+                  const clickEvent = () => {
+                    dispatch(setProjectUuid(project.projectUuid));
+                    axios
+                      .get('/api/v1/projects/' + projUuid + '/branches?page=0')
+                      .then((response) => {
+                        console.log('브랜치 정보 불러오기 성공');
+                        console.log(
+                          '가져온 데이터(sidebar.tsx)',
+                          response.data.data.projectBranchInfos
                         );
-                        console.log('mainbranchId: ', mainId);
-                        dispatch(setMainBranchUuid(branchData.branchUuid));
-                        console.log('mainbranchUuid : ', mainUuid);
-                        dispatch(setBranchUuid(mainUuid));
-                        console.log('설정한 branchUuid : ', branUuid);
-                      }
-                    });
-                  });
-                navigate('/Project');
-                console.log('이동할 프로젝트 이름 : ', project.projectName);
-              };
-              return (
-                <Box onClick={clickEvent}>
-                  <ProjectBox {...project} />
-                </Box>
-              );
-            })}
+                        setBranchData(response.data.data.projectBranchInfos);
+
+                        branchData.map((branchData) => {
+                          if (branchData.branchName === 'main') {
+                            dispatch(
+                              setMainBranchId(branchData.branchId.toString())
+                            );
+                            console.log('mainbranchId: ', mainId);
+                            dispatch(setMainBranchUuid(branchData.branchUuid));
+                            console.log('mainbranchUuid : ', mainUuid);
+                            dispatch(setBranchUuid(mainUuid));
+                            console.log('설정한 branchUuid : ', branUuid);
+                          }
+                        });
+                      });
+                    navigate('/Project');
+                    console.log('이동할 프로젝트 이름 : ', project.projectName);
+                  };
+                  return (
+                    <Box onClick={clickEvent}>
+                      <ProjectBox {...project} />
+                    </Box>
+                  );
+                })}
+              </Box>
+            )}
           </Box>
         </Box>
       </Box>
@@ -315,7 +326,11 @@ export default function Main() {
           justifyContent: 'center',
         }}
       >
-        <Pagination count={10} color='primary' size='small' />
+        {noneProduct ? (
+          <></>
+        ) : (
+          <Pagination count={10} color='primary' size='small' />
+        )}
       </Box>
     </Box>
   );
