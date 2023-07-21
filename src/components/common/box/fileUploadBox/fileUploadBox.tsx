@@ -7,8 +7,26 @@ import FileBox from "../fileBox/fileBox";
 import DeleteButton from "../../button/deleteButton/deleteButton";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Upload } from "../../../content/upload/upload";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../../stores/store";
 
+interface recentlogResponse {
+  status: number;
+  code: string;
+  message: string;
+  data: recentLogInfos;
+}
 
+interface recentLogInfos{
+  resourceInfos: resourcesData[]; 
+}
+
+interface resourcesData {
+  fileName: string;
+  fileUuid: string;
+  fileLink: string;
+}
 
 type NewType = {
   id: number; //파일들의 고유값 id
@@ -45,6 +63,7 @@ export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   //const [fileobjects, setFiles] = useState<IFileTypes[]>([]);
   const [fileobjects, setFileObjects] = useState<FileObjectType[]>([]);
+  const [recentObjects, setRecentObjects] = useState<resourcesData[]>([]); 
   const dragRef = useRef<HTMLLabelElement | null>(null);
   const selectFile = useRef(null);
   const fileId = useRef<number>(0)
@@ -56,6 +75,51 @@ export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
   const fileList: IFileList = {
     imageFiles: fileobjects
   }
+
+  let branchUuid = useSelector((state: RootState) => {
+    return state.branch.uuid;
+  });
+
+  useEffect(()=>{
+    axios.get('/api/v1/branches/'+ branchUuid + '/logs/recent')
+    .then((response)=> {
+      axios.get<recentlogResponse>('/api/v1/logs/'+response.data.data.logUuid)
+      .then((response)=>{
+        console.log("recent data(fileuploadbox) : ", response.data.data.resourceInfos);
+        setRecentObjects(response.data.data.resourceInfos);
+        console.log("저장된 최근리소스 : ", recentObjects); 
+      })
+    }).catch((error)=>{
+      console.log(error)
+    })
+  }, [branchUuid]) 
+
+  useEffect(() => {
+    const recentFileObjects = [...fileobjects];
+    recentObjects.map(async(resources: any, index) => {
+      try {
+        const response = await fetch(resources.fileLink);
+        const blobData = await response.blob();
+        const file = new File([blobData], resources.fileName, {
+          type: 'image/png',
+        });
+
+        await recentFileObjects.push({
+          id: index++,
+          object: file,
+          URL: URL.createObjectURL(file),
+          name: resources.fileName,
+        });
+
+        setFileObjects(recentFileObjects);
+        onFilesChange(recentFileObjects); 
+      }
+      catch (error) {
+        console.log("최근 로그 파일 적용 실패")
+        console.log(error);
+      }
+    })
+  }, [recentObjects])
 
   //파일 오브젝트 추출
   const files: File[] = fileList.imageFiles.map((file) => file.object)
@@ -83,7 +147,7 @@ export default function FileUploadBox({ onFilesChange } : FileUploadBoxProps) {
         tempFiles = [
           ...tempFiles,
           {
-            id: fileId.current++, //fileId의 값을 1씩 늘려주며 각 파일의 고유값으로 사용
+            id: fileobjects.length++, //fileId의 값을 1씩 늘려주며 각 파일의 고유값으로 사용
             object: file, //object 안에 선택했던 파일들의 정보 담김
             URL: URL.createObjectURL(file), 
             name: file.name
