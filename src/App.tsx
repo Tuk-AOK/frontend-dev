@@ -6,6 +6,7 @@ import LogHistoryPage from "./pages/logHistoryPage";
 import LoginPage from "./pages/loginPage";
 import MergePage from "./pages/mergePage";
 import SignupPage from "./pages/signupPage";
+import SettingPage from "./pages/settingPage";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -20,6 +21,7 @@ function App() {
       <Route path="/loghistory" element={<LogHistoryPage/>} />
       <Route path="/merge" element={<MergePage/>} />
       <Route path="/signup" element={<SignupPage/>} />
+      <Route path="/setting" element={<SettingPage/>} />
     </Routes> 
   </BrowserRouter>
   
