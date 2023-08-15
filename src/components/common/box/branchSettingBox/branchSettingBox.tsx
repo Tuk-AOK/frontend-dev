@@ -21,12 +21,6 @@ export default function BranchSettingBox() {
         }}
       >
         <BranchBox/>
-        <BranchBox/>
-        <BranchBox/>
-        <BranchBox/>
-        <BranchBox/>
-        <BranchBox/>
-        <BranchBox/>
       </Box>
       </Box>
     </Box>
