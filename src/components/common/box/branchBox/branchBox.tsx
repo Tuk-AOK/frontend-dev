@@ -26,25 +26,8 @@ interface Branch{
 }
 
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 450,
-  height: 200,
-  bgcolor: 'background.paper',
-  border: 'none',
-  borderRadius: '3px',
-  boxShadow: 24,
-  p: 4,
-};
 
 export default function BranchBox() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const ariaLabel = { 'aria-label': 'description' };
-
-  const [branchName, setBranchName] = useState('');
   const [branchData, setBranchData] = useState<Branch[]>([]);
 
   const [activeModalBranch, setActiveModalBranch] = useState<Branch | null>(null);

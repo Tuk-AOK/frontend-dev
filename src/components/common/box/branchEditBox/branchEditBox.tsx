@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Modal, Typography, Button, Input } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
+import axios from 'axios';
 
 interface Branch {
   branchName: string;
@@ -18,7 +19,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 450,
-  height: 220,
+  height: 200,
   bgcolor: 'background.paper',
   border: 'none',
   borderRadius: '3px',
@@ -29,6 +30,24 @@ const style = {
 
 export default function BranchEditBox({ branch, onClose }: BranchModalProps) {
   const [branchName, setBranchName] = useState("");
+
+  const changeBranchName = () => {
+    if(branchName === ""){
+      alert("수정할 브랜치 이름을 적어주세요.")
+    } else {
+      axios.patch('/api/v1/branches/'+ branch?.branchUuid, {
+        name: branchName
+      })
+      .then((response)=>{
+        console.log("이름 변경 성공")
+        console.log(response.data)
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+    }
+  }
 
   if (!branch) {
     return null;
@@ -67,7 +86,7 @@ export default function BranchEditBox({ branch, onClose }: BranchModalProps) {
             }}
           />
 
-          <Button variant="outlined" startIcon={<CheckIcon />}>
+          <Button variant="outlined" startIcon={<CheckIcon />} onClick={changeBranchName}>
             Edit
           </Button>
         </Box>
