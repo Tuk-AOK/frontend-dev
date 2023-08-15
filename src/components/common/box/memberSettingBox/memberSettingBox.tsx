@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from 'react';
-import axios from "axios";
 import MemberBox from "../memberBox/memberBox";
 
+
 export default function MemberSettingBox() {
+
   return(
     <Box display="block">
       <Box sx={{fontSize: "24px", fontWeight: "bold", textAlign: "left"}}>
@@ -20,10 +20,6 @@ export default function MemberSettingBox() {
           alignItems: 'center',
         }}
       >
-        <MemberBox/>
-        <MemberBox/>
-        <MemberBox/>
-        <MemberBox/>
         <MemberBox/>
       </Box>
       </Box>
