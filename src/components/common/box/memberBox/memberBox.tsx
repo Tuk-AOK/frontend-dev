@@ -4,6 +4,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/store";
+import UserDeleteModalBox from "../userDeleteModalBox/userDeleteModalBox";
 
 
 interface userResponse {
@@ -27,6 +28,16 @@ interface user{
 
 export default function MemberBox() {
   const [userData, setUserData] = useState<user[]>([]);
+
+  const [activeModalBranch, setActiveModalBranch] = useState<user | null>(null);
+
+  const handleModalOpen = (user: user) => {
+    setActiveModalBranch(user)
+  }
+
+  const handleModalClose = () => {
+    setActiveModalBranch(null);
+  }
 
   let projectUuid = useSelector((state: RootState)=>{
     return state.project.uuid;  
@@ -60,13 +71,14 @@ export default function MemberBox() {
               {user.userNickname}
             </Box>
             <Box sx={{display: "flex", alignItems: "center", ml:"auto"}}>
-              <IconButton>
+              <IconButton onClick={() => handleModalOpen(user)}>
                 <ExitToAppIcon/>
               </IconButton>
             </Box>
           </Box>
         );
       })}
+      <UserDeleteModalBox user={activeModalBranch} onClose={handleModalClose}/>
     </Box>
   );
 }

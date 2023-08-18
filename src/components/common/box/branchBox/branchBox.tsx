@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BranchEditBox from "../branchEditBox/branchEditBox";
+import BranchDeleteBox from "../branchDeleteBox/branchDeleteBox";
 
 
 interface BranchResponse{
@@ -30,15 +31,23 @@ interface Branch{
 export default function BranchBox() {
   const [branchData, setBranchData] = useState<Branch[]>([]);
 
-  const [activeModalBranch, setActiveModalBranch] = useState<Branch | null>(null);
+  const [activeEditBranch, setActiveEditBranch] = useState<Branch | null>(null);
+  const [activeDeleteBranch, setActiveDeleteBranch] = useState<Branch | null>(null);
 
-
-  const handleModalOpen = (branch: Branch) => {
-    setActiveModalBranch(branch);
+  const handleEditOpen = (branch: Branch) => {
+    setActiveEditBranch(branch);
   };
 
-  const handleModalClose = () => {
-    setActiveModalBranch(null);
+  const handleEditClose = () => {
+    setActiveEditBranch(null);
+  };
+
+  const handleDeleteOpen = (branch: Branch) => {
+    setActiveDeleteBranch(branch);
+  };
+
+  const handleDeleteClose = () => {
+    setActiveDeleteBranch(null);
   };
   
   let projectUuid = useSelector((state: RootState)=>{
@@ -73,19 +82,22 @@ export default function BranchBox() {
             </Box>
             <Box sx={{display: "flex", alignItems: "center", ml:"auto"}}>
               <IconButton
-                onClick={() => handleModalOpen(branch)}
+                onClick={() => handleEditOpen(branch)}
               >
                 <EditIcon/>
               </IconButton>
 
-              <IconButton>
+              <IconButton
+                onClick={() => handleDeleteOpen(branch)}
+              >
                 <DeleteIcon/>
               </IconButton>
             </Box>
           </Box>
         );
         })}
-      <BranchEditBox branch={activeModalBranch} onClose={handleModalClose} />
+      <BranchEditBox branch={activeEditBranch} onClose={handleEditClose} />
+      <BranchDeleteBox branch={activeDeleteBranch} onClose={handleDeleteClose}/>
     </Box>
   );
 }
