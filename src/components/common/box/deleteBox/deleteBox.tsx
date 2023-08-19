@@ -62,11 +62,14 @@ export default function DeleteBox() {
     return state.user.userUuid
   });
 
-  axios.get<ProjectResponse>("/api/v1/projects/" + projectUuid)
-  .then((response) => {
-    console.log(response.data)
-    setDeleteProjectName(response.data.data.projectName)
-  })
+  useEffect(()=>{
+    axios.get<ProjectResponse>("/api/v1/projects/" + projectUuid)
+    .then((response) => {
+      console.log(response.data)
+      setDeleteProjectName(response.data.data.projectName)
+    })
+  }, [projectUuid])
+
 
   const deleteProject = () => {
     if (projectName !== deleteProjectName){
