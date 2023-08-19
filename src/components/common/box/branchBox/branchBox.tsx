@@ -74,7 +74,7 @@ export default function BranchBox() {
     <Box display="block">
       {branchData.map(branch => {
         return(
-          <Box display="flex" sx={{ width:"930px", alignItems: "center"}}>
+          <Box display="flex" sx={{mb:"10px", width:"930px", alignItems: "center"}}>
             <Box sx={{width:"250px",fontSize: "20px", fontWeight: "bold", textAlign: "left", textOverflow: 'ellipsis'}}>
               {branch.branchName}
             </Box>

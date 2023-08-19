@@ -63,7 +63,7 @@ export default function MemberBox() {
     <Box sx={{display: "block"}}>
       {userData.map(user => {
         return(
-          <Box display="flex" sx={{ width:"930px", alignItems: "center"}}>
+          <Box display="flex" sx={{ mb:"10px", width:"930px", alignItems: "center"}}>
             <Box sx={{width:"45px", height:"45px", borderRadius:100, bgcolor:"black", overflow:"hidden"}}>
               <img width="100%" height="100%" src={user.userPhoto} alt="test" />
             </Box>
