@@ -34,6 +34,18 @@ export default function BranchDeleteBox({branch, onClose}: BranchModalProps){
     return null;
   }
   
+  const deleteBranch = () => {
+    axios.delete("/api/v1/branches/" + branch.branchUuid)
+    .then((response)=>{
+      console.log("브랜치 삭제 성공");
+      console.log(response.data);
+      window.location.reload();
+    })
+    .catch((error)=>{
+      console.log(error); 
+    })
+  }
+
   return(
     <Modal
       open={!!branch}
@@ -70,7 +82,7 @@ export default function BranchDeleteBox({branch, onClose}: BranchModalProps){
               mt: "35px",
             }}
           >
-            <Button variant="outlined" startIcon={<CheckIcon />} color="error">
+            <Button variant="outlined" startIcon={<CheckIcon />} color="error" onClick={deleteBranch}>
               delete
             </Button>
             <Button variant="outlined" startIcon={<ClearIcon />} onClick={onClose}>

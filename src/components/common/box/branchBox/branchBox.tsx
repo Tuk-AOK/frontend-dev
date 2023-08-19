@@ -24,6 +24,7 @@ interface BranchesData{
 interface Branch{
   branchName: string;
   branchUuid: string; 
+  updateAt: string;
 }
 
 
@@ -78,7 +79,7 @@ export default function BranchBox() {
               {branch.branchName}
             </Box>
             <Box sx={{fontSize: "16px", fontWeight: "regular", textAlign:"center"}}>
-              last update : 2022/08/14 19:00
+              {branch.updateAt}
             </Box>
             <Box sx={{display: "flex", alignItems: "center", ml:"auto"}}>
               <IconButton

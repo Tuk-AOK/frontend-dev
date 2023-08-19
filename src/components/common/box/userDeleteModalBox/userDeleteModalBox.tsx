@@ -3,6 +3,8 @@ import { Box, Modal, Typography, Button, Input } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from '@mui/icons-material/Clear';
 import axios from 'axios';
+import { RootState } from "../../../../stores/store";
+import { useSelector } from "react-redux";
 
 interface User{
   userUuid: string;
@@ -33,9 +35,28 @@ const style = {
 };
 
 export default function UserDeleteModalBox({user, onClose}: ModalProps){
-  
+  let projectUuid = useSelector((state: RootState)=>{
+    return state.project.uuid;  
+  });
+
+  let currentUserUuid = useSelector((state: RootState)=>{
+    return state.user.userUuid
+  });
+
   if(!user){
     return null;
+  }
+
+  const deleteUser = () => {
+    axios.delete("/api/v1/projects/" + projectUuid + "/deleter/" + currentUserUuid + "/target/" + user.userUuid)
+    .then((response)=>{
+      console.log("유저 삭제 성공"); 
+      window.location.reload();    
+    })
+    .catch((error)=>{
+      console.log(error);
+      alert("허용되지 않은 접근입니다.");
+    })
   }
   
   return( 
@@ -74,7 +95,7 @@ export default function UserDeleteModalBox({user, onClose}: ModalProps){
               mt: "35px",
             }}
           >
-            <Button variant="outlined" startIcon={<CheckIcon />} color="error">
+            <Button variant="outlined" startIcon={<CheckIcon />} color="error" onClick={deleteUser}>
               delete
             </Button>
             <Button variant="outlined" startIcon={<ClearIcon />} onClick={onClose}>
