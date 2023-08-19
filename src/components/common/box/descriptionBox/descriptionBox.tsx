@@ -106,7 +106,7 @@ export default function DescriptionBox() {
                   console.log('유저 초대 완료');
                   console.log(response);
                   console.log(response.data.data);
-                  //window.location.replace("/project");
+                  window.location.replace("/project");
                 })
                 .catch((error) => {
                   alert('유저 초대에 실패했습니다.');
