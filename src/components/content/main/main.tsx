@@ -75,6 +75,8 @@ export default function Main() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [noneProduct, setNoneProduct] = useState(true);
 
+  const [defaultPage, setDefaultPage] = useState(0); 
+
   const handleModalOpen = () => {
     setIsModalOpen(true);
   };
@@ -172,11 +174,15 @@ export default function Main() {
     }
   };
 
+  const handlePage = (e: React.ChangeEvent<unknown>, page: number) => {
+    setDefaultPage(page-1);
+  }
+
   useEffect(() => {
     (async () => {
       await axios
         .get<wholeProjectResponse>(
-          '/api/v1/projects?userUuid=' + userUuid + '&page=0'
+          '/api/v1/projects?userUuid=' + userUuid + '&page=' + defaultPage
         )
         .then((response) => {
           console.log('유저 플젝 불러오기 성공');
@@ -192,7 +198,7 @@ export default function Main() {
           console.log(error);
         });
     })();
-  }, [projects.length]);
+  }, [projects.length, defaultPage]);
 
   return (
     <Box sx={{ px: 3, py: 3 }}>
@@ -299,7 +305,7 @@ export default function Main() {
                       .get(
                         '/api/v1/projects/' +
                           project.projectUuid +
-                          '/branches?page=0'
+                          '/branches?page='+ defaultPage
                       )
                       .then((response) => {
                         console.log('브랜치 정보 불러오기 성공');
@@ -361,7 +367,7 @@ export default function Main() {
         {noneProduct ? (
           <></>
         ) : (
-          <Pagination count={10} color='primary' size='small' />
+          <Pagination count={10} color='primary' size='small' defaultPage={1} onChange={handlePage} />
         )}
       </Box>
     </Box>
