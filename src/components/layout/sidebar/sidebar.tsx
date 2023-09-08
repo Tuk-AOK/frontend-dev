@@ -111,6 +111,7 @@ export default function Example() {
   const projectNavigate = () => navigate('/project');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -176,7 +177,7 @@ export default function Example() {
   }, [defaultPage]);
 
   const fetchData = async () => {
-    if (isLoading) {
+    if (isLoading || !hasMore) {
       return;
     }
 
@@ -186,8 +187,13 @@ export default function Example() {
         '/api/v1/projects?userUuid=' + uuid + '&page=' + defaultPage,
       );
       const data = response.data.data.projects;
-      setProjects((prevList) => [...prevList, ...data]);
-      setDefaultPage(defaultPage + 1);
+
+      if(data.length === 0) {
+        setHasMore(false);
+      } else {
+        setProjects((prevList) => [...prevList, ...data]);
+        setDefaultPage(defaultPage + 1);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
