@@ -147,7 +147,7 @@ export default function Main() {
           dispatch(setProjectUuid(response.data.data.projectUuid));
 
           axios
-            .get('/api/v1/projects/' + projUuid + '/branches?page=0')
+            .get('/api/v1/projects/' + projUuid + '/branches?page=' + defaultPage)
             .then((response) => {
               console.log('브랜치 정보 불러오기 성공');
               console.log(
@@ -175,7 +175,7 @@ export default function Main() {
   };
 
   const handlePage = (e: React.ChangeEvent<unknown>, page: number) => {
-    setDefaultPage(page-1);
+    setDefaultPage(page - 1);
   }
 
   useEffect(() => {
@@ -198,7 +198,7 @@ export default function Main() {
           console.log(error);
         });
     })();
-  }, [projects.length, defaultPage]);
+  }, [projects.length, defaultPage, userUuid]);
 
   return (
     <Box sx={{ px: 3, py: 3 }}>
@@ -294,23 +294,24 @@ export default function Main() {
                 }}
               >
                 {projects.map((project) => {
-                  const clickEvent = () => {
+                  const clickEvent = async() => {
+                    console.log("프로젝트(main.tsx) : ", project);
                     dispatch(setProjectUuid(project.projectUuid));
                     console.log(
                       '현재 저장된 프로젝트 UUID : ',
                       project.projectUuid
                     );
 
-                    axios
+                      await axios
                       .get(
                         '/api/v1/projects/' +
                           project.projectUuid +
-                          '/branches?page='+ defaultPage
+                          '/branches?page=0'
                       )
                       .then((response) => {
                         console.log('브랜치 정보 불러오기 성공');
                         console.log(
-                          '가져온 데이터(sidebar.tsx)',
+                          '가져온 데이터(main.tsx)',
                           response.data.data.projectBranchInfos
                         );
                         setBranchData(response.data.data.projectBranchInfos);
@@ -319,20 +320,20 @@ export default function Main() {
                           (branchData: Branch) => {
                             if (branchData.branchName === 'main') {
                               console.log(
-                                '⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ 브랜치uuid(sidebar.tsx) : ',
+                                '⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ 브랜치uuid(main.tsx) : ',
                                 branchData.branchUuid
                               );
 
                               dispatch(
                                 setMainBranchId(branchData.branchId.toString())
                               );
-                              console.log('mainbranchId: ', mainId);
+                              console.log('mainbranchId(main.tsx): ', mainId);
                               dispatch(
                                 setMainBranchUuid(branchData.branchUuid)
                               );
-                              console.log('mainbranchUuid : ', mainUuid);
+                              console.log('mainbranchUuid(main.tsx) : ', mainUuid);
                               dispatch(setBranchUuid(branchData.branchUuid));
-                              console.log('설정한 branchUuid : ', branUuid);
+                              console.log('설정한 branchUuid(main.tsx) : ', branchData.branchUuid);
                             }
                           }
                         );

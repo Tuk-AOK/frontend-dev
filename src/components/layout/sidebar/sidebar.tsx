@@ -346,7 +346,7 @@ export default function Example() {
                     );
                   })
                   .then(() => {
-                    projectNavigate();
+                    window.location.replace("/project")
                     console.log('이동할 프로젝트 이름 : ', project.projectName);
                   });
               };
