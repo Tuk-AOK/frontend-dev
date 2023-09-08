@@ -23,7 +23,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import CheckIcon from '@mui/icons-material/Check';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import InfiniteScroll from "react-infinite-scroll-component";
 import axios from 'axios';
 
 interface userResponse {
@@ -98,6 +98,8 @@ export default function Example() {
   const [userId, setUserId] = useState('');
 
   const [branchData, setBranchData] = useState<Branch[]>([]);
+  const [defaultPage, setDefaultPage] = useState(0); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -168,21 +170,52 @@ export default function Example() {
   const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
-    (async () => {
-      await axios
-        .get<ProjectResponse>('/api/v1/projects?userUuid=' + uuid + '&page=0')
-        .then((response) => {
-          //console.log("프로젝트 정보 불러오기 성공");
-          console.log('가져온 project 데이터', response.data.data.projects);
-          setProjects(response.data.data.projects);
-          //console.log("저장상태", projects);
-        })
-        .catch((error) => {
-          console.log('프로젝트 정보 불러오기 실패');
-          console.log(error);
-        });
-    })();
-  }, [uuid]);
+    if(defaultPage >= 0) {
+      fetchData();
+    }
+  }, [defaultPage]);
+
+  const fetchData = async () => {
+    if (isLoading) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get<ProjectResponse>(
+        '/api/v1/projects?userUuid=' + uuid + '&page=' + defaultPage,
+      );
+      const data = response.data.data.projects;
+      setProjects((prevList) => [...prevList, ...data]);
+      setDefaultPage(defaultPage + 1);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const fetchMoreData = () => {
+    fetchData();
+  };
+
+  // useEffect(() => {
+  //   (async () => {
+  //     await axios
+  //       .get<ProjectResponse>('/api/v1/projects?userUuid=' + uuid + '&page=0')
+  //       .then((response) => {
+  //         //console.log("프로젝트 정보 불러오기 성공");
+  //         console.log('가져온 project 데이터', response.data.data.projects);
+  //         setProjects(response.data.data.projects);
+  //         //console.log("저장상태", projects);
+  //       })
+  //       .catch((error) => {
+  //         console.log('프로젝트 정보 불러오기 실패');
+  //         console.log(error);
+  //       });
+  //   })();
+  // }, [uuid]);
 
   const createProject = () => {
     if (projectName === '' && projectIntro !== '') {
@@ -303,59 +336,68 @@ export default function Example() {
             Home
           </MenuItem>
           <SubMenu icon={<FolderSharedIcon />} label='Projects'>
-            {projects.map((project) => {
-              const clickEvent = () => {
-                dispatch(setProjectUuid(project.projectUuid));
-                console.log(
-                  '현재 저장된 프로젝트 UUID : ',
-                  project.projectUuid
-                );
+            <InfiniteScroll
+              dataLength={projects.length}
+              next={fetchMoreData}
+              hasMore={defaultPage !== 0}
+              loader={<></>}
+              endMessage={<></>}
+              style={{display: "flex", flexDirection: "row", flexWrap: "wrap", maxHeight: "25rem"}}
+            >
+              {projects.map((project) => {
+                const clickEvent = () => {
+                  dispatch(setProjectUuid(project.projectUuid));
+                  console.log(
+                    '현재 저장된 프로젝트 UUID : ',
+                    project.projectUuid
+                  );
 
-                axios
-                  .get(
-                    '/api/v1/projects/' +
-                      project.projectUuid +
-                      '/branches?page=0'
-                  )
-                  .then((response) => {
-                    console.log('브랜치 정보 불러오기 성공');
-                    console.log(
-                      '가져온 데이터(sidebar.tsx)',
-                      response.data.data.projectBranchInfos
-                    );
-                    setBranchData(response.data.data.projectBranchInfos);
+                  axios
+                    .get(
+                      '/api/v1/projects/' +
+                        project.projectUuid +
+                        '/branches?page=0'
+                    )
+                    .then((response) => {
+                      console.log('브랜치 정보 불러오기 성공');
+                      console.log(
+                        '가져온 데이터(sidebar.tsx)',
+                        response.data.data.projectBranchInfos
+                      );
+                      setBranchData(response.data.data.projectBranchInfos);
 
-                    response.data.data.projectBranchInfos.map(
-                      (branchData: Branch) => {
-                        if (branchData.branchName === 'main') {
-                          console.log(
-                            '⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ 브랜치uuid(sidebar.tsx) : ',
-                            branchData.branchUuid
-                          );
+                      response.data.data.projectBranchInfos.map(
+                        (branchData: Branch) => {
+                          if (branchData.branchName === 'main') {
+                            console.log(
+                              '⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️ 브랜치uuid(sidebar.tsx) : ',
+                              branchData.branchUuid
+                            );
 
-                          dispatch(
-                            setMainBranchId(branchData.branchId.toString())
-                          );
-                          console.log('mainbranchId: ', mainId);
-                          dispatch(setMainBranchUuid(branchData.branchUuid));
-                          console.log('mainbranchUuid : ', mainUuid);
-                          dispatch(setBranchUuid(branchData.branchUuid));
-                          console.log('설정한 branchUuid : ', branUuid);
+                            dispatch(
+                              setMainBranchId(branchData.branchId.toString())
+                            );
+                            console.log('mainbranchId: ', mainId);
+                            dispatch(setMainBranchUuid(branchData.branchUuid));
+                            console.log('mainbranchUuid : ', mainUuid);
+                            dispatch(setBranchUuid(branchData.branchUuid));
+                            console.log('설정한 branchUuid : ', branUuid);
+                          }
                         }
-                      }
-                    );
-                  })
-                  .then(() => {
-                    window.location.replace("/project")
-                    console.log('이동할 프로젝트 이름 : ', project.projectName);
-                  });
-              };
-              return (
-                <MenuItem icon={<ArticleIcon />} onClick={clickEvent}>
-                  {project.projectName}
-                </MenuItem>
-              );
-            })}
+                      );
+                    })
+                    .then(() => {
+                      window.location.replace("/project")
+                      console.log('이동할 프로젝트 이름 : ', project.projectName);
+                    });
+                };
+                return (
+                  <MenuItem icon={<ArticleIcon />} onClick={clickEvent}>
+                    {project.projectName}
+                  </MenuItem>
+                );
+              })}
+            </InfiniteScroll>
 
             <Box>
               <MenuItem
