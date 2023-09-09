@@ -33,6 +33,7 @@ interface currentData {
 
 export default function LogHistory() {
   const [logDatas, setLogDatas] = useState<log[]>([]);
+  const [allLogData, setAllLogData] = useState<log[]>([]);
   const [currentLog, setCurrentLog] = useState(''); 
 
   const navigate = useNavigate();
@@ -67,6 +68,30 @@ export default function LogHistory() {
       setCurrentLog(logDatas[0].logUuid);
     }
   }, [logDatas]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const pageSize = 10; // 페이지당 아이템 수
+      const totalPages = Math.ceil(logDatas.length / pageSize);
+  
+      const allLogs: log[] = [];
+  
+      for (let page = 0; page < 10; page++) {
+        try {
+          const response = await axios.get(`/api/v1/branches/${uuid}/logs?page=${page}`);
+          const pageLogs: log[] = response.data.data.logs;
+          allLogs.push(...pageLogs);
+        } catch (error) {
+          console.error("로그 데이터 불러오기 실패:", error);
+        }
+      }
+  
+      setAllLogData(allLogs);
+    };
+  
+    fetchData();
+  }, [logDatas, uuid]);
+
 
   const revertEvent = () => {
     if(logDatas.length <= 1){
@@ -116,7 +141,7 @@ export default function LogHistory() {
         </Box>
 
         <LogHistorySlider
-          logData={logDatas}
+          logData={allLogData}
           latestLogData={latestLogData}
           onCurrentLogsChange={handleCurrentLogchange}
         />
