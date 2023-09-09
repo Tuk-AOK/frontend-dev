@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BranchEditBox from "../branchEditBox/branchEditBox";
 import BranchDeleteBox from "../branchDeleteBox/branchDeleteBox";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
 interface BranchResponse{
@@ -31,6 +32,9 @@ interface Branch{
 
 export default function BranchBox() {
   const [branchData, setBranchData] = useState<Branch[]>([]);
+  const [defaultPage, setDefaultPage] = useState(0); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const [activeEditBranch, setActiveEditBranch] = useState<Branch | null>(null);
   const [activeDeleteBranch, setActiveDeleteBranch] = useState<Branch | null>(null);
@@ -56,22 +60,68 @@ export default function BranchBox() {
   });
 
   useEffect(() => {
-    (async () => {
-        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
-        .then((response)=> {
-            console.log("브랜치 정보 불러오기 성공");
-            console.log("가져온 데이터", response.data.data.projectBranchInfos);
-            setBranchData(response.data.data.projectBranchInfos);
+    if(defaultPage >= 0) {
+      fetchData();
+    }
+  }, [defaultPage]);
+
+  const fetchData = async () => {
+    if (isLoading || !hasMore) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get<BranchResponse>(
+        '/api/v1/projects/'+ projectUuid +'/branches?page='+ defaultPage,
+      );
+      const data = response.data.data.projectBranchInfos;
+
+      if(data.length === 0) {
+        setHasMore(false);
+      } else {
+        setBranchData((prevList) => [...prevList, ...data]);
+        setDefaultPage(defaultPage + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const fetchMoreData = () => {
+    fetchData();
+  };
+
+  // useEffect(() => {
+  //   (async () => {
+  //       await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
+  //       .then((response)=> {
+  //           console.log("브랜치 정보 불러오기 성공");
+  //           console.log("가져온 데이터", response.data.data.projectBranchInfos);
+  //           setBranchData(response.data.data.projectBranchInfos);
             
-        })
-        .catch((error)=>{
-            console.log(error);
-        })
-    })();
-  }, [projectUuid]); 
+  //       })
+  //       .catch((error)=>{
+  //           console.log(error);
+  //       })
+  //   })();
+  // }, [projectUuid]); 
 
   return(
     <Box display="block">
+      <InfiniteScroll
+        dataLength={branchData.length}
+        next={fetchMoreData}
+        hasMore={defaultPage !== 0}
+        loader={<></>}
+        endMessage={<></>}
+        style={{display: "flex", flexDirection: "column"}}
+      >
+
+      </InfiniteScroll>
       {branchData.map(branch => {
         return(
           <Box display="flex" sx={{mb:"10px", width:"930px", alignItems: "center"}}>
