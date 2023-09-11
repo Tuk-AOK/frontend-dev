@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setBranchUuid } from "../../../../hooks/branchSlice";
 import { RootState } from "../../../../stores/store";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
 interface BranchResponse{
@@ -76,6 +77,9 @@ export default function SplitButton() {
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [defaultPage, setDefaultPage] = useState(0); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   
   const handleModalOpen = () => {
     setIsModalOpen(true);
@@ -104,19 +108,55 @@ export default function SplitButton() {
   const [currentBranch, setCurrentBranch] = useState('');
 
   useEffect(() => {
-    (async () => {
-        await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
-        .then((response)=> {
-            console.log("브랜치 정보 불러오기 성공");
-            console.log("가져온 데이터", response.data.data.projectBranchInfos);
-            setBranchData(response.data.data.projectBranchInfos);
+    if(defaultPage >= 0) {
+      fetchData();
+    }
+  }, [defaultPage]);
+
+  const fetchData = async () => {
+    if (isLoading || !hasMore) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get<BranchResponse>(
+        '/api/v1/projects/'+ projectUuid +'/branches?page='+ defaultPage,
+      );
+      const data = response.data.data.projectBranchInfos;
+
+      if(data.length === 0) {
+        setHasMore(false);
+      } else {
+        setBranchData((prevList) => [...prevList, ...data]);
+        setDefaultPage(defaultPage + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const fetchMoreData = () => {
+    fetchData();
+  };
+
+  // useEffect(() => {
+  //   (async () => {
+  //       await axios.get<BranchResponse>('/api/v1/projects/'+ projectUuid +'/branches?page=0')
+  //       .then((response)=> {
+  //           console.log("브랜치 정보 불러오기 성공");
+  //           console.log("가져온 데이터", response.data.data.projectBranchInfos);
+  //           setBranchData(response.data.data.projectBranchInfos);
             
-        })
-        .catch((error)=>{
-            console.log(error);
-        })
-    })();
-  }, [projectUuid]); 
+  //       })
+  //       .catch((error)=>{
+  //           console.log(error);
+  //       })
+  //   })();
+  // }, [projectUuid]); 
 
 
 
@@ -225,24 +265,32 @@ export default function SplitButton() {
                       {option}
                     </MenuItem>
                   ))} */}
-
-                  {branchData.map((branch, index) => {
-                    const clickEvent = (event:any) => {
-                      handleMenuItemClick(event, index);
-                      dispatch(setBranchUuid(branch.branchUuid));
-                      console.log("클릭된 로그 :", branch.branchUuid);
-                      window.location.replace('/Project');
-                    }
-                    return(
-                      <MenuItem
-                        key={branch.branchName}
-                        selected={index === selectedIndex}
-                        onClick={clickEvent}
-                      >
-                        {branch.branchName}
-                      </MenuItem>
-                    );
-                  })}
+                  <InfiniteScroll
+                    dataLength={branchData.length}
+                    next={fetchMoreData}
+                    hasMore={defaultPage !== 0}
+                    loader={<></>}
+                    endMessage={<></>}
+                    style={{display: "flex", flexDirection: "column", maxHeight: "15rem"}}
+                  >
+                    {branchData.map((branch, index) => {
+                      const clickEvent = (event:any) => {
+                        handleMenuItemClick(event, index);
+                        dispatch(setBranchUuid(branch.branchUuid));
+                        console.log("클릭된 로그 :", branch.branchUuid);
+                        window.location.replace('/Project');
+                      }
+                      return(
+                        <MenuItem
+                          key={branch.branchName}
+                          selected={index === selectedIndex}
+                          onClick={clickEvent}
+                        >
+                          {branch.branchName}
+                        </MenuItem>
+                      );
+                    })}
+                  </InfiniteScroll>
                   
                   <MenuItem onClick={() => handleModalOpen()}
                   >

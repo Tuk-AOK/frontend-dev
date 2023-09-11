@@ -8,6 +8,7 @@ import PendingRoundedIcon from '@mui/icons-material/PendingRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import ClickAwayListener from "@mui/material/ClickAwayListener";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface currentFeedbackResponse{
   status: number;
@@ -36,25 +37,67 @@ export default function CommentBox(){
   const [feedbacks, setFeedbacks] = useState<feedback[]>([])
   const [userNickname, setUserNickname] = useState('');
   const [userProfileImg, setUserProfileImg] = useState('');
+
+  const [defaultPage, setDefaultPage] = useState(0); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+
   let branchUuid = useSelector((state: RootState) => {
     return state.branch.uuid;
   });
 
-  useEffect(()=>{
-    (async () => {
-      await axios.get<currentFeedbackResponse>('/api/v1/branches/'+ branchUuid +'/feedbacks?page=0')
-      .then((response)=> {
-          console.log("피드백 정보 불러오기 성공(feedbackBox.tsx)");
-          console.log("가져온 피드백 데이터", response.data.data.branchFeedbackInfos);
-          setFeedbacks(response.data.data.branchFeedbackInfos);
-          console.log("feedback 저장상태 : ", feedbacks);
+  useEffect(() => {
+    if(defaultPage >= 0) {
+      fetchData();
+    }
+  }, [defaultPage]);
+
+  const fetchData = async () => {
+    if (isLoading || !hasMore) {
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get<currentFeedbackResponse>(
+        '/api/v1/branches/'+ branchUuid +'/feedbacks?page=' + defaultPage,
+      );
+      const data = response.data.data.branchFeedbackInfos;
+
+      if(data.length === 0) {
+        setHasMore(false);
+      } else {
+        setFeedbacks((prevList) => [...prevList, ...data]);
+        setDefaultPage(defaultPage + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const fetchMoreData = () => {
+    fetchData();
+  };
+
+  // useEffect(()=>{
+  //   (async () => {
+  //     await axios.get<currentFeedbackResponse>('/api/v1/branches/'+ branchUuid +'/feedbacks?page=0')
+  //     .then((response)=> {
+  //         console.log("피드백 정보 불러오기 성공(feedbackBox.tsx)");
+  //         console.log("가져온 피드백 데이터", response.data.data.branchFeedbackInfos);
+  //         setFeedbacks(response.data.data.branchFeedbackInfos);
+  //         console.log("feedback 저장상태 : ", feedbacks);
           
-      })
-      .catch((error)=>{
-          console.log(error);
-      })
-  })();
-  }, [branchUuid])
+  //     })
+  //     .catch((error)=>{
+  //         console.log(error);
+  //     })
+  // })();
+  // }, [branchUuid])
 
 
   
@@ -135,109 +178,118 @@ export default function CommentBox(){
 
   return(
     <Box>
-      {feedbacks.length > 0 && 
-        feedbacks.map((datas: any) => {
+      <InfiniteScroll
+        dataLength={feedbacks.length}
+        next={fetchMoreData}
+        hasMore={defaultPage !== 0}
+        loader={<></>}
+        endMessage={<></>}
+        style={{display: "flex", flexDirection: "column"}}
+      >
+        {feedbacks.length > 0 && 
+          feedbacks.map((datas: any) => {
 
-          axios.get('/api/v1/users/' + datas.feedbackUserUuid)
-          .then((response)=>{
-            setUserNickname(response.data.data.userNickname)
-            setUserProfileImg(response.data.data.userPhoto)
-          })
+            axios.get('/api/v1/users/' + datas.feedbackUserUuid)
+            .then((response)=>{
+              setUserNickname(response.data.data.userNickname)
+              setUserProfileImg(response.data.data.userPhoto)
+            })
 
-          return(
-            <Box sx={{pb: 2, display: "flex", flex: "1 0 40%"}} key={datas.feedbackUuid}>
-              <Box
-                sx={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: 85,
-                  bgcolor: "#000000",
-                  overflow: "hidden",
-                }}
-              >
-                <img width="100%" height="100%" src={userProfileImg} alt="test" />
-              </Box>
-              <Box sx={{display: "flex", flexDirection: "column", flex: "1 0 40%"}}>
+            return(
+              <Box sx={{pb: 2, display: "flex", flex: "1 0 40%"}} key={datas.feedbackUuid}>
                 <Box
                   sx={{
-                    ml : 2,
-                    borderRadius: 5,
-                    bgcolor: "#F5F5F5",
-                  }}>
-                    <Box sx={{p:2, whiteSpace: 'break-spaces'}}>
-                      {datas.feedbackMessage}
-                    </Box>
+                    width: 50,
+                    height: 50,
+                    borderRadius: 85,
+                    bgcolor: "#000000",
+                    overflow: "hidden",
+                  }}
+                >
+                  <img width="100%" height="100%" src={userProfileImg} alt="test" />
                 </Box>
-                <Box sx={{ ml: 2.5, fontSize: "10pt", color: "gray",}}>
-                  {userNickname}
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  ml: 1,
-                  mr: 1,
-                  width: 30,
-                  height: 30,
-                }}
-              >
-                <React.Fragment>
-                  <ButtonGroup ref={(node) => (anchorRefs.current[datas.feedbackUuid] = node)}>
-                    <IconButton 
-                    aria-controls={open[datas.feedbackUuid] ? "split-button-menu" : undefined}
-                    aria-expanded={open[datas.feedbackUuid] ? "true" : undefined}
-                    aria-label="select merge strategy"
-                    onClick={()=>handleToggle(datas.feedbackUuid)}>
-                      {selectedIcon[datas.feedbackUuid] || getInitialIcon(datas.feedbackStatus)}
-                    </IconButton>
-                  </ButtonGroup>
-                  <Popper
+                <Box sx={{display: "flex", flexDirection: "column", flex: "1 0 40%"}}>
+                  <Box
                     sx={{
-                      zIndex: 1,
-                    }}
-                    open={open[datas.feedbackUuid]}
-                    anchorEl={anchorRefs.current[datas.feedbackUuid]}
-                    role={undefined}
-                    transition
-                    disablePortal
-                  >
-                    {({ TransitionProps, placement }) => (
-                      <Grow
-                        {...TransitionProps}
-                        style={{
-                          transformOrigin:
-                            placement === "bottom" ? "center top" : "center bottom",
-                        }}
-                      >
-                        <Paper>
-                          <ClickAwayListener onClickAway={(event)=> handleClose(event, datas.feedbackUuid)}>
-                            <MenuList id="split-button-menu" autoFocusItem>  
-                              <MenuItem
-                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <PendingRoundedIcon sx={{ pr: 0.8, color: "#1856A5" }}/>, "inprogress")}
-                              >
-                                <PendingRoundedIcon sx={{pr: 0.8, color: "#1856A5"}}/> in progress
-                              </MenuItem>
-                              <MenuItem
-                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <CheckCircleRoundedIcon sx={{ pr: 0.8, color: "#8BAF55" }} />, "executed")}
-                              >
-                                <CheckCircleRoundedIcon sx={{pr: 0.8, color: "#8BAF55"}}/> executed
-                              </MenuItem>
-                              <MenuItem
-                              onClick={() => handleMenuItemClick(datas.feedbackUuid, <ErrorRoundedIcon sx={{ pr: 0.8, color: "#E93547" }} />, "rejected")}
-                              >
-                                <ErrorRoundedIcon sx={{pr: 0.8, color: "#E93547"}}/> rejected
-                              </MenuItem>
-                            </MenuList>
-                          </ClickAwayListener>
-                        </Paper>
-                      </Grow>
-                    )}
-                  </Popper>
-                </React.Fragment>
+                      ml : 2,
+                      borderRadius: 5,
+                      bgcolor: "#F5F5F5",
+                    }}>
+                      <Box sx={{p:2, whiteSpace: 'break-spaces'}}>
+                        {datas.feedbackMessage}
+                      </Box>
+                  </Box>
+                  <Box sx={{ ml: 2.5, fontSize: "10pt", color: "gray",}}>
+                    {userNickname}
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    ml: 1,
+                    mr: 1,
+                    width: 30,
+                    height: 30,
+                  }}
+                >
+                  <React.Fragment>
+                    <ButtonGroup ref={(node) => (anchorRefs.current[datas.feedbackUuid] = node)}>
+                      <IconButton 
+                      aria-controls={open[datas.feedbackUuid] ? "split-button-menu" : undefined}
+                      aria-expanded={open[datas.feedbackUuid] ? "true" : undefined}
+                      aria-label="select merge strategy"
+                      onClick={()=>handleToggle(datas.feedbackUuid)}>
+                        {selectedIcon[datas.feedbackUuid] || getInitialIcon(datas.feedbackStatus)}
+                      </IconButton>
+                    </ButtonGroup>
+                    <Popper
+                      sx={{
+                        zIndex: 1,
+                      }}
+                      open={open[datas.feedbackUuid]}
+                      anchorEl={anchorRefs.current[datas.feedbackUuid]}
+                      role={undefined}
+                      transition
+                      disablePortal
+                    >
+                      {({ TransitionProps, placement }) => (
+                        <Grow
+                          {...TransitionProps}
+                          style={{
+                            transformOrigin:
+                              placement === "bottom" ? "center top" : "center bottom",
+                          }}
+                        >
+                          <Paper>
+                            <ClickAwayListener onClickAway={(event)=> handleClose(event, datas.feedbackUuid)}>
+                              <MenuList id="split-button-menu" autoFocusItem>  
+                                <MenuItem
+                                onClick={() => handleMenuItemClick(datas.feedbackUuid, <PendingRoundedIcon sx={{ pr: 0.8, color: "#1856A5" }}/>, "inprogress")}
+                                >
+                                  <PendingRoundedIcon sx={{pr: 0.8, color: "#1856A5"}}/> in progress
+                                </MenuItem>
+                                <MenuItem
+                                onClick={() => handleMenuItemClick(datas.feedbackUuid, <CheckCircleRoundedIcon sx={{ pr: 0.8, color: "#8BAF55" }} />, "executed")}
+                                >
+                                  <CheckCircleRoundedIcon sx={{pr: 0.8, color: "#8BAF55"}}/> executed
+                                </MenuItem>
+                                <MenuItem
+                                onClick={() => handleMenuItemClick(datas.feedbackUuid, <ErrorRoundedIcon sx={{ pr: 0.8, color: "#E93547" }} />, "rejected")}
+                                >
+                                  <ErrorRoundedIcon sx={{pr: 0.8, color: "#E93547"}}/> rejected
+                                </MenuItem>
+                              </MenuList>
+                            </ClickAwayListener>
+                          </Paper>
+                        </Grow>
+                      )}
+                    </Popper>
+                  </React.Fragment>
+                </Box>
               </Box>
-            </Box>
-          );
-        })
-      }
+            );
+          })
+        }
+      </InfiniteScroll>
     </Box>
   );
 }

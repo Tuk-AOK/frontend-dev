@@ -145,7 +145,7 @@ export default function Project() {
           setRecentLog(response.data.data.logUuid);
 
           axios
-            .get<logResponse>('/api/v1/logs/' + recentLog)
+            .get<logResponse>('/api/v1/logs/' + response.data.data.logUuid)
             .then((response) => {
               console.log('최근 로그 정보 불러오기 성공');
               console.log(response.data);
